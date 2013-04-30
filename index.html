@@ -9,7 +9,8 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="对于myltisim这个软件，在上学期已经接触过，但是却从来没有使用过，上课的时候也是在看老师给我们演示。前几天确从模电老师那里了解了eda的真正含义，以及这个软件的真正强大之处。于是决定回来折腾一下，当然，对于通信专业的学生来说，电路的分析是必须要掌握的，因此这个软件更得好好的折腾折腾。 &hellip;">
+  <meta name="description" content="今天因为折腾点东西系统出了点故障，重启之后，就进入了rescue模式用别人的电脑查了下，顺利解决问题。
+grub rescue模式下，只有几个命令可以使用 set，ls，prefix，root，insmod 用set查看当前prefix和root的配置。 ls列出所有分区，分区格式为（hdx）或者 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +66,67 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/30/grub+rescue/">Grub Rescue</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-30T00:00:00+08:00" pubdate data-updated="true">Apr 30<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>今天因为折腾点东西系统出了点故障，重启之后，就进入了rescue模式用别人的电脑查了下，顺利解决问题。<br/>
+grub rescue模式下，只有几个命令可以使用 set，ls，prefix，root，insmod <br/>
+用set查看当前prefix和root的配置。 <br/>
+ls列出所有分区，分区格式为（hdx）或者（hdx，msdosx）我们要做的就是找到我们的当前系统的grub在哪。因为以前装过linux没有删除干净，所以要用ls多看几次。命令如下:</p>
+
+<pre><code>ls (hdx)/  
+ls (hdx,msdosx)/  
+</code></pre>
+
+<p>一般如果你的grub2存在的话，下面会跟着很多的文件。找到之后就好办了。<br/>
+注意：ls命令<strong>最后的 / </strong>必须有。<br/>
+对于boot是单独分区的情况，使用如下命令：</p>
+
+<pre><code>set root=(hdx,msdosx)
+set prefix=(hdx,msdosx)/grub
+insmod /grub/normal.mod 
+normal
+</code></pre>
+
+<p>这样便能进入正常的grub了，进入系统之后在更新一下grub：</p>
+
+<pre><code>sudo update-grub
+sudo grub-install /dev/sda
+</code></pre>
+
+<p>最后一定是/deb/sda.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -160,6 +222,10 @@
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/04/30/grub+rescue/">Grub rescue</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/04/27/multisim/">Multisim</a>
