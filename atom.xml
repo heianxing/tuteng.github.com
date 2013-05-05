@@ -4,7 +4,7 @@
   <title><![CDATA[TuTeng'blog]]></title>
   <link href="http://tuteng.github.io/atom.xml" rel="self"/>
   <link href="http://tuteng.github.io/"/>
-  <updated>2013-04-30T19:07:08+08:00</updated>
+  <updated>2013-05-05T20:06:11+08:00</updated>
   <id>http://tuteng.github.io/</id>
   <author>
     <name><![CDATA[图腾]]></name>
@@ -14,10 +14,10 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Grub rescue]]></title>
-    <link href="http://tuteng.github.io/blog/2013/04/30/grub+rescue/"/>
-    <updated>2013-04-30T00:00:00+08:00</updated>
-    <id>http://tuteng.github.io/blog/2013/04/30/grub rescue</id>
+    <title type="html"><![CDATA[Grub Rescue]]></title>
+    <link href="http://tuteng.github.io/blog/2013/04/30/grubrescue/"/>
+    <updated>2013-04-30T15:45:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2013/04/30/grubrescue</id>
     <content type="html"><![CDATA[<p>今天因为折腾点东西系统出了点故障，重启之后，就进入了rescue模式用别人的电脑查了下，顺利解决问题。<br/>
 grub rescue模式下，只有几个命令可以使用 set，ls，prefix，root，insmod <br/>
 用set查看当前prefix和root的配置。 <br/>
