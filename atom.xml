@@ -4,7 +4,7 @@
   <title><![CDATA[TuTeng'blog]]></title>
   <link href="http://tuteng.github.io/atom.xml" rel="self"/>
   <link href="http://tuteng.github.io/"/>
-  <updated>2013-05-05T21:49:15+08:00</updated>
+  <updated>2013-05-08T18:54:58+08:00</updated>
   <id>http://tuteng.github.io/</id>
   <author>
     <name><![CDATA[图腾]]></name>
@@ -12,6 +12,28 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[arduino]]></title>
+    <link href="http://tuteng.github.io/blog/2013/05/08/arduino/"/>
+    <updated>2013-05-08T18:25:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2013/05/08/arduino</id>
+    <content type="html"><![CDATA[<p>最近准备入手一个arduino的板子，据说这东东很好玩，趁今天下午没事，先收了一下关于它的资料。下面是维基对于其的介绍：<br/>
+Arduino，是一个开源的单片机控制器，它使用了Atmel AVR单片机，采用了基于开放源代码的软硬件平台，构建于开放源代码 simple I/O 接口版，并且具有使用类似Java，C 语言的Processing/Wiring开发环境。<br/>
+下面是关于它的一些资料：</p>
+
+<p><a href="http://arduino.cc/">arduino官网</a> <br/>
+<a href="http://chaishushan.googlecode.com/svn/doc/arduino/r106/index.html">arduino开发文档</a><br/>
+<a href="http://arduino123.net/">arduino中文网</a><br/>
+<a href="http://www.arduino.tw/">arduino台湾网</a></p>
+
+<p>再来张图片,关于arduino电子器件的，从网上找的，不过没有发现是谁的，在此引用一下</p>
+
+<p><img src="http://files.note.sdo.com/xBlh9~koEJnR6u0GA005W8" alt="arduino电子器件价格参考" /></p>
+
+<p>最后打算用它做一个智能小车的东西，算是入门吧</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[todu]]></title>
