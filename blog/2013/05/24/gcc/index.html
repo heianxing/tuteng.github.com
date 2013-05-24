@@ -5,12 +5,20 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>arduino - TuTeng'blog</title>
+  <title>gcc和makefile - TuTeng'blog</title>
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="最近准备入手一个arduino的板子，据说这东东很好玩，趁今天下午没事，先收了一下关于它的资料。下面是维基对于其的介绍：
-Arduino，是一个开源的单片机控制器，它使用了Atmel AVR单片机，采用了基于开放源代码的软硬件平台，构建于开放源代码 simple I/O 接口版， &hellip;">
+  <meta name="description" content="gcc常用命令 -E 仅作预处理，不进行编译，汇编和链接
+-S 编译到汇编语言，不进行链接
+-c 编译，汇编到目标代码，不进行链接
+-o 输出到文件。
+-g 对代码进行调试，加上此选项
+-O1 进行一级优化
+-O2 进行二级优化
+-static 对代码进行静态链接
+-Wall 打印出所有警告
+- &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +27,7 @@ Arduino，是一个开源的单片机控制器，它使用了Atmel AVR单片机�
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tuteng.github.io/blog/2013/05/08/arduino">
+  <link rel="canonical" href="http://tuteng.github.io/blog/2013/05/24/gcc">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
@@ -69,7 +77,7 @@ Arduino，是一个开源的单片机控制器，它使用了Atmel AVR单片机�
   
   <header>
     
-      <h1 class="entry-title">Arduino</h1>
+      <h1 class="entry-title">Gcc和makefile</h1>
     
     
       <p class="meta">
@@ -85,27 +93,82 @@ Arduino，是一个开源的单片机控制器，它使用了Atmel AVR单片机�
   
 
 
-<time datetime="2013-05-08T18:25:00+08:00" pubdate data-updated="true">May 8<span>th</span>, 2013</time>
+<time datetime="2013-05-24T21:41:00+08:00" pubdate data-updated="true">May 24<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>最近准备入手一个arduino的板子，据说这东东很好玩，趁今天下午没事，先收了一下关于它的资料。下面是维基对于其的介绍：<br/>
-Arduino，是一个开源的单片机控制器，它使用了Atmel AVR单片机，采用了基于开放源代码的软硬件平台，构建于开放源代码 simple I/O 接口版，并且具有使用类似Java，C 语言的Processing/Wiring开发环境。<br/>
-下面是关于它的一些资料：</p>
+<div class="entry-content"><h3>gcc常用命令</h3>
 
-<p><a href="http://arduino.cc/">arduino官网</a> <br/>
-<a href="http://chaishushan.googlecode.com/svn/doc/arduino/r106/index.html">arduino开发文档</a><br/>
-<a href="http://arduino123.net/">arduino中文网</a><br/>
-<a href="http://www.arduino.tw/">arduino台湾网</a></p>
+<blockquote><p>-E 仅作预处理，不进行编译，汇编和链接<br/>
+-S 编译到汇编语言，不进行链接<br/>
+-c 编译，汇编到目标代码，不进行链接<br/>
+-o 输出到文件。
+-g 对代码进行调试，加上此选项<br/>
+-O1 进行一级优化<br/>
+-O2 进行二级优化<br/>
+-static 对代码进行静态链接<br/>
+-Wall 打印出所有警告<br/>
+-Werror 打印出所有错误<br/>
+ -I /home/hello/include表示将/home/hello/include目录作为第一个寻找头文件的目录，寻找的顺序是：/home/hello/include&#8211;>/usr/include&#8211;>/usr/local/include<br/>
+-L /home/hello/lib表示将/home/hello/lib目录作为第一个寻找库文件的目录，寻找的顺序是：/home/hello/lib&#8211;>/lib&#8211;>/usr/lib&#8211;>/usr/local/lib<br/>
+ -lworld表示在上面的lib的路径中寻找libworld.so动态库文件（如果gcc编译选项中加入了“-static”表示寻找libworld.a静态库文件）</p></blockquote>
 
-<p>再来张图片,关于arduino电子器件的，从网上找的，不过没有发现是谁的，在此引用一下</p>
+<p>hello文件</p>
 
-<p><img src="http://files.note.sdo.com/xBlh9~koEJnR6u0GA005W8" alt="arduino电子器件价格参考" /></p>
+<pre><code>#include"a.h"
+int main()
+{
+            print();
+}
+</code></pre>
 
-<p>最后打算用它做一个智能小车的东西，算是入门吧</p>
+<p>a.h文件在上一层目录中，即../中</p>
+
+<pre><code>#include&lt;stdlib.h&gt;
+#include&lt;stdio.h&gt;
+void print(){
+            printf("hello world\n");
+}
+</code></pre>
+
+<h6>gcc命令使用</h6>
+
+<pre><code>gcc -E hello.c -o hello.i -I../    对源文件进行预处理，-I指定第一个寻找头文件的目录
+gcc -S hello.i -o hello.s          将预处理文件编译到汇编代码
+gcc -c hello.s -o hello.o          将汇编代码编译到目标文件
+gcc hello.o -o hello               对目标文件进行链接
+</code></pre>
+
+<h6>优化</h6>
+
+<pre><code>gcc -o hello -O1 hello.c -I../     进行一级优化
+gcc -o hello -O2 hello.c -I../     进行二级优化
+</code></pre>
+
+<h3>makefile简单使用</h3>
+
+<p>将上面的命令进行总结并写入到一个文件，并将此文件命名为makefile</p>
+
+<h6>语法</h6>
+
+<pre><code>target ... : prerequisites ...
+             command
+</code></pre>
+
+<p>上面程序的makefile语法</p>
+
+<pre><code>hello.o:hello.c
+        gcc -E hello.c -o hello.i -I../ 
+        gcc -S hello.i -o hello.s
+        gcc -c hello.s -o hello.o
+        gcc hello.o -o hello
+.PHONY:clean
+clean:
+        rm hello.s hello.o   #方便使用make clean命令清除不必要的文件
+</code></pre>
 </div>
 
 
@@ -128,7 +191,7 @@ Arduino，是一个开源的单片机控制器，它使用了Atmel AVR单片机�
   
 
 
-<time datetime="2013-05-08T18:25:00+08:00" pubdate data-updated="true">May 8<span>th</span>, 2013</time>
+<time datetime="2013-05-24T21:41:00+08:00" pubdate data-updated="true">May 24<span>th</span>, 2013</time>
       
 
 
@@ -136,7 +199,7 @@ Arduino，是一个开源的单片机控制器，它使用了Atmel AVR单片机�
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2013/05/08/arduino/" data-via="" data-counturl="http://tuteng.github.io/blog/2013/05/08/arduino/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2013/05/24/gcc/" data-via="" data-counturl="http://tuteng.github.io/blog/2013/05/24/gcc/" >Tweet</a>
   
   
   
@@ -145,10 +208,8 @@ Arduino，是一个开源的单片机控制器，它使用了Atmel AVR单片机�
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/05/05/jihua/" title="Previous Post: todu">&laquo; todu</a>
+        <a class="basic-alignment left" href="/blog/2013/05/19/rhel/" title="Previous Post: rhel服务搭建">&laquo; rhel服务搭建</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/05/19/rhel/" title="Next Post: rhel服务搭建">rhel服务搭建 &raquo;</a>
       
     </p>
   </footer>
