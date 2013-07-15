@@ -9,7 +9,8 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="一直以来就很喜欢那种把想法变成现实的感觉，尤其是把想的东西变成可以看得见摸得着的东东，就有一种成就感。在最后一次数字电路的实验中，和同学亲手打造了一个秒表，纯硬件，在此记录一下实验原理。 材料 数码管两个，74ls47或74ls247两片，74ls160两片，74ls00两片，10uf电容一个，0 &hellip;">
+  <meta name="description" content="感觉好久都没写东西了，最近终于把可恶的考试弄完了，继续折腾。
+前段时间把openwrt的摄像头挂上了，所以想完善一下它的功能，就在一台没用的电脑上装上了centos，做个远程监控玩玩。 centos安装 从网上下载最新的版本，用ultraiso做好系统盘，启动。安装过程没有什么可以说的， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +66,120 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/15/centos/">Centos安装及配置</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-15T17:20:00+08:00" pubdate data-updated="true">Jul 15<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>感觉好久都没写东西了，最近终于把可恶的考试弄完了，继续折腾。
+前段时间把openwrt的摄像头挂上了，所以想完善一下它的功能，就在一台没用的电脑上装上了centos，做个远程监控玩玩。</p>
+
+<h5>centos安装</h5>
+
+<p>从网上下载最新的版本，用ultraiso做好系统盘，启动。安装过程没有什么可以说的，与其他发行版有点不同的是需要将安装包放到u盘根目录下（u盘容量最好大点，8~16G最好）。开始没注意这点，重复了几次。至此centos就给装上了。但最后重启了又出了点问题，grub一不注意给装到了u盘上（这点是后来从网上看帖子发现的）。那就修复grub吧，反正有启动盘。</p>
+
+<h5>grub修复</h5>
+
+<p>从u盘启动，centos就是不一般啊，默认连桌面都没有，黑黑的。从u盘启动后需进入grub模式。网上的命令式</p>
+
+<pre><code>sbin /grub
+</code></pre>
+
+<p>我这个命令无效啊我的是</p>
+
+<pre><code>grub
+</code></pre>
+
+<p>反正想办法进入grub模式就好了。
+接下来看看你的是那块磁盘使用如下命令</p>
+
+<pre><code>find /grub/grub/stage1
+</code></pre>
+
+<p>我的显示如下</p>
+
+<pre><code>(hd0,1)
+</code></pre>
+
+<p>hd0是我的第一块硬盘，额就一块硬盘，所以还好辨认，后面的1代表第二个分区，因为第一个分区用0表示，下面开始改了：</p>
+
+<pre><code>root (hd0,1)
+setup (hd0)
+</code></pre>
+
+<p>下面在将grub.conf和menu.lst里面的（hdx，y）修改为（hd0,1)。
+此时重启，即可进入系统。<br/>
+如此系统就算安装完成了。</p>
+
+<h5>配置网络</h5>
+
+<p>系统安装完了就要联网了。因为我要将它与路由器连接，所要配置静态ip，过程如下：<br/>
+centos的网络配置文件在<strong>/etc/sysconfig/</strong>中里面有很多关于网络配置的东西。我的机器就只有一块网卡eth0，所以在<strong>/etc/sysconfig/network-scripts/ifcfg-eth0</strong>下面。配置如下</p>
+
+<pre><code>DEVICE=eth0        #网络设备
+HWADDR=00:E0:4C:08:AC:10  #mac地址
+TYPE=Ethernet   #以太网
+UUID=a53621d2-d290-48ff-96e0-2a0005046b20 
+ONBOOT=yes           
+NM_CONTROLLED=yes
+BOOTPROTO=static       #静态地址，也可选dhcp或bootp
+IPADDR=192.168.0.135  #ip地址
+NETMASK=255.255.255.0  #子网掩码
+NETWORK=192.168.0.0    #网络号
+</code></pre>
+
+<p>修改网关<br/>
+vi /etc/sysconfig/network</p>
+
+<pre><code>NETWORKING=yes   #打开网络
+HOSTNAME=linuxgroup  #本机主机名（必须与/etc/hosts中的一样）
+GATEWAY=192.168.0.1  #网关
+</code></pre>
+
+<p>配置DNS<br/>
+vi /etc/resolv.conf</p>
+
+<pre><code>nameserver xxx.xxx.xxx.xxx
+nameserver xxx.xxx.xxx.xxx #根据自己的实际情况制定
+</code></pre>
+
+<p>弄好了之后可以重启服务了</p>
+
+<pre><code>service network restart 
+/etc/init.d/network restart #两条命令都可以
+</code></pre>
+
+<p>现在基本算弄完了，等待后续的折腾</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -722,6 +837,10 @@ sudo grub-install /dev/sda
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/07/15/centos/">centos安装及配置</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/06/06/yingjian/">纯硬件打造数字秒表</a>
       </li>
     
@@ -735,10 +854,6 @@ sudo grub-install /dev/sda
     
       <li class="post">
         <a href="/blog/2013/05/08/arduino/">arduino</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/05/05/jihua/">todu</a>
       </li>
     
   </ul>

@@ -5,20 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>gcc和makefile - TuTeng'blog</title>
+  <title>centos安装及配置 - TuTeng'blog</title>
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="gcc常用命令 -E 仅作预处理，不进行编译，汇编和链接
--S 编译到汇编语言，不进行链接
--c 编译，汇编到目标代码，不进行链接
--o 输出到文件。
--g 对代码进行调试，加上此选项
--O1 进行一级优化
--O2 进行二级优化
--static 对代码进行静态链接
--Wall 打印出所有警告
-- &hellip;">
+  <meta name="description" content="感觉好久都没写东西了，最近终于把可恶的考试弄完了，继续折腾。
+前段时间把openwrt的摄像头挂上了，所以想完善一下它的功能，就在一台没用的电脑上装上了centos，做个远程监控玩玩。 centos安装 从网上下载最新的版本，用ultraiso做好系统盘，启动。安装过程没有什么可以说的， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -27,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tuteng.github.io/blog/2013/05/24/gcc">
+  <link rel="canonical" href="http://tuteng.github.io/blog/2013/07/15/centos">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
@@ -77,7 +69,7 @@
   
   <header>
     
-      <h1 class="entry-title">Gcc和makefile</h1>
+      <h1 class="entry-title">Centos安装及配置</h1>
     
     
       <p class="meta">
@@ -93,82 +85,92 @@
   
 
 
-<time datetime="2013-05-24T21:41:00+08:00" pubdate data-updated="true">May 24<span>th</span>, 2013</time>
+<time datetime="2013-07-15T17:20:00+08:00" pubdate data-updated="true">Jul 15<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><h3>gcc常用命令</h3>
+<div class="entry-content"><p>感觉好久都没写东西了，最近终于把可恶的考试弄完了，继续折腾。
+前段时间把openwrt的摄像头挂上了，所以想完善一下它的功能，就在一台没用的电脑上装上了centos，做个远程监控玩玩。</p>
 
-<blockquote><p>-E 仅作预处理，不进行编译，汇编和链接<br/>
--S 编译到汇编语言，不进行链接<br/>
--c 编译，汇编到目标代码，不进行链接<br/>
--o 输出到文件。
--g 对代码进行调试，加上此选项<br/>
--O1 进行一级优化<br/>
--O2 进行二级优化<br/>
--static 对代码进行静态链接<br/>
--Wall 打印出所有警告<br/>
--Werror 打印出所有错误<br/>
- -I /home/hello/include表示将/home/hello/include目录作为第一个寻找头文件的目录，寻找的顺序是：/home/hello/include&#8211;>/usr/include&#8211;>/usr/local/include<br/>
--L /home/hello/lib表示将/home/hello/lib目录作为第一个寻找库文件的目录，寻找的顺序是：/home/hello/lib&#8211;>/lib&#8211;>/usr/lib&#8211;>/usr/local/lib<br/>
- -lworld表示在上面的lib的路径中寻找libworld.so动态库文件（如果gcc编译选项中加入了“-static”表示寻找libworld.a静态库文件）</p></blockquote>
+<h5>centos安装</h5>
 
-<p>hello文件</p>
+<p>从网上下载最新的版本，用ultraiso做好系统盘，启动。安装过程没有什么可以说的，与其他发行版有点不同的是需要将安装包放到u盘根目录下（u盘容量最好大点，8~16G最好）。开始没注意这点，重复了几次。至此centos就给装上了。但最后重启了又出了点问题，grub一不注意给装到了u盘上（这点是后来从网上看帖子发现的）。那就修复grub吧，反正有启动盘。</p>
 
-<pre><code>#include"a.h"
-int main()
-{
-            print();
-}
+<h5>grub修复</h5>
+
+<p>从u盘启动，centos就是不一般啊，默认连桌面都没有，黑黑的。从u盘启动后需进入grub模式。网上的命令式</p>
+
+<pre><code>sbin /grub
 </code></pre>
 
-<p>a.h文件在上一层目录中，即../中</p>
+<p>我这个命令无效啊我的是</p>
 
-<pre><code>#include&lt;stdlib.h&gt;
-#include&lt;stdio.h&gt;
-void print(){
-            printf("hello world\n");
-}
+<pre><code>grub
 </code></pre>
 
-<h6>gcc命令使用</h6>
+<p>反正想办法进入grub模式就好了。
+接下来看看你的是那块磁盘使用如下命令</p>
 
-<pre><code>gcc -E hello.c -o hello.i -I../    对源文件进行预处理，-I指定第一个寻找头文件的目录
-gcc -S hello.i -o hello.s          将预处理文件编译到汇编代码
-gcc -c hello.s -o hello.o          将汇编代码编译到目标文件
-gcc hello.o -o hello               对目标文件进行链接
+<pre><code>find /grub/grub/stage1
 </code></pre>
 
-<h6>优化</h6>
+<p>我的显示如下</p>
 
-<pre><code>gcc -o hello -O1 hello.c -I../     进行一级优化
-gcc -o hello -O2 hello.c -I../     进行二级优化
+<pre><code>(hd0,1)
 </code></pre>
 
-<h3>makefile简单使用</h3>
+<p>hd0是我的第一块硬盘，额就一块硬盘，所以还好辨认，后面的1代表第二个分区，因为第一个分区用0表示，下面开始改了：</p>
 
-<p>将上面的命令进行总结并写入到一个文件，并将此文件命名为makefile</p>
-
-<h6>语法</h6>
-
-<pre><code>target ... : prerequisites ...
-             command
+<pre><code>root (hd0,1)
+setup (hd0)
 </code></pre>
 
-<p>上面程序的makefile语法</p>
+<p>下面在将grub.conf和menu.lst里面的（hdx，y）修改为（hd0,1)。
+此时重启，即可进入系统。<br/>
+如此系统就算安装完成了。</p>
 
-<pre><code>hello.o:hello.c
-        gcc -E hello.c -o hello.i -I../ 
-        gcc -S hello.i -o hello.s
-        gcc -c hello.s -o hello.o
-        gcc hello.o -o hello
-.PHONY:clean
-clean:
-        rm hello.s hello.o   #方便使用make clean命令清除不必要的文件
+<h5>配置网络</h5>
+
+<p>系统安装完了就要联网了。因为我要将它与路由器连接，所要配置静态ip，过程如下：<br/>
+centos的网络配置文件在<strong>/etc/sysconfig/</strong>中里面有很多关于网络配置的东西。我的机器就只有一块网卡eth0，所以在<strong>/etc/sysconfig/network-scripts/ifcfg-eth0</strong>下面。配置如下</p>
+
+<pre><code>DEVICE=eth0        #网络设备
+HWADDR=00:E0:4C:08:AC:10  #mac地址
+TYPE=Ethernet   #以太网
+UUID=a53621d2-d290-48ff-96e0-2a0005046b20 
+ONBOOT=yes           
+NM_CONTROLLED=yes
+BOOTPROTO=static       #静态地址，也可选dhcp或bootp
+IPADDR=192.168.0.135  #ip地址
+NETMASK=255.255.255.0  #子网掩码
+NETWORK=192.168.0.0    #网络号
 </code></pre>
+
+<p>修改网关<br/>
+vi /etc/sysconfig/network</p>
+
+<pre><code>NETWORKING=yes   #打开网络
+HOSTNAME=linuxgroup  #本机主机名（必须与/etc/hosts中的一样）
+GATEWAY=192.168.0.1  #网关
+</code></pre>
+
+<p>配置DNS<br/>
+vi /etc/resolv.conf</p>
+
+<pre><code>nameserver xxx.xxx.xxx.xxx
+nameserver xxx.xxx.xxx.xxx #根据自己的实际情况制定
+</code></pre>
+
+<p>弄好了之后可以重启服务了</p>
+
+<pre><code>service network restart 
+/etc/init.d/network restart #两条命令都可以
+</code></pre>
+
+<p>现在基本算弄完了，等待后续的折腾</p>
 </div>
 
 
@@ -191,7 +193,7 @@ clean:
   
 
 
-<time datetime="2013-05-24T21:41:00+08:00" pubdate data-updated="true">May 24<span>th</span>, 2013</time>
+<time datetime="2013-07-15T17:20:00+08:00" pubdate data-updated="true">Jul 15<span>th</span>, 2013</time>
       
 
 
@@ -199,7 +201,7 @@ clean:
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2013/05/24/gcc/" data-via="" data-counturl="http://tuteng.github.io/blog/2013/05/24/gcc/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2013/07/15/centos/" data-via="" data-counturl="http://tuteng.github.io/blog/2013/07/15/centos/" >Tweet</a>
   
   
   
@@ -208,10 +210,8 @@ clean:
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/05/19/rhel/" title="Previous Post: rhel服务搭建">&laquo; rhel服务搭建</a>
+        <a class="basic-alignment left" href="/blog/2013/06/06/yingjian/" title="Previous Post: 纯硬件打造数字秒表">&laquo; 纯硬件打造数字秒表</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/06/06/yingjian/" title="Next Post: 纯硬件打造数字秒表">纯硬件打造数字秒表 &raquo;</a>
       
     </p>
   </footer>
