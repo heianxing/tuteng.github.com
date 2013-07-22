@@ -4,7 +4,7 @@
   <title><![CDATA[TuTeng'blog]]></title>
   <link href="http://tuteng.github.io/atom.xml" rel="self"/>
   <link href="http://tuteng.github.io/"/>
-  <updated>2013-07-22T16:09:04+08:00</updated>
+  <updated>2013-07-22T16:24:15+08:00</updated>
   <id>http://tuteng.github.io/</id>
   <author>
     <name><![CDATA[图腾]]></name>
@@ -12,6 +12,28 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[github博客操作]]></title>
+    <link href="http://tuteng.github.io/blog/2013/07/22/github/"/>
+    <updated>2013-07-22T16:12:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2013/07/22/github</id>
+    <content type="html"><![CDATA[<p>使用octopress有一段时间了，可是还是不怎么熟练，这不今天又遇到了问题，害的我中午饭都没吃好，不过最终还是把问题给解决了。在此记录一下octopress的使用方法。</p>
+
+<h5>用rake管理</h5>
+
+<pre><code>rake install  安装默认主题
+rake install['主题名字']安装自己喜欢的主题
+rake gennerate 每次做了改变都提交一次
+rake preview  生成本地预览，可以在4000端口查看
+rake new_post['帖子名字'] 生成新的帖子，可以用markdown编辑
+rake new_page['about'] 生成一个新的页面，但生成之后还不能立即使用，需要修改/source/_includes/custom/navigation.html这个文件，按照相同的格式来编辑。
+rake deploy 将你的博客提交到服务器
+</code></pre>
+
+<p>先记录这些，有空在补充</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[通信专业词汇]]></title>

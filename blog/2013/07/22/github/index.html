@@ -5,12 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>hello world - TuTeng'blog</title>
+  <title>github博客操作 - TuTeng'blog</title>
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="今天心情很好，体验一下octopress
-">
+  <meta name="description" content="使用octopress有一段时间了，可是还是不怎么熟练，这不今天又遇到了问题，害的我中午饭都没吃好，不过最终还是把问题给解决了。在此记录一下octopress的使用方法。 用rake管理 rake install 安装默认主题
+rake install['主题名字']安装自己喜欢的主题
+rake &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tuteng.github.io/blog/2013/04/27/hello-world">
+  <link rel="canonical" href="http://tuteng.github.io/blog/2013/07/22/github">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
@@ -70,7 +71,7 @@
   
   <header>
     
-      <h1 class="entry-title">Hello World</h1>
+      <h1 class="entry-title">Github博客操作</h1>
     
     
       <p class="meta">
@@ -86,14 +87,27 @@
   
 
 
-<time datetime="2013-04-27T15:45:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2013</time>
+<time datetime="2013-07-22T16:12:00+08:00" pubdate data-updated="true">Jul 22<span>nd</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>今天心情很好，体验一下octopress</p>
+<div class="entry-content"><p>使用octopress有一段时间了，可是还是不怎么熟练，这不今天又遇到了问题，害的我中午饭都没吃好，不过最终还是把问题给解决了。在此记录一下octopress的使用方法。</p>
+
+<h5>用rake管理</h5>
+
+<pre><code>rake install  安装默认主题
+rake install['主题名字']安装自己喜欢的主题
+rake gennerate 每次做了改变都提交一次
+rake preview  生成本地预览，可以在4000端口查看
+rake new_post['帖子名字'] 生成新的帖子，可以用markdown编辑
+rake new_page['about'] 生成一个新的页面，但生成之后还不能立即使用，需要修改/source/_includes/custom/navigation.html这个文件，按照相同的格式来编辑。
+rake deploy 将你的博客提交到服务器
+</code></pre>
+
+<p>先记录这些，有空在补充</p>
 </div>
 
 
@@ -116,7 +130,7 @@
   
 
 
-<time datetime="2013-04-27T15:45:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2013</time>
+<time datetime="2013-07-22T16:12:00+08:00" pubdate data-updated="true">Jul 22<span>nd</span>, 2013</time>
       
 
 
@@ -124,7 +138,7 @@
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2013/04/27/hello-world/" data-via="" data-counturl="http://tuteng.github.io/blog/2013/04/27/hello-world/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2013/07/22/github/" data-via="" data-counturl="http://tuteng.github.io/blog/2013/07/22/github/" >Tweet</a>
   
   
   
@@ -133,8 +147,8 @@
     
     <p class="meta">
       
+        <a class="basic-alignment left" href="/blog/2013/07/22/tongxin/" title="Previous Post: 通信专业词汇">&laquo; 通信专业词汇</a>
       
-        <a class="basic-alignment right" href="/blog/2013/04/27/multisim/" title="Next Post: Multisim">Multisim &raquo;</a>
       
     </p>
   </footer>
