@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>TuTeng'blog</title>
+  <title>通信专业词汇 - TuTeng'blog</title>
   <meta name="author" content="图腾">
 
   
@@ -22,7 +22,7 @@ ACELP Algebraic &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tuteng.github.io">
+  <link rel="canonical" href="http://tuteng.github.io/blog/2013/07/22/tongxin">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
@@ -68,15 +68,12 @@ ACELP Algebraic &hellip;">
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2013/07/22/tongxin/">通信专业词汇</a></h1>
+      <h1 class="entry-title">通信专业词汇</h1>
     
     
       <p class="meta">
@@ -99,7 +96,7 @@ ACELP Algebraic &hellip;">
   </header>
 
 
-  <div class="entry-content"><pre><code>A 
+<div class="entry-content"><pre><code>A 
 A, Asub A-interface A接口
 AC  Alternating Current 交流
 AC  Access Class (C0 to C15)    接入级别（C0到C15）
@@ -571,136 +568,16 @@ U
 UPD Updating
 </code></pre>
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/15/centos/">Centos安装及配置</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
   
 
+<span class="byline author vcard">Posted by <span class="fn">图腾</span></span>
 
-<time datetime="2013-07-15T17:20:00+08:00" pubdate data-updated="true">Jul 15<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>感觉好久都没写东西了，最近终于把可恶的考试弄完了，继续折腾。
-前段时间把openwrt的摄像头挂上了，所以想完善一下它的功能，就在一台没用的电脑上装上了centos，做个远程监控玩玩。</p>
-
-<h5>centos安装</h5>
-
-<p>从网上下载最新的版本，用ultraiso做好系统盘，启动。安装过程没有什么可以说的，与其他发行版有点不同的是需要将安装包放到u盘根目录下（u盘容量最好大点，8~16G最好）。开始没注意这点，重复了几次。至此centos就给装上了。但最后重启了又出了点问题，grub一不注意给装到了u盘上（这点是后来从网上看帖子发现的）。那就修复grub吧，反正有启动盘。</p>
-
-<h5>grub修复</h5>
-
-<p>从u盘启动，centos就是不一般啊，默认连桌面都没有，黑黑的。从u盘启动后需进入grub模式。网上的命令式</p>
-
-<pre><code>sbin /grub
-</code></pre>
-
-<p>我这个命令无效啊我的是</p>
-
-<pre><code>grub
-</code></pre>
-
-<p>反正想办法进入grub模式就好了。
-接下来看看你的是那块磁盘使用如下命令</p>
-
-<pre><code>find /grub/grub/stage1
-</code></pre>
-
-<p>我的显示如下</p>
-
-<pre><code>(hd0,1)
-</code></pre>
-
-<p>hd0是我的第一块硬盘，额就一块硬盘，所以还好辨认，后面的1代表第二个分区，因为第一个分区用0表示，下面开始改了：</p>
-
-<pre><code>root (hd0,1)
-setup (hd0)
-</code></pre>
-
-<p>下面在将grub.conf和menu.lst里面的（hdx，y）修改为（hd0,1)。
-此时重启，即可进入系统。<br/>
-如此系统就算安装完成了。</p>
-
-<h5>配置网络</h5>
-
-<p>系统安装完了就要联网了。因为我要将它与路由器连接，所要配置静态ip，过程如下：<br/>
-centos的网络配置文件在<strong>/etc/sysconfig/</strong>中里面有很多关于网络配置的东西。我的机器就只有一块网卡eth0，所以在<strong>/etc/sysconfig/network-scripts/ifcfg-eth0</strong>下面。配置如下</p>
-
-<pre><code>DEVICE=eth0        #网络设备
-HWADDR=00:E0:4C:08:AC:10  #mac地址
-TYPE=Ethernet   #以太网
-UUID=a53621d2-d290-48ff-96e0-2a0005046b20 
-ONBOOT=yes           
-NM_CONTROLLED=yes
-BOOTPROTO=static       #静态地址，也可选dhcp或bootp
-IPADDR=192.168.0.135  #ip地址
-NETMASK=255.255.255.0  #子网掩码
-NETWORK=192.168.0.0    #网络号
-</code></pre>
-
-<p>修改网关<br/>
-vi /etc/sysconfig/network</p>
-
-<pre><code>NETWORKING=yes   #打开网络
-HOSTNAME=linuxgroup  #本机主机名（必须与/etc/hosts中的一样）
-GATEWAY=192.168.0.1  #网关
-</code></pre>
-
-<p>配置DNS<br/>
-vi /etc/resolv.conf</p>
-
-<pre><code>nameserver xxx.xxx.xxx.xxx
-nameserver xxx.xxx.xxx.xxx #根据自己的实际情况制定
-</code></pre>
-
-<p>弄好了之后可以重启服务了</p>
-
-<pre><code>service network restart 
-/etc/init.d/network restart #两条命令都可以
-</code></pre>
-
-<p>现在基本算弄完了，等待后续的折腾</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/06/06/yingjian/">纯硬件打造数字秒表</a></h1>
-    
-    
-      <p class="meta">
-        
 
 
 
@@ -712,634 +589,33 @@ nameserver xxx.xxx.xxx.xxx #根据自己的实际情况制定
   
 
 
-<time datetime="2013-06-06T15:26:00+08:00" pubdate data-updated="true">Jun 6<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>一直以来就很喜欢那种把想法变成现实的感觉，尤其是把想的东西变成可以看得见摸得着的东东，就有一种成就感。在最后一次数字电路的实验中，和同学亲手打造了一个秒表，纯硬件，在此记录一下实验原理。</p>
-
-<h5>材料</h5>
-
-<p>数码管两个，74ls47或74ls247两片，74ls160两片，74ls00两片，10uf电容一个，0.01uf电容一个，上拉电阻14个，555定时器一片。</p>
-
-<h5>工作原理</h5>
-
-<h6>74ls47原理</h6>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kr10A9M70gM000d9" alt="74ls47" /><br/>
-<img src="http://admin22.51dzw.com/uploadfiles/201202/20120215205259686.jpg" alt="功能表" /><br/>
-由功能表可看出，若要显示数字0~9可以将3,4,5管脚置为高电平，且输入端的D，C，B，A（对应6,2,1,7）管脚可以将输入的0~9的二进制数据转换到数码管的显示。</p>
-
-<h6>数码管原理</h6>
-
-<blockquote><blockquote><blockquote><p><img src="http://memberpic.114my.cn/yixianyin/uploadfile/20118/2011813104654.jpg" alt="数码管图片" /></p></blockquote></blockquote></blockquote>
-
-<p>数码管分为共阳极与共阴极，这里我们用的是共阳极，即输入低电平有效。</p>
-
-<h6>74ls160原理</h6>
-
-<p><img src="http://www.hqew.com/File/Images/250000-259999/251555/Promotion/20100228131839671SSAZ1Q.JPG" alt="74ls160" />
-<img src="http://files.note.sdo.com/xBlh9~kr1KTq4M0bs000ig" alt="74ls160" /><br/>
-<img src="http://files.note.sdo.com/xBlh9~kr1EIFM70qk000g8" alt="时序图" /><br/>
-从时序图中可以看出，当QA，QB，QC,QD脉冲为1001（数字9）时，输出位输出一次高电平，此时前面经历了从0000到1001的变化，总共进行了十次计数。因此称其为十进制计数器。并且在计数时，CLR、LOAD、ENP、ENT都一直保持高电平。可以将十进制计数器进行改造，可以将其改成其他进制计数器，例如六进制计数器。原理就是，当计数器要进行第七次计数的时候使其归零，从而从新开始计数。利用74ls00便可以实现此功能<br/>
-<img src="http://course.tju.edu.cn/dzjc/syjx0010.files/image004.jpg" alt="74ls00" /><br/>
-利用此片的1,2,3引脚，计数方式0000&#8212;0001&#8212;0010&#8212;0011&#8212;0100&#8212;0101&#8212;0110&#8212;0111&#8212;1000&#8212;1001，且从左往右依次为Qd，Qc，Qb，Qa。若改位六进制，即进行0000&#8212;0001&#8212;0010&#8212;0011&#8212;0100&#8212;0101这个循环，遇到0110归零即可，此时利用74ls00的1,2引脚连接Qb，Qc即可达到目的。连接1,2引脚后，第三引脚可以接74ls160的清零端，从而开始从新计数</p>
-
-<h5>555定时器</h5>
-
-<p>除了上边的部件外，还需要一个时钟脉冲源，以用来产生稳定的脉冲。这里我们选择了555定时器
-<img src="http://www.lechengdz.com/mcu/UploadFiles_3202/200812/20081201155344726.jpg" alt="555" /><br/>
-555定时器由两个电压比较器，一个RS触发器等构成。我们可以在加入两个电容和两个电阻构成多谐振荡器。如图
-<img src="http://shiti.henanzikao.cn/images/shiti/20110522000451637/20110522000604905.jpg" alt="多谐振荡器" /><br/>
-其中第二个电阻我们使用的是可调电阻为了改变脉冲强度（在6和7之间的电压），左边的电容10uf。3引脚为脉冲输出，利用其产生的脉冲来实现计数。</p>
-
-<h6>一张电路原理图。</h6>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kr70fG4M0KM000J_" alt="" /></p>
-
-<h6>电路实物图两张</h6>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kr0Y6q4M0bs0009y" alt="" />
-<img src="http://files.note.sdo.com/xBlh9~kr0Y7a4M0bs0009C" alt="" /></p>
-
-<h5>附注</h5>
-
-<p>上面的原理图以上的图片多是为了分析原理而从网上找的图片</p>
-
-<h6>总结</h6>
-
-<p>学习硬件动手很重要，有的东西如果明白了原理在动手实验的话，往往会达到事半功倍的效果。</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
+<time datetime="2013-07-22T10:29:00+08:00" pubdate data-updated="true">Jul 22<span>nd</span>, 2013</time>
       
-  <header>
+
+
+    </p>
     
-      <h1 class="entry-title"><a href="/blog/2013/05/24/gcc/">Gcc和makefile</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
+      <div class="sharing">
   
-
-
-<time datetime="2013-05-24T21:41:00+08:00" pubdate data-updated="true">May 24<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h3>gcc常用命令</h3>
-
-<blockquote><p>-E 仅作预处理，不进行编译，汇编和链接<br/>
--S 编译到汇编语言，不进行链接<br/>
--c 编译，汇编到目标代码，不进行链接<br/>
--o 输出到文件。
--g 对代码进行调试，加上此选项<br/>
--O1 进行一级优化<br/>
--O2 进行二级优化<br/>
--static 对代码进行静态链接<br/>
--Wall 打印出所有警告<br/>
--Werror 打印出所有错误<br/>
- -I /home/hello/include表示将/home/hello/include目录作为第一个寻找头文件的目录，寻找的顺序是：/home/hello/include&#8211;>/usr/include&#8211;>/usr/local/include<br/>
--L /home/hello/lib表示将/home/hello/lib目录作为第一个寻找库文件的目录，寻找的顺序是：/home/hello/lib&#8211;>/lib&#8211;>/usr/lib&#8211;>/usr/local/lib<br/>
- -lworld表示在上面的lib的路径中寻找libworld.so动态库文件（如果gcc编译选项中加入了“-static”表示寻找libworld.a静态库文件）</p></blockquote>
-
-<p>hello文件</p>
-
-<pre><code>#include"a.h"
-int main()
-{
-            print();
-}
-</code></pre>
-
-<p>a.h文件在上一层目录中，即../中</p>
-
-<pre><code>#include&lt;stdlib.h&gt;
-#include&lt;stdio.h&gt;
-void print(){
-            printf("hello world\n");
-}
-</code></pre>
-
-<h6>gcc命令使用</h6>
-
-<pre><code>gcc -E hello.c -o hello.i -I../    对源文件进行预处理，-I指定第一个寻找头文件的目录
-gcc -S hello.i -o hello.s          将预处理文件编译到汇编代码
-gcc -c hello.s -o hello.o          将汇编代码编译到目标文件
-gcc hello.o -o hello               对目标文件进行链接
-</code></pre>
-
-<h6>优化</h6>
-
-<pre><code>gcc -o hello -O1 hello.c -I../     进行一级优化
-gcc -o hello -O2 hello.c -I../     进行二级优化
-</code></pre>
-
-<h3>makefile简单使用</h3>
-
-<p>将上面的命令进行总结并写入到一个文件，并将此文件命名为makefile</p>
-
-<h6>语法</h6>
-
-<pre><code>target ... : prerequisites ...
-             command
-</code></pre>
-
-<p>上面程序的makefile语法</p>
-
-<pre><code>hello.o:hello.c
-        gcc -E hello.c -o hello.i -I../ 
-        gcc -S hello.i -o hello.s
-        gcc -c hello.s -o hello.o
-        gcc hello.o -o hello
-.PHONY:clean
-clean:
-        rm hello.s hello.o   #方便使用make clean命令清除不必要的文件
-</code></pre>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2013/07/22/tongxin/" data-via="" data-counturl="http://tuteng.github.io/blog/2013/07/22/tongxin/" >Tweet</a>
+  
+  
+  
 </div>
-  
-  
 
-
-    </article>
-  
-  
-    <article>
+    
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/19/rhel/">Rhel服务搭建</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-19T19:05:00+08:00" pubdate data-updated="true">May 19<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>最近在学习arm，需要搭建一些服务，在此记录一下。</p>
-
-<h2>tftp服务搭建</h2>
-
-<p>首先检查一下，有没有安装：</p>
-
-<pre><code>netstat -a | grep tftp
-</code></pre>
-
-<p>没有安装什么都不会显示，若是安装了就会显示一些关于该服务的信息。没有安装可以从网上下载tftp的rpm包，或者从安装光盘里找到。</p>
-
-<h6>执行安装</h6>
-
-<pre><code>rpm -ivh xxxxx.rpm
-</code></pre>
-
-<p>安装完毕会在根目录下产生一个tftpboot的工作目录，没有的话自己建立。</p>
-
-<h6>配置</h6>
-
-<p>tftp的配置文件在/etc/xinetd.d/tftp,将disable修改成yes，server args中-s指定tftp的工作目录。其他的可以选择默认。</p>
-
-<h6>启动与停止</h6>
-
-<pre><code>/etc/init.d/xinetd start  启动
-/etc/init.d/xinetd stop   停止
-/etc/init.d/xinetd resart 重启
-</code></pre>
-
-<h6>查看服务状态</h6>
-
-<pre><code>service tftp status
-</code></pre>
-
-<h2>nfs服务搭建</h2>
-
-<p>跟上面顺序差不多，在此直接上代码。</p>
-
-<pre><code>netstat -a | grep nfs
-</code></pre>
-
-<p>或者</p>
-
-<pre><code>rpm -qa | grep nfs
-</code></pre>
-
-<p>都可以用来查看nfs是否已经安装</p>
-
-<h6>安装</h6>
-
-<pre><code>rpm -ivh xxxxx.rpm
-</code></pre>
-
-<h6>配置</h6>
-
-<p>配置文件位于/etc/exports文件中，配置规则如下：</p>
-
-<pre><code>共享的目录 主机名称1或IP1（参数1，参数2） 主机名称2或IP2（参数3，参数4）  
-</code></pre>
-
-<blockquote><p>exports中的主要参数：<br/>
-rw:可读写权限<br/>
-ro:只读权限   <br/>
-no_root_squash:对于登陆NFS主机的共享目录用户如果是root的话则对该目录具有root权限。这样做极不安全，建议不用为好！<br/>
-root_squash:对于登陆NFS主机的共享目录用户使用者如果是root则它的权限将被压缩成匿名使用者，同时它的UID和GID都会变成nobody那个系统账号的身份。<br/>
-all_squash:不管登陆NFS主机用户身份如何，它的身份都会被压缩成匿名使用者，通常就是nobody<br/>
-anonuid:anonuid=xxx,制定NFS服务器/etc/passwd中匿名用户的UID<br/>
-anongid:anonuid=xxx,制定NFS服务器/etc/passwd中匿名用户的GID<br/>
-sync:数据在请求时写入共享(使硬盘与内存保持同步）<br/>
-async:NFS在写入数据前可响应请求（数据先暂存于内存中，而不是立即存入硬盘）<br/>
-secure:NFS通过1024以下的安全端口发送<br/>
-insecure:NFS通过1024以上端口发送<br/>
-hide:不共享NFS目录的子目录<br/>
-no_hide:共享NFS目录的子目录</p></blockquote>
-
-<p>我的配置如下：/home 192.168.1.*(rw,sync,no_root_squash)</p>
-
-<h6>启动与停止</h6>
-
-<pre><code>/etc/init.d/nfs start
-/etc/init.d/nfs stop
-/etc/init.d/nfs restart
-</code></pre>
-
-<h6>使用</h6>
-
-<pre><code>mount -t NFS servername：shared_dir /localdir
-</code></pre>
-
-<h2>samba服务搭建</h2>
-
-<p>查看是否安装</p>
-
-<pre><code>rpm -qa | grep samba
-</code></pre>
-
-<h6>安装</h6>
-
-<pre><code>rpm -ivh xxxx.rpm
-</code></pre>
-
-<h6>配置</h6>
-
-<p>配置文件位于/etc/samba/smb.conf修改配置文件，我的配置文件如下</p>
-
-<pre><code>[root]
-        comment = root Directories      #共享说明
-        browseable = yes                #浏览权限
-        writable = yes                  #写权限
-        path = /                        #共享目录
-;       valid users = smb               #共享用户
-[homes]
-        comment = Home Directories
-        browseable = no
-        writable = yes
-;       valid users = %S
-;       valid users = MYDOMAIN\%S
-
-[printers]
-        comment = All Printers
-        path = /var/spool/samba
-        browseable = no
-        guest ok = no
-        writable = no
-        printable = yes
-</code></pre>
-
-<h6>使用</h6>
-
-<p> 增加smb用户</p>
-
-<pre><code>useradd smb
-</code></pre>
-
-<p>设置密码</p>
-
-<pre><code>passwd smb
-</code></pre>
-
-<p>在windows中使用</p>
-
-<pre><code>\\ip地址
-</code></pre>
-
-<h6>启动与停止</h6>
-
-<pre><code>/etc/init.d/smb start
-/etc/init.d/smb stop
-/etc/init.d/smb restart
-</code></pre>
-
-<h2>总</h2>
-
-<p>对于上面的服务，都可以使用下面的方法来启动，停止或者重启</p>
-
-<pre><code>service 服务 start
-service 服务 stop
-service 服务 restart
-</code></pre>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
+        <a class="basic-alignment left" href="/blog/2013/07/15/centos/" title="Previous Post: centos安装及配置">&laquo; centos安装及配置</a>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/08/arduino/">Arduino</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-08T18:25:00+08:00" pubdate data-updated="true">May 8<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>最近准备入手一个arduino的板子，据说这东东很好玩，趁今天下午没事，先收了一下关于它的资料。下面是维基对于其的介绍：<br/>
-Arduino，是一个开源的单片机控制器，它使用了Atmel AVR单片机，采用了基于开放源代码的软硬件平台，构建于开放源代码 simple I/O 接口版，并且具有使用类似Java，C 语言的Processing/Wiring开发环境。<br/>
-下面是关于它的一些资料：</p>
-
-<p><a href="http://arduino.cc/">arduino官网</a> <br/>
-<a href="http://chaishushan.googlecode.com/svn/doc/arduino/r106/index.html">arduino开发文档</a><br/>
-<a href="http://arduino123.net/">arduino中文网</a><br/>
-<a href="http://www.arduino.tw/">arduino台湾网</a></p>
-
-<p>再来张图片,关于arduino电子器件的，从网上找的，不过没有发现是谁的，在此引用一下</p>
-
-<p><img src="http://files.note.sdo.com/xBlh9~koEJnR6u0GA005W8" alt="arduino电子器件价格参考" /></p>
-
-<p>最后打算用它做一个智能小车的东西，算是入门吧</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/05/jihua/">Todu</a></h1>
-    
-    
-      <p class="meta">
-        
+    </p>
+  </footer>
+</article>
 
 
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-05T21:18:00+08:00" pubdate data-updated="true">May 5<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4>专业基础课</h4>
-
-<p>《信号与系统》第四章，傅里叶变换，采样定理很重要，马上就要学完。<br/>
-《通信电子线路》开始了第六章，中间有个第四章还没有学习，其中第五章正弦波振荡器部分必须认真看几遍，学会画交流通路。参考书籍《高频电子线路》张肃文<br/>
-《数字电路基础》掌握触发器（RS型，jk型，D型，T型）学习第六章时序逻辑电路的分析。</p>
-
-<h4>课余学习</h4>
-
-<p>《深入理解计算机系统》努力看完第三章，继续往下看。<br/>
-《tcp/ip详解》卷一，掌握tcp的传输原理。<br/>
-《c primer plus》尽量快的往下看。</p>
-
-<h4>想搞的东西</h4>
-
-<p>基于51单片机的3d水立方，智能小车。</p>
-
-<h4>新发现的好玩意</h4>
-
-<h6>软件无线电</h6>
-
-<p>gnuradio（致力于硬件开源），据说是很强悍的东东，需要有python和c++基础。</p>
-
-<h4>正在做还没弄完的</h4>
-
-<p>clfs，环境已经搭建好，而且前几步编译也很顺利。将x86刷成openwrt的路由器</p>
-
-<h4>应该掌握的软件</h4>
-
-<p>multisim，altium designer，orcad，会画电路图会对电路图进行分析</p>
 </div>
-  
-  
 
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/30/grubrescue/">Grub Rescue</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-30T15:45:00+08:00" pubdate data-updated="true">Apr 30<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>今天因为折腾点东西系统出了点故障，重启之后，就进入了rescue模式用别人的电脑查了下，顺利解决问题。<br/>
-grub rescue模式下，只有几个命令可以使用 set，ls，prefix，root，insmod <br/>
-用set查看当前prefix和root的配置。 <br/>
-ls列出所有分区，分区格式为（hdx）或者（hdx，msdosx）我们要做的就是找到我们的当前系统的grub在哪。因为以前装过linux没有删除干净，所以要用ls多看几次。命令如下:</p>
-
-<pre><code>ls (hdx)/  
-ls (hdx,msdosx)/  
-</code></pre>
-
-<p>一般如果你的grub2存在的话，下面会跟着很多的文件。找到之后就好办了。<br/>
-注意：ls命令<strong>最后的 / </strong>必须有。<br/>
-对于boot是单独分区的情况，使用如下命令：</p>
-
-<pre><code>set root=(hdx,msdosx)
-set prefix=(hdx,msdosx)/grub
-insmod /grub/normal.mod 
-normal
-</code></pre>
-
-<p>这样便能进入正常的grub了，进入系统之后在更新一下grub：</p>
-
-<pre><code>sudo update-grub
-sudo grub-install /dev/sda
-</code></pre>
-
-<p>最后一定是/deb/sda.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/27/multisim/">Multisim</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-27T21:45:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>对于myltisim这个软件，在上学期已经接触过，但是却从来没有使用过，上课的时候也是在看老师给我们演示。前几天确从模电老师那里了解了eda的真正含义，以及这个软件的真正强大之处。于是决定回来折腾一下，当然，对于通信专业的学生来说，电路的分析是必须要掌握的，因此这个软件更得好好的折腾折腾。<br/>
-要使用软件，首先就是得安装。于是先找度娘问了下，真是有些扫兴，上边最先出现的不是它们的官网，而是这破解，那绿色。果断放弃，进了google。google确实不错。进入之后，前三条就是我想要的信息。multisim的<a href="http://www.ni.com/multisim/zhs/">官网</a>，而且我还发现了更令人兴奋的事情，那就是下边的<strong>针对教育</strong>，<strong>针对学生</strong>。感觉这个软件厂家想的还真是周到。点击<strong>获取学生版</strong>随便注册了一下，真是有点小激动，正版软件就要用上了。而且功能看它的介绍也是蛮强悍的，对我这学生来说也是错错有余了。而且人家还为我们想到了语言不通的问题，提供了汉化包。<br/>
-接下来，我就开始下载了，但是事有不顺哪，500多兆的软件每秒那个几十KB，这得下到哪年啊，果断放弃了这种直接下载的方法，那软件还是得装哪。仔细想了想，我要是能够得到下载的地址就好了，直接用叫什么雷的玩意下载不就好了。就是这样吗。本来想用抓包工具直接看看数据包从哪来的呢。但windows下却没有现成的软件。于是就抱着试试看的态度，从下载下来的软件包入手。我一共下载了两个包，一个汉化包，一个下载器（就是从网络安装）。从汉化包的<a href="ftp://ftp.ni.com/pub/branches/china/Multisim_topic.zip">位置</a>可以看出这是一个ftp站点啊，果断后退了几层，发现了大量的资源。<a href="ftp://ftp.ni.com/">ftp站点</a>截图如下：</p>
-
-<p><img src="http://files.note.sdo.com/xBlh9~knOeT9nM2Gw001nj" alt="" /></p>
-
-<p>但是还是没有multisim这个东东。只好从下载器入手了，下面是ni下载器的图片：<br/>
-<img src="http://files.note.sdo.com/xBlh9~knOeVFnM2Gw001nX" alt="" /></p>
-
-<p>软件不是很大，但是速度太慢了，从获取<a href="http://download.ni.com/evaluation/labview/ekit/other/downloader/NI_Circuit_Design_Suite_12_0_Education_downloader.exe">下载器的位置</a>，可看出跟刚才那个汉化包，完全不在一块。从下载器的图片可以看出，我们需要的就在这，而且大小都是594M。但是向上几层就会发现有很多更有用的 <a href="http://download.ni.com/evaluation/labview/ekit/other/downloader/">资源</a> 这儿不仅有我们需要的multisim，还有很多其他有用的东东。这些留着以后用的着的时候在来取，先把用到的取下来。最后上个图，全是资源啊。</p>
-
-<p><img src="http://files.note.sdo.com/xBlh9~knOeVVnM2Gw001n-" alt="" /></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/27/hello-world/">Hello World</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-27T15:45:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>今天心情很好，体验一下octopress</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
 <aside class="sidebar">
   
     <section>
@@ -1375,6 +651,7 @@ sudo grub-install /dev/sda
 
   
 </aside>
+
 
     </div>
   </div>

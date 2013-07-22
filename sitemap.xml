@@ -2,59 +2,59 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://tuteng.github.io/blog/2013/04/27/hello-world/</loc>
-        <lastmod>2013-05-05T20:03:38+08:00</lastmod>
+        <lastmod>2013-07-22T12:54:20+08:00</lastmod>
     </url>
     <url>
         <loc>http://tuteng.github.io/blog/2013/04/27/multisim/</loc>
-        <lastmod>2013-05-05T20:03:38+08:00</lastmod>
+        <lastmod>2013-07-22T12:54:20+08:00</lastmod>
     </url>
     <url>
         <loc>http://tuteng.github.io/blog/2013/04/30/grubrescue/</loc>
-        <lastmod>2013-05-05T20:03:38+08:00</lastmod>
+        <lastmod>2013-07-22T12:54:20+08:00</lastmod>
     </url>
     <url>
         <loc>http://tuteng.github.io/blog/2013/05/05/jihua/</loc>
-        <lastmod>2013-05-05T21:48:54+08:00</lastmod>
+        <lastmod>2013-07-22T12:54:20+08:00</lastmod>
     </url>
     <url>
         <loc>http://tuteng.github.io/blog/2013/05/08/arduino/</loc>
-        <lastmod>2013-05-08T18:54:48+08:00</lastmod>
+        <lastmod>2013-07-22T12:54:20+08:00</lastmod>
     </url>
     <url>
         <loc>http://tuteng.github.io/blog/2013/05/19/rhel/</loc>
-        <lastmod>2013-05-19T20:28:37+08:00</lastmod>
+        <lastmod>2013-07-22T12:54:20+08:00</lastmod>
     </url>
     <url>
         <loc>http://tuteng.github.io/blog/2013/05/24/gcc/</loc>
-        <lastmod>2013-05-24T21:43:01+08:00</lastmod>
+        <lastmod>2013-07-22T12:54:20+08:00</lastmod>
     </url>
     <url>
         <loc>http://tuteng.github.io/blog/2013/06/06/yingjian/</loc>
-        <lastmod>2013-06-07T19:21:43+08:00</lastmod>
+        <lastmod>2013-07-22T12:54:20+08:00</lastmod>
     </url>
     <url>
         <loc>http://tuteng.github.io/blog/2013/07/15/centos/</loc>
-        <lastmod>2013-07-15T18:31:45+08:00</lastmod>
+        <lastmod>2013-07-22T12:54:20+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://tuteng.github.io/blog/2013/07/22/tongxin/</loc>
+        <lastmod>2013-07-22T12:54:20+08:00</lastmod>
     </url>
     <url>
         <loc>http://tuteng.github.io/404.html</loc>
-        <lastmod>2013-05-05T20:03:38+08:00</lastmod>
+        <lastmod>2013-07-22T12:54:20+08:00</lastmod>
     </url>
     <url>
-        <loc>http://tuteng.github.io/about/</loc>
-        <lastmod>2013-05-05T20:05:20+08:00</lastmod>
-    </url>
-    <url>
-        <loc>http://tuteng.github.io/about-me/</loc>
-        <lastmod>2013-05-05T20:03:38+08:00</lastmod>
+        <loc>http://tuteng.github.io/blog/aboutme/</loc>
+        <lastmod>2013-07-22T13:03:09+08:00</lastmod>
     </url>
     <url>
         <loc>http://tuteng.github.io/blog/archives/Archives.html</loc>
-        <lastmod>2013-05-05T20:03:38+08:00</lastmod>
+        <lastmod>2013-07-22T12:54:20+08:00</lastmod>
     </url>
     <url>
         <loc>http://tuteng.github.io/blog/archives/</loc>
-        <lastmod>2013-07-15T18:31:45+08:00</lastmod>
+        <lastmod>2013-07-22T12:54:20+08:00</lastmod>
     </url>
     <url>
         <loc>http://tuteng.github.io/humans.txt</loc>
@@ -62,14 +62,14 @@
     </url>
     <url>
         <loc>http://tuteng.github.io/</loc>
-        <lastmod>2013-07-15T18:31:45+08:00</lastmod>
+        <lastmod>2013-07-22T12:54:20+08:00</lastmod>
     </url>
     <url>
         <loc>http://tuteng.github.io/new-page/</loc>
-        <lastmod>2013-05-24T21:59:54+08:00</lastmod>
+        <lastmod>2013-07-22T12:54:20+08:00</lastmod>
     </url>
     <url>
         <loc>http://tuteng.github.io/robots.txt</loc>
-        <lastmod>2013-05-05T20:03:38+08:00</lastmod>
+        <lastmod>2013-07-22T12:54:20+08:00</lastmod>
     </url>
 </urlset>
