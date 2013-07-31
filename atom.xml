@@ -4,7 +4,7 @@
   <title><![CDATA[TuTeng'blog]]></title>
   <link href="http://tuteng.github.io/atom.xml" rel="self"/>
   <link href="http://tuteng.github.io/"/>
-  <updated>2013-07-22T16:24:15+08:00</updated>
+  <updated>2013-07-31T10:26:46+08:00</updated>
   <id>http://tuteng.github.io/</id>
   <author>
     <name><![CDATA[图腾]]></name>
@@ -12,6 +12,98 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[iic总线]]></title>
+    <link href="http://tuteng.github.io/blog/2013/07/31/danpianji/"/>
+    <updated>2013-07-31T09:11:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2013/07/31/danpianji</id>
+    <content type="html"><![CDATA[<h4>iic总线实现</h4>
+
+<p>iic总线只需要两个接口就可以实现，因此是十分节省资源的。iic总线的实现分为下面几个步骤：开始，结束，应答，接收一个字节，写一个字节，通过这几个调用模块可以实现接收数据，发送数据。在51开发板上，用于串口通信的接口主要是P2.0和P2.1接口，连线可以说是非常的简单。 <br/>
+在iic总线通信期间，只有SCL为高电平时，数据的发送才是有效的，因此若不想使用，可以暂时将其拉低</p>
+
+<pre><code>    //SDA和SCL分别代表iic总线的数据线和时钟线
+    void delay(){
+        _nop_();
+        _nop_();
+        _nop_();
+        _nop_();
+        _nop_();
+        _nop_();
+    }       //延时函数，么个_nop_()大约为1us，为了接收稳定信号，当SCL和SDA变化时都要延时至少4.5us            
+
+void init_iic(){
+        SCL=1;
+        delay();
+        SDA=1;
+        delay();
+
+    }   //iic总线初始化，将SCL和SDA线拉高
+
+void start(){
+        SDA=1;
+        delay();
+        SCL=1;
+        delay();
+        SDA=0;
+        delay();
+}     //iic总线启动信号，在时钟信号为高的情况下，SDA由高电平拉为低电平
+void end(){
+        SDA=0;
+        delay();
+        SCL=1;
+        delay();
+        SDA=1;
+        delay();
+}       //iic总线结束信号，在时钟信号为低电平时，SDA由低电平拉为高电平
+void respons(){
+        unsigned char i;
+        SCL=1;
+        delay();
+        while((SDA==1)&amp;&amp;(i&lt;255))  
+            i++; //若SDA一直为高，则在此处循环255次，防止从机始终不应答，陷入死循环
+        SCL=0;
+        delay();
+    }       //应答信号，时钟信号为高时，SDA被从机自动从高电平拉为低电平
+void write_one_data(unsigned char dat){  //此处参数不能为data，这个在头文件中已被定义
+        unsigned char i,temp;
+        temp=dat;
+        for(i=0;i&lt;8;i++){ 
+            temp=temp&lt;&lt;1;//数据左移一位，最高位溢出被存在CY中，次高位变为最高位
+            SCL=0;
+            delay();
+            SDA=CY;  //将数据暂存到数据线上，准备发送
+            delay();
+            SCL=1;  //将时钟线拉高，数据开始发送
+            delay();
+        }//发送一个字节（8位）的数据，CY（PSW.7）：即PSW的D7位，进位、借位标志，在头文件reg52.h中有定义
+        SCL=0;
+        delay();
+        SDA=1;
+        delay();
+    }
+unsigned int read_one_data(){
+
+        unsigned char i,k=0;
+        SCL=0;
+        delay();
+        SDA=1;
+        for(i=0;i&lt;8;i++)
+        {
+            SCL=1;
+            delay();
+            k=(k&lt;&lt;1)|SDA;   //将k左移一位后与数据线取或，即可得到传输的数据，发送数据时从最高位开始，接收时数据在最低位，在经左移和循环恢复原来的数据
+            SCL=0;
+            delay();
+        }   //读一个字节的数据
+        delay();
+        return k; //返回一个字节的数据
+
+    }
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[github博客操作]]></title>
