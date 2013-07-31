@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>AD转换并显示在1602上 - TuTeng'blog</title>
+  <meta name="author" content="图腾">
+
+  
+  <meta name="description" content="AD转换实现 pcf8591电路图： PCF8591是一个单片集成、单独供电、低功耗、8-bit CMOS数据获取器件。PCF8591具有4个模拟输入、1个模拟输出和1个串行I2C总线接口。PCF8591的3个地址引脚A0, A1和A2可用于硬件地址编程， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tuteng.github.io/blog/2013/07/31/ad">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">TuTeng'blog</a></h1>
+  
+    <h2>生命不息，折腾不止</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:tuteng.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/aboutme">Aboutme</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">AD转换并显示在1602上</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-31T10:31:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h4>AD转换实现</h4>
+
+<p>pcf8591电路图：
+<img src="http://files.note.sdo.com/xBlh9~kvxTDFM71NI002aE" alt="" /> <br/>
+PCF8591是一个单片集成、单独供电、低功耗、8-bit CMOS数据获取器件。PCF8591具有4个模拟输入、1个模拟输出和1个串行I2C总线接口。PCF8591的3个地址引脚A0, A1和A2可用于硬件地址编程，允许在同个I2C总线上接入8个PCF8591器件，而无需额外的硬件。在PCF8591器件上输入输出的地址、控制和数据信号都是通过双线双向I2C总线以串行的方式进行传输对于iic总线可参考<a href="http://tuteng.github.io/blog/2013/07/31/danpianji/">前一篇文章</a>。这是我的板子上的AD/DA模块，其中j31，j32是通道选择通过跳帽来选择通道，同时只能选择两个通道，w3，w4是两个电位器，这里用来产生模拟量，其中w3来控制第2通道和第3通道，w4用来控制0通道和1通道。对于pcf851的详细描述可参考如下：<a href="http://v.to/0I6RU">pcf8591中文参考手册</a> <br/>
+部分程序代码如下:</p>
+
+<pre><code>void write_data_iic(uchar ch){
+    start();    
+    write_one_data(ADDW);  //首先发送地址，这里ADDW为0x90（10010000），  AD模块的硬件地址，前四位固定不变，  第5位到第七位可编程，但从电路图中可看出，A2，A1，A0全接了地，所以此三位为0，最后一位位读写控制位，写为0，读为1
+    respons();
+    write_one_data(0x40|ch);  //通道选择位，0x40（01000000）只打开了第二位，相当于使能端打开，通过与ch取或来到达选择通道的目的。 
+    respons();
+    end();
+
+}//利用iic总线向通道写入数据
+uchar read_data_iic(uchar ch){
+    uchar num;
+    start();    //iic总线开始
+    write_one_data(ADDW); //读数据前要先进行写操作，目的是写入器件地址以寻找合适的器件，当器件与地址匹配时，器件会发出一个应答信号，这样就可以开始读取数据
+    respons();
+    write_one_data(0x40|ch); //通道选择位，同上
+    respons();
+    start();
+    write_one_data(ADDR); //再次发送设备地址，只是这次最后一位为读命令
+    respons();
+    num=read_one_data();  //读取数据并存入变量num中
+    respons();
+    end();
+    return num;
+}//利用iic总线从总线读取数据
+</code></pre>
+
+<h4>1602液晶模块</h4>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kvxTDpM71NI002aC" alt="" /><br/>
+1602液晶也叫1602字符型液晶，它是一种专门用来显示字母、数字、符号等的点阵型液晶模块,它由若干个5X7或者5X11等点阵字符位组成，每个点阵字符位都可以显示一个字符，每位之间有一个点距的间隔，每行之间也有间隔，起到了字符间距和行间距的作用。管脚功能参看1602数据手册。</p>
+
+<h6>lcd部分程序代码</h6>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kvyY156u0I800042" alt="" /></p>
+
+<pre><code>void write_com(uchar com){
+        lcdrs=0;  //RS引脚，寄存器选择，1：数据寄存器；0：指令寄存器
+        P0=com;
+        lcdrw=0;  //RW引脚，读写操作选择，1：读；0：写
+        delayms(5); //延时函数
+        lcden=1;    //使能信号，高电平有效
+        delayms(5);
+        lcden=0;
+        }    //lcd写命令操作
+void write_data(uchar dat){ //参数同样不可以使用data
+        lcdrs=1;  //数据寄存器
+        P0=dat;     //将数据传到P0口
+        lcdrw=0;  //写操作
+        delayms(5);
+        lcden=1;
+        delayms(5);
+        lcden=0;
+        }  //lcd写数据操作
+</code></pre>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kvy-G9M70Ew000bO" alt="" /></p>
+
+<pre><code>        void init_lcd(){
+            lcden=0;
+            write_com(0x38);
+            write_com(0x0c);
+            write_com(0x06);
+            write_com(0x01);
+            }   //lcd初始化操作
+</code></pre>
+
+<p>将以上各部分代码稍加组合，即可实现所需功能，完整代码在<a href="https://github.com/tuteng/danpianji">这里</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">图腾</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-31T10:31:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2013/07/31/ad/" data-via="" data-counturl="http://tuteng.github.io/blog/2013/07/31/ad/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/07/31/danpianji/" title="Previous Post: iic总线">&laquo; iic总线</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/07/31/ad/">AD转换并显示在1602上</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/31/danpianji/">iic总线</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/22/github/">github博客操作</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/22/tongxin/">通信专业词汇</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/15/centos/">centos安装及配置</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - 图腾 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
