@@ -4,7 +4,7 @@
   <title><![CDATA[TuTeng'blog]]></title>
   <link href="http://tuteng.github.io/atom.xml" rel="self"/>
   <link href="http://tuteng.github.io/"/>
-  <updated>2013-07-31T16:49:03+08:00</updated>
+  <updated>2013-08-26T20:39:31+08:00</updated>
   <id>http://tuteng.github.io/</id>
   <author>
     <name><![CDATA[图腾]]></name>
@@ -12,6 +12,155 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[红外接收并解码]]></title>
+    <link href="http://tuteng.github.io/blog/2013/08/26/hongwaijieshou/"/>
+    <updated>2013-08-26T19:03:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2013/08/26/hongwaijieshou</id>
+    <content type="html"><![CDATA[<p>真囧，红外接收搞了两天，终于给弄好了。有好多天没有记录了，废话少说吧，start<br/>
+在嵌入式领域，结合各种芯片，红外模块可以用来控制各种设备。常用的有我们平时使用的各种遥控器，今天从软件的领域来研究一下红外就收的解码过程。</p>
+
+<h5>电路图如下</h5>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kxIUsFM72zw0005Q" alt="红外一体接收" />
+<img src="http://files.note.sdo.com/xBlh9~kxIVna4M0vU0008Z" alt="实物图" /></p>
+
+<p>以这两张图片来说明今天的代码。从图中看，红外接收模块还是很简单的，就只有三个引脚，但是我们用的是时候只用其中的一个，其他两个都已经给我们固定好了。</p>
+
+<h5>红外遥控系统</h5>
+
+<p>通用红外遥控系统由发射和接收两大部分组成，应用编/解码专用集成电路芯片来进行控制。<br/>
+发射部分包括键盘矩阵、编码调制、LED红外发送器；<br/>
+接收部分包括光、电转换放大器、解调、解码电路。<br/>
+遥控发射器专用芯片很多，根据编码格式可以分成两大类，这里我们以运用比较广泛，解码比较容易的一类来加以说明，现以日本NEC的uPD6121G组成发射电路为例说明编码原理（一般家庭用的DVD、VCD、音响都使用这种编码方式）。当发射器按键按下后，即有遥控码发出，所按的键不同遥控编码也不同。这种遥控码具有以下特征：
+采用脉宽调制的串行码，以脉宽为0.565ms、间隔0.56ms、周期为1.125ms的组合表示二进制的“0”；以脉宽为0.565ms、间隔1.685ms、周期为2.25ms的组合表示二进制的“1”，其波形如图所示。</p>
+
+<p><img src="http://hi.csdn.net/attachment/201107/12/0_1310458705pbeL.gif" alt="" /></p>
+
+<p>如图可见，0与1前端的低电平持续都是0.56ms，那么就是后面的高电平持续时间不同，0为0.56ms，1为1.685ms，找到不同之处，编程时就有识别的依据了！</p>
+
+<p><img src="http://hi.csdn.net/attachment/201107/12/0_1310458680N8mF.gif" alt="" /></p>
+
+<p>UPD6121G产生的遥控编码是连续的32位二进制码组，其中前16位为用户识别码，能区别不同的电器设备，防止不同机种遥控码互相干扰。该芯片的用户识别码固定为十六进制01H；后16位为8位操作码（功能码）及其反码。UPD6121G最多额128种不同组合的编码。<br/>
+当一个键按下超过36ms，振荡器使芯片激活，将发射一组108ms的编码脉冲,这108ms发射代码由一个引导码（9ms）,一个结果码（4.5ms）,低8位地址码（9ms~18ms）,高8位地址码（9ms~18ms）,8位数据码（9ms~18ms）和这8位数据的反码（9ms~18ms）组成。如果键按下超过108ms仍未松开，接下来发射的代码（连发码）将仅由起始码（9ms）和结束码（2.25ms）组成。（实际上人手的动作是很慢的，即使你快速的按下按键，可能对于芯片来说还是超过108ms，所以如何处理连发码是很关键的）<br/>
+遥控器在按键按下后，周期性地发出同一种32位二进制码，周期约为108ms。一组码本身的持续时间随它包含的二进制“0”和“1”的个数不同而不同，大约在45～63ms之间，图为发射波形图。</p>
+
+<p><img src="http://hi.csdn.net/attachment/201107/12/0_13104587170sq6.gif" alt="" /></p>
+
+<p><img src="http://hi.csdn.net/attachment/201107/12/0_13104587243Hms.gif" alt="" /></p>
+
+<h5>代码部分</h5>
+
+<pre><code>void dsjsq0(void) interrupt 1
+{
+    time++;
+}//定时器计数器0中断，全局变量time，用来计数，time每次加1，时间过去255us
+
+void wbzd0(void) interrupt 0
+{
+    static uchar i;
+    static bit flag;
+    if(flag)
+    {
+        if(time&lt;60&amp;&amp;time&gt;=30)  //晶振频率为12MH，当时间经过255*30到255*60之间时，即可进入函数将time存储
+                i=0;
+
+        irdata[i]=time;// 将time存储等待后续将其翻译成二进制，其中irdata[0]存储的是前导码的时间。
+//      write_data(time);//用来测试time是否含有数据 
+        time=0;  //将time归零等待下面的32位数据
+        i++;  
+
+        if(33==i)  //数据存储完毕
+        {
+            irok=1;  //存储完毕标志
+            i=0;
+        }
+    }  
+    else
+    {
+        flag=1;  //进入函数处理的标志
+        time=0;
+    }
+//  write_data(irdata); //测试用
+ } //外部中断0，下降沿触发，利用外部中断的最高优先级来讲time存到全局数组中
+
+void wbzd0_init()
+{
+    IT0=1;   //下降沿触发
+    EA=1;    //打开全局中断
+    EX0=1;   //外部中断0中断允许
+//  PX0=1;   //外部中断0中断优先级控制位
+
+
+} //外部中断0初始化
+
+void dsjsq0_init(void)
+{
+    TMOD=0X02;  //工作方式选择位，方式2，8位初值自动重装的8位定时器计数器
+    TH0=0X00;   //装入初值，高8位
+    TL0=0X00;   //低8位
+    ET0=1;      //定时器计数器0中断允许位
+    TR0=1;      //定时器0运行控制位
+}  //定时器计数器0总段初始化
+
+void irchuli(void)
+{
+    uchar i,j,k,timedata,value;
+    k=1;
+        for(i=0;i&lt;4;i++)  
+        {
+            for(j=0;j&lt;8;j++)
+            {   timedata=irdata[k]; //irdata[0]为引导码的时间，所以从irdata[1]开始处理
+                if(timedata&gt;7)  //判断时间，来决定数组中的数据是0还是1
+                    value|=0x80;  //与0x80取或，将转换后0或1的数据存储到value中
+                if(j&lt;7)    //注意此处是j，不是timedata，在这里纠结了好久才发现这个错误
+                    value&gt;&gt;=1;  //通过右移，获得一个字节的数据
+                k++;
+            }  //处理一个字节
+            tempdata[i]=value;  //将单个字节存到数组中
+    //      write_data(tempdata); //测试用
+            value=0;
+        } //32位，4个字节，每个字节8位，
+    irchuliok=1;    
+}  //红外处理部分
+void irzhuan(void)
+{
+    uchar i;
+    tempdata2[0]=table[tempdata[0]/16];  //处理客户码
+    tempdata2[1]=table[tempdata[0]%16];
+    tempdata2[2]='-';
+    tempdata2[3]=table[tempdata[1]/16];  //处理处理客户码
+    tempdata2[4]=table[tempdata[1]%16];
+    tempdata2[5]='-';
+    tempdata2[6]=table[tempdata[2]/16];  //处理数据码
+    tempdata2[7]=table[tempdata[2]%16];
+    tempdata2[8]='-';
+    tempdata2[9]=table[tempdata[3]/16];   //处理数据反码
+    tempdata2[10]=table[tempdata[3]%16];
+    write_com(0xc0+5);
+    for(i=0;i&lt;11;i++)
+    {   
+        write_data(tempdata2[i]);
+        delay(5);
+    }  //利用for循环将解码显示到lcd上
+/*  write_data(tempdata2[0]);
+    write_data(tempdata2[1]);
+    write_data(tempdata2[2]);
+    write_data(tempdata2[3]);
+//  write_data(tempdata2[4]);
+//  write_data(tempdata2[5]);
+*/
+    irchuliok=0;  //红外部分处理完毕标志
+
+}  //4个字节的红外转换部分
+</code></pre>
+
+<p>完整代码请查看<a href="https://github.com/tuteng/hongwaijiema">这里</a>  <br/>
+参考文章<a href="http://blog.csdn.net/mhjerry/article/details/6600414">红外遥控系统原理及单片机软件解码程序，我的编写经历(C版本)</a><br/>
+<a href="http://my.oschina.net/jayzonex/blog/10649">51单片机红外解码程序</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[AD转换并显示在1602上]]></title>
