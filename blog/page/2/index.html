@@ -9,7 +9,16 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="最近在学习arm，需要搭建一些服务，在此记录一下。 tftp服务搭建 首先检查一下，有没有安装： netstat -a | grep tftp 没有安装什么都不会显示，若是安装了就会显示一些关于该服务的信息。没有安装可以从网上下载tftp的rpm包，或者从安装光盘里找到。 执行安装 rpm - &hellip;">
+  <meta name="description" content="gcc常用命令 -E 仅作预处理，不进行编译，汇编和链接
+-S 编译到汇编语言，不进行链接
+-c 编译，汇编到目标代码，不进行链接
+-o 输出到文件。
+-g 对代码进行调试，加上此选项
+-O1 进行一级优化
+-O2 进行二级优化
+-static 对代码进行静态链接
+-Wall 打印出所有警告
+- &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +75,110 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/24/gcc/">Gcc和makefile</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-24T21:41:00+08:00" pubdate data-updated="true">May 24<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>gcc常用命令</h3>
+
+<blockquote><p>-E 仅作预处理，不进行编译，汇编和链接<br/>
+-S 编译到汇编语言，不进行链接<br/>
+-c 编译，汇编到目标代码，不进行链接<br/>
+-o 输出到文件。
+-g 对代码进行调试，加上此选项<br/>
+-O1 进行一级优化<br/>
+-O2 进行二级优化<br/>
+-static 对代码进行静态链接<br/>
+-Wall 打印出所有警告<br/>
+-Werror 打印出所有错误<br/>
+ -I /home/hello/include表示将/home/hello/include目录作为第一个寻找头文件的目录，寻找的顺序是：/home/hello/include&#8211;>/usr/include&#8211;>/usr/local/include<br/>
+-L /home/hello/lib表示将/home/hello/lib目录作为第一个寻找库文件的目录，寻找的顺序是：/home/hello/lib&#8211;>/lib&#8211;>/usr/lib&#8211;>/usr/local/lib<br/>
+ -lworld表示在上面的lib的路径中寻找libworld.so动态库文件（如果gcc编译选项中加入了“-static”表示寻找libworld.a静态库文件）</p></blockquote>
+
+<p>hello文件</p>
+
+<pre><code>#include"a.h"
+int main()
+{
+            print();
+}
+</code></pre>
+
+<p>a.h文件在上一层目录中，即../中</p>
+
+<pre><code>#include&lt;stdlib.h&gt;
+#include&lt;stdio.h&gt;
+void print(){
+            printf("hello world\n");
+}
+</code></pre>
+
+<h6>gcc命令使用</h6>
+
+<pre><code>gcc -E hello.c -o hello.i -I../    对源文件进行预处理，-I指定第一个寻找头文件的目录
+gcc -S hello.i -o hello.s          将预处理文件编译到汇编代码
+gcc -c hello.s -o hello.o          将汇编代码编译到目标文件
+gcc hello.o -o hello               对目标文件进行链接
+</code></pre>
+
+<h6>优化</h6>
+
+<pre><code>gcc -o hello -O1 hello.c -I../     进行一级优化
+gcc -o hello -O2 hello.c -I../     进行二级优化
+</code></pre>
+
+<h3>makefile简单使用</h3>
+
+<p>将上面的命令进行总结并写入到一个文件，并将此文件命名为makefile</p>
+
+<h6>语法</h6>
+
+<pre><code>target ... : prerequisites ...
+             command
+</code></pre>
+
+<p>上面程序的makefile语法</p>
+
+<pre><code>hello.o:hello.c
+        gcc -E hello.c -o hello.i -I../ 
+        gcc -S hello.i -o hello.s
+        gcc -c hello.s -o hello.o
+        gcc hello.o -o hello
+.PHONY:clean
+clean:
+        rm hello.s hello.o   #方便使用make clean命令清除不必要的文件
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -533,6 +646,10 @@ sudo grub-install /dev/sda
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/09/16/chaiji/">笔记本清理</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/15/matlab/">matlab初学</a>
       </li>
     
@@ -546,10 +663,6 @@ sudo grub-install /dev/sda
     
       <li class="post">
         <a href="/blog/2013/07/31/ad/">AD转换并显示在1602上</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/07/31/danpianji/">iic总线</a>
       </li>
     
   </ul>

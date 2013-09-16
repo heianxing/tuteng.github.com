@@ -4,7 +4,7 @@
   <title><![CDATA[TuTeng'blog]]></title>
   <link href="http://tuteng.github.io/atom.xml" rel="self"/>
   <link href="http://tuteng.github.io/"/>
-  <updated>2013-09-16T17:02:52+08:00</updated>
+  <updated>2013-09-16T17:53:59+08:00</updated>
   <id>http://tuteng.github.io/</id>
   <author>
     <name><![CDATA[图腾]]></name>
@@ -12,6 +12,71 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[笔记本清理]]></title>
+    <link href="http://tuteng.github.io/blog/2013/09/16/chaiji/"/>
+    <updated>2013-09-16T17:11:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2013/09/16/chaiji</id>
+    <content type="html"><![CDATA[<p>自从买了笔记本，一直在折腾，却没怎么注意“保养”，用着越来越难用了，闲着没事，花了几个小时打扫了一下卫生。 <br/>
+我的笔记本是acer4752G，当时买的时候花了4000多大洋。下面进入正题。</p>
+
+<h5>工具</h5>
+
+<p>一把螺丝刀，一个银行卡片。这都是参考的网上成功的经验准备的工具</p>
+
+<h5>拆卸过程</h5>
+
+<p>从后面开始，卸完大部分的螺丝
+<img src="http://files.note.sdo.com/xBlh9~kyigGB6u1pc000uQ" alt="" /><br/>
+背面有电池，内存条，硬盘，无线网卡</p>
+
+<h6>内存条</h6>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kyigIB6u1pc000v1" alt="内存条" /></p>
+
+<h6>硬盘</h6>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kyigIl6u1pc000u-" alt="硬盘" /></p>
+
+<h6>光驱</h6>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kyigG56u1pc000uM" alt="光驱" /><br/>
+光驱最好卸了</p>
+
+<h6>键盘</h6>
+
+<p>卸键盘的时候要注意，别把排线给扯坏了，用银行卡顺着，一点一点的。
+<img src="http://files.note.sdo.com/xBlh9~kyigGl6u1pc000uO" alt="键盘" />
+键盘后的排线
+<img src="http://files.note.sdo.com/xBlh9~kyigI56u1pc000uZ" alt="排线" />
+键盘卸完后
+<img src="http://files.note.sdo.com/xBlh9~kyigHl6u1pc000uV" alt="" />
+触摸板排线
+<img src="http://files.note.sdo.com/xBlh9~kyigHR6u1pc000uX" alt="" />
+额的键盘那叫一个脏啊，真想用水给冲几遍。我这图是打扫完的，看上去还算干净点了吧。</p>
+
+<h6>大件全景图</h6>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kyigFB6u1pc000uI" alt="全景图" /></p>
+
+<h6>核心部件</h6>
+
+<p>主板
+<img src="http://files.note.sdo.com/xBlh9~kyigJR6u1pc000v7" alt="主板" />
+注意排线
+<img src="http://files.note.sdo.com/xBlh9~kyigJ56u1pc000v3" alt="" />
+卸完后的架子
+<img src="http://files.note.sdo.com/xBlh9~kyigJB6u1pc000v5" alt="" />
+主板全景
+<img src="http://files.note.sdo.com/xBlh9~kyigGR6u1pc000uS" alt="" />
+两个导热的铜片，同学的联想只有一个，深深的优越感啊，哈哈<br/>
+主板拆完
+<img src="http://files.note.sdo.com/xBlh9~kyigFl6u1pc000uG" alt="" />
+风扇里的灰也是够多的了<br/>
+ok了，一次还算完美的拆机，最后装上之后，出了点小叉子，显示器没反应，当时有点蒙，以为哪里给整坏了，后来接了个外接显示器，还是没反应，原来是系统没起来，又拔下内存条，重新插了一遍，好了。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[matlab初学]]></title>
