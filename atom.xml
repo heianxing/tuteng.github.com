@@ -4,7 +4,7 @@
   <title><![CDATA[TuTeng'blog]]></title>
   <link href="http://tuteng.github.io/atom.xml" rel="self"/>
   <link href="http://tuteng.github.io/"/>
-  <updated>2013-09-21T22:02:46+08:00</updated>
+  <updated>2013-09-21T22:04:20+08:00</updated>
   <id>http://tuteng.github.io/</id>
   <author>
     <name><![CDATA[图腾]]></name>
@@ -45,11 +45,13 @@ rvds的安装比较繁琐，但仅仅是繁琐，并不难。对于rvds我发现
 
 <p>首先查看技术手册
 <img src="http://files.note.sdo.com/xBlh9~kzSif9M719Y001jv" alt="" />
-从图中可以看出，led灯是低电平有效，且控制led灯的是gpk4，gpk5，gpk6，gpk7四个IO口，到时候我们给它送低电平就可以了。<br/>
-再来看看芯片手册<br/>
-<img src="http://files.note.sdo.com/xBlh9~kzSif9M719Y001jp" alt="" />
-<img src="http://files.note.sdo.com/xBlh9~kzSif9M719Y001jn" alt="" />
-程序如下</p>
+从图中可以看出，led灯是低电平有效，且控制led灯的是gpk4，gpk5，gpk6，gpk7四个IO口，到时候我们给它送低电平就可以了。  <br/>
+再来看看芯片手册</p>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kzSif9M719Y001jp" alt="" />
+<img src="http://files.note.sdo.com/xBlh9~kzSif9M719Y001jn" alt="" /></p>
+
+<p>程序如下</p>
 
 <pre><code>    //#include "def.h"
 //#include "GPIO.H"   //因为资料不全，这两个头文件的具体内容至今没有找到
@@ -134,8 +136,9 @@ void LedRun(void)
 
 <p>但是始终就是通不过，并且报有下面的错误</p>
 
-<p><img src="http://files.note.sdo.com/xBlh9~kzSjma4M2xM001tF" alt="" /><br/>
-最终只好放弃这种方法，改用下面的引导代码</p>
+<p><img src="http://files.note.sdo.com/xBlh9~kzSjma4M2xM001tF" alt="" /></p>
+
+<p>最终只好放弃这种方法，改用下面的引导代码</p>
 
 <pre><code> IMPORT main   
      AREA |C$$code|,CODE,READONLY 
