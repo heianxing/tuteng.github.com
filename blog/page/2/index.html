@@ -9,16 +9,7 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="gcc常用命令 -E 仅作预处理，不进行编译，汇编和链接
--S 编译到汇编语言，不进行链接
--c 编译，汇编到目标代码，不进行链接
--o 输出到文件。
--g 对代码进行调试，加上此选项
--O1 进行一级优化
--O2 进行二级优化
--static 对代码进行静态链接
--Wall 打印出所有警告
-- &hellip;">
+  <meta name="description" content="一直以来就很喜欢那种把想法变成现实的感觉，尤其是把想的东西变成可以看得见摸得着的东东，就有一种成就感。在最后一次数字电路的实验中，和同学亲手打造了一个秒表，纯硬件，在此记录一下实验原理。 材料 数码管两个，74ls47或74ls247两片，74ls160两片，74ls00两片，10uf电容一个，0 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -75,6 +66,94 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/06/yingjian/">纯硬件打造数字秒表</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-06T15:26:00+08:00" pubdate data-updated="true">Jun 6<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>一直以来就很喜欢那种把想法变成现实的感觉，尤其是把想的东西变成可以看得见摸得着的东东，就有一种成就感。在最后一次数字电路的实验中，和同学亲手打造了一个秒表，纯硬件，在此记录一下实验原理。</p>
+
+<h5>材料</h5>
+
+<p>数码管两个，74ls47或74ls247两片，74ls160两片，74ls00两片，10uf电容一个，0.01uf电容一个，上拉电阻14个，555定时器一片。</p>
+
+<h5>工作原理</h5>
+
+<h6>74ls47原理</h6>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kr10A9M70gM000d9" alt="74ls47" /><br/>
+<img src="http://admin22.51dzw.com/uploadfiles/201202/20120215205259686.jpg" alt="功能表" /><br/>
+由功能表可看出，若要显示数字0~9可以将3,4,5管脚置为高电平，且输入端的D，C，B，A（对应6,2,1,7）管脚可以将输入的0~9的二进制数据转换到数码管的显示。</p>
+
+<h6>数码管原理</h6>
+
+<blockquote><blockquote><blockquote><p><img src="http://memberpic.114my.cn/yixianyin/uploadfile/20118/2011813104654.jpg" alt="数码管图片" /></p></blockquote></blockquote></blockquote>
+
+<p>数码管分为共阳极与共阴极，这里我们用的是共阳极，即输入低电平有效。</p>
+
+<h6>74ls160原理</h6>
+
+<p><img src="http://www.hqew.com/File/Images/250000-259999/251555/Promotion/20100228131839671SSAZ1Q.JPG" alt="74ls160" />
+<img src="http://files.note.sdo.com/xBlh9~kr1KTq4M0bs000ig" alt="74ls160" /><br/>
+<img src="http://files.note.sdo.com/xBlh9~kr1EIFM70qk000g8" alt="时序图" /><br/>
+从时序图中可以看出，当QA，QB，QC,QD脉冲为1001（数字9）时，输出位输出一次高电平，此时前面经历了从0000到1001的变化，总共进行了十次计数。因此称其为十进制计数器。并且在计数时，CLR、LOAD、ENP、ENT都一直保持高电平。可以将十进制计数器进行改造，可以将其改成其他进制计数器，例如六进制计数器。原理就是，当计数器要进行第七次计数的时候使其归零，从而从新开始计数。利用74ls00便可以实现此功能<br/>
+<img src="http://course.tju.edu.cn/dzjc/syjx0010.files/image004.jpg" alt="74ls00" /><br/>
+利用此片的1,2,3引脚，计数方式0000&#8212;0001&#8212;0010&#8212;0011&#8212;0100&#8212;0101&#8212;0110&#8212;0111&#8212;1000&#8212;1001，且从左往右依次为Qd，Qc，Qb，Qa。若改位六进制，即进行0000&#8212;0001&#8212;0010&#8212;0011&#8212;0100&#8212;0101这个循环，遇到0110归零即可，此时利用74ls00的1,2引脚连接Qb，Qc即可达到目的。连接1,2引脚后，第三引脚可以接74ls160的清零端，从而开始从新计数</p>
+
+<h5>555定时器</h5>
+
+<p>除了上边的部件外，还需要一个时钟脉冲源，以用来产生稳定的脉冲。这里我们选择了555定时器
+<img src="http://www.lechengdz.com/mcu/UploadFiles_3202/200812/20081201155344726.jpg" alt="555" /><br/>
+555定时器由两个电压比较器，一个RS触发器等构成。我们可以在加入两个电容和两个电阻构成多谐振荡器。如图
+<img src="http://shiti.henanzikao.cn/images/shiti/20110522000451637/20110522000604905.jpg" alt="多谐振荡器" /><br/>
+其中第二个电阻我们使用的是可调电阻为了改变脉冲强度（在6和7之间的电压），左边的电容10uf。3引脚为脉冲输出，利用其产生的脉冲来实现计数。</p>
+
+<h6>一张电路原理图。</h6>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kr70fG4M0KM000J_" alt="" /></p>
+
+<h6>电路实物图两张</h6>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kr0Y6q4M0bs0009y" alt="" />
+<img src="http://files.note.sdo.com/xBlh9~kr0Y7a4M0bs0009C" alt="" /></p>
+
+<h5>附注</h5>
+
+<p>上面的原理图以上的图片多是为了分析原理而从网上找的图片</p>
+
+<h6>总结</h6>
+
+<p>学习硬件动手很重要，有的东西如果明白了原理在动手实验的话，往往会达到事半功倍的效果。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -646,6 +725,10 @@ sudo grub-install /dev/sda
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/09/21/arm/">嵌入式开发程序裸奔之led</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/16/chaiji/">笔记本清理</a>
       </li>
     
@@ -659,10 +742,6 @@ sudo grub-install /dev/sda
     
       <li class="post">
         <a href="/blog/2013/08/26/hongwaijieshou/">红外接收并解码</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/07/31/ad/">AD转换并显示在1602上</a>
       </li>
     
   </ul>
