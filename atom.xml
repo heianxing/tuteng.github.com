@@ -4,7 +4,7 @@
   <title><![CDATA[TuTeng'blog]]></title>
   <link href="http://tuteng.github.io/atom.xml" rel="self"/>
   <link href="http://tuteng.github.io/"/>
-  <updated>2013-09-21T22:04:20+08:00</updated>
+  <updated>2013-10-26T16:56:42+08:00</updated>
   <id>http://tuteng.github.io/</id>
   <author>
     <name><![CDATA[图腾]]></name>
@@ -12,6 +12,226 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[基于linux的温度采集系统]]></title>
+    <link href="http://tuteng.github.io/blog/2013/10/21/wendu/"/>
+    <updated>2013-10-21T19:58:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2013/10/21/wendu</id>
+    <content type="html"><![CDATA[<p>自从上次到现在感觉好长时间都没怎么写博客了，想想真是罪孽深重啊。过了个国庆，心也不知道飞到哪去了。这期间断断续续折腾了点东西，今天总算是有了点眉目。</p>
+
+<h5>想法</h5>
+
+<p>国庆之前，<a href="http://zhangweide.cn/">zhwei</a>同学说机房空调不大管用了，想做个检测温度的东西，我心思着，自己也学了点单片机的东西，就当练练手了。就决定合作一个小项目（呵呵，这好像算不上什么项目,大牛一下午肯定就能搞出来）。说干就干。 <br/>
+首先确定了一下分工，大致流程如下：  <br/>
+<img src="http://files.note.sdo.com/xBlh9~kCksSl6u09Y002dB" alt="" /><br/>
+我们先进行了一下分工。我会点硬件，从温度采集，到数据上传到服务器，都是由我完成，他负责将数据从浏览器中通过网络展示出来。</p>
+
+<h5>实施</h5>
+
+<p>选材原则：价格便宜，方便使用。 <br/>
+做之前，先选选材料，温度传感器就用ds18b20吧，使用方便，价格还算便宜。单片机是用51呢，还是arduino呢（手头上这两个都有），但感觉把arduino放机房里浪费了，以后还得自己搞着玩呢。刚好<a href="http://ma6174.com/">小码哥</a>学长给留了个单片机最小系统，能用起来啦，感谢学长额,哈哈。再者就是单片机和pc之间的通信，使用网络模块（enc28j60），还是用串口呢，后来还是奔着价格便宜，选了串口，毕竟串口模块加上条串口线才10块钱。一个网络模块要20好几。这样做下来共花费30多块钱吧。下边先写程序吧。 <br/>
+开始写单片机方面的程序，犯了个二啊。学单片机时从网上买的开发板，以为上面会带有ds18b20（关键是说明文档里，还好好的带着例子），连线超级简单，花了一个晚自习的时间基本上写出来了，开始测试，tm的死活不出东西，没办法，单步调试，后来发现初始化都么有成功，这是要闹哪样啊。一个晚自习就这样在蛋疼中度过了。第二天依旧折腾，开始以为是代码哪里出了问题，从网上四处找答案，为毛初始化不成功，为毛呢。网友们说的都不靠谱啊，怎么试怎么不行（后来知道了要试出来才奇了怪了）。以为额的温度传感器坏了呢，就去找卖家理论。还是人家卖家经验丰富啊，上来一句，同学您买传感器了吗？真tm的为自己的智商着急啊，没有传感器搞个毛啊。立马下单啊。花了两个晚自习啊！</p>
+
+<h6>ds18b20模块</h6>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kCkHgR6u09Y002gn" alt="" /><br/>
+就是这东东啦，大家在开发的时候，一定得看清，一般卖家卖开发板是不带它的，虽然有测试代码，但最终还是得自己再买。 <br/>
+先确定延时函数，此温度模块对时间要求相对来说是比较高的。</p>
+
+<pre><code>#include&lt;reg52.h&gt;
+#include&lt;intrins.h&gt;
+void main()
+{   
+    int i=10;    //耗时2us
+//  char j=10;  //耗时1us
+//  delay6ius(3);
+//  while(j)
+//      --j;          //延时(2*j)us
+    while(i)
+        i--;          // (i*8)us
+    _nop_();     //延时1us
+}
+</code></pre>
+
+<p>我的晶振是使用的12Mhz的（后经测试，11.0592Mhz的同样适用），开始以为是延时不对，专门针对我的板子，一点点的调出来的时间。对于整型变量，使用while语句，每自增自减一次，大约延时8us。对于字符型的大约是2us。<br/>
+对于ds18b20主要分为复位，写和读。基本上都是由这几个简单的步骤组合起来的。结合时序图来看程序。<br/>
+<img src="http://files.note.sdo.com/xBlh9~kCkHhB6u09Y002gr" alt="复位" /></p>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kCkHhl6u09Y002gp" alt="" /></p>
+
+<pre><code>//此处temp接温度传感器的数据线DQ，延时函数如下
+void delayus(unsigned char i)
+{
+    while(--i);  //延时大约为i的2倍
+}
+bit init_ds18b20(void)
+{   
+    bit zhi=0;     //复位观察标志位，如果成功，返回0，否则为1
+    temp=1;        //先将其拉高
+    delayus(5);    //短暂延时
+    temp=0;         //复位程序开始
+    delayus(200);  
+    delayus(200);   //延时大约800us左右,此处延时至少480us，最大960us
+    temp=1;         //将数据线拉高
+    delayus(50);    //15-60us后，会产生一个存在脉冲，此脉冲可以存在大约240us，为了保证能得到数据，延时100us左右
+    zhi=temp;      //由传感器传回，若果为0复位成功
+    delayus(25);    //稍作延时，返回标志位
+    return zhi;      //返回标志位
+}
+</code></pre>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kCkHi56u09Y002gt" alt="读一个字节" /></p>
+
+<pre><code>uchar readonechar(void)
+{
+    uchar i=0;
+    uchar dat=0;
+    for (i=8;i&gt;0;i--)
+    {
+        temp=0;  //将数据线拉为低电平，
+        dat&gt;&gt;=1;
+        temp=1; //产生起始信号，读间隙必须由主机产生至少1us的低电平，表示读时间的开始
+        if(temp)  //随后在总线被释放后的15us中传感器会发送内部数据位，这时如果总线为高电平表示读出1，如果总线为低电平表示读出数据0.每一位的读取之前都由控制器加一个起始信号。
+            dat|=0x80;
+        delayus(25);
+    }
+    return(dat);
+}//注意，在上图中必须在读间隙开始的15us内读取数据位才可以保证通信的正确。
+</code></pre>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kCkHj56u09Y002gw" alt="" /></p>
+
+<pre><code>void writeonechar(uchar dat)
+{
+    uchar i=0;
+    for(i=8;i&gt;0;i--)
+    {
+        temp=0;
+        temp=dat&amp;0x01;
+        delayus(25);
+        temp=1;
+        dat&gt;&gt;=1; //写数据分为写0和写1，在写数据的前15us总线要是被控制器拉置低电平，而后将是芯片对总线数据的采样时间，采样时间在15-60us，采样时间内如果控制器将总线拉高则表示写1，若果控制器将总线拉低表示写0.每一位的发送都应该有一个至少15us的低电平起始位，随后的数据0或1应该在45us内完成。
+    }
+    delayus(25);
+}
+</code></pre>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kCJNPB6u24Y00052" alt="ram及eeprom图" />
+ds18b20共9个字节的ram，每个字节为8位，第1、2个字节时温度转换后的数据值信息，第3、4个字节时用户eeprom（常用于温度报警值存储）的镜像，在上电复位时其值被刷新。第5个字节则是用户第3个eeprom的镜像。第6、7、8个字节为计数寄存器，是为了让用户得到更高的温度分辨率而设计。同样也是内部温度转换，计算的暂存单元。第9个字节为前8个字节的crc码。
+在这里我们只用到了前两个字节，对于以后的功能我们会适时的添加</p>
+
+<pre><code>uint readtemperature(void)
+{
+    uchar a=0;
+    uint b=0;
+    uint c=0;
+    init_ds18b20();  //传感器第一个周期初始化
+    writeonechar(0xCC); //此指令使芯片不对rom编码做出反应，在单总线（即只有一个温度传感器）的情况下，为了节省时间则可以选用此指令。如果在多芯片挂接时使用此指令将会出现数据冲突，导致出错
+    writeonechar(0x44); // 进行一次温度转换，将转换后的温度值放入ram的第1、2个字节。
+    delayms(10);
+    init_ds18b20();  //执行第二个周期复位。
+    writeonechar(0xCC);  //指令同上
+    writeonechar(0xBE); //此指令将从ram中读数据，读地址从地址0开始，一直可以读到地址9，完成整个ram数据读出。芯片允许在读过程中用复位信号终止读取，既可以不读后面不需要的字节以减少读取时间。
+    a=readonechar();  //读取低8位，即第一个字节
+    b=readonechar(); //读取高8位，即第二个字节
+    b&lt;&lt;=8;    
+    c=a+b;     //获得温度值
+    return(c);
+}
+</code></pre>
+
+<p>根据文档，若要读出当前的温度数据我们要进行两次工作周期，第一个周期为复位，跳过rom指令、执行温度转换存储器操作指令、等待大约500us温度转换时间。紧接着执行第二个周期为复位、跳过rom质量、执行读ram的存储器操作指令、读数据（最多为9个字节，中途可以停止，制度简单温度值则读前两个字节即可）。</p>
+
+<h6>温度处理</h6>
+
+<p>现在温度读出来了，下一步就是对其进行处理了。<br/>
+在得到的两个字节数据共16位中，其中高5位为符号位。如果高5位全为1，说明这是一个负温度，如果全为0，表示这是一个正数。正温度转成10进制乘上默认分辨率0.0625，即为现在的温度，误差大约为1度。负温度要先进行取反在转成10进制乘上分辨率，即是现在的温度。</p>
+
+<pre><code>#include&lt;reg52.h&gt;
+#include "ds18b20.h"
+uchar shi,ge,bai,wan,qian;
+unsigned int code asc[10]={48,49,50,51,52,53,54,55,56,57 };
+//直接通过asc码发送温度值
+unsigned int num;
+void sendbyte(unsigned char dat)
+{
+    SBUF=dat;
+    while(!TI);
+    TI=0;
+}  //通过串口发送数据
+void sendstr(unsigned char *s)
+{
+    while(*s!='\0')
+    {
+        sendbyte(*s);
+        s++;
+    }
+}  //发送字符串
+
+void init_uart(void)
+{
+    SCON=0X50;
+    TMOD |= 0X20; 
+    TMOD |=0X01;  //设置定时器计数器工作方式
+    TH1=0XFD;
+    TL1=0XFD;  //装入初值
+    TH0=(65536-45872)/256;
+    TL0=(65536-45872)%256;  //装入初值
+    ET0=1;  //定时器计数器0，中断允许位
+    TR0=1;  //启动定时器0
+    TR1=1;  //启动定时器1
+    EA=1;  //打开总中断
+//  ES=1;   //串口初始化，在这里并没有将串口中断打开，中断如果打开    数据发送太快，用另一个定时器计数器来控制时间。
+}
+void t0_time() interrupt 1  //定时器计数器0中断
+{
+    TH0=(65536-45872)/256;
+    TL0=(65536-45872)%256;
+    num++;
+    if(num==200)  //通过调整num的值控制发送到服务器端值得频率。现在服务器端大约10秒通过串口得到一次数据。
+    {
+        num=0;   //数据清零，从新计数
+//      sendstr("tempreature:");
+        sendbyte(45); 
+        sendbyte(45);
+        sendbyte(asc[wan]);
+        sendbyte(asc[qian]);
+
+        sendbyte(asc[bai]);
+        sendbyte(asc[shi]);
+        sendbyte(asc[ge]);
+        sendbyte(13);
+//      sendbyte(10);  //通过asc码可以控制发送过去的格式。
+    }
+}
+
+void main()
+{
+    int temp;
+    float temperature;
+    init_uart();      
+    while(1)
+    {     
+        temp=readtemperature();  //获得温度值
+        temperature=(float)temp*0.0625; //将温度值转换成10进制，因此处主要用于机房，温度差在大于0，小于100度，所以只为正值即可。
+        temp=temperature*1000; //扩大倍数，精度为控制在小数点后3位。
+        wan=temp/10000;   //温度的十位
+        qian=temp%10000/1000;  //温度的各位
+        bai=temp%1000/100;  //小数点后一位
+        shi=temp%100/10;    //小数点后第二位
+        ge=temp%10;         //小数点后第第三位
+
+    }
+}
+</code></pre>
+
+<p>最后来张整体的图片。<br/>
+<img src="http://files.note.sdo.com/xBlh9~kCK2vVM72Dk0011A" alt="" /></p>
+
+<p>至此，从温度采集到串口发送基本完成。对于linux的串口接收部分在下一篇总结一下。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[嵌入式开发程序裸奔之led]]></title>
