@@ -4,7 +4,7 @@
   <title><![CDATA[TuTeng'blog]]></title>
   <link href="http://tuteng.github.io/atom.xml" rel="self"/>
   <link href="http://tuteng.github.io/"/>
-  <updated>2013-10-26T16:56:42+08:00</updated>
+  <updated>2013-11-01T17:42:38+08:00</updated>
   <id>http://tuteng.github.io/</id>
   <author>
     <name><![CDATA[图腾]]></name>
@@ -12,6 +12,227 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[小记]]></title>
+    <link href="http://tuteng.github.io/blog/2013/11/01/xinshi/"/>
+    <updated>2013-11-01T16:35:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2013/11/01/xinshi</id>
+    <content type="html"><![CDATA[<p>秋天了，天气随着淅淅沥沥的小雨也开始变凉了，生活中的一切都还好，希望还在，梦想也还在&#8230;&#8230; <br/>
+最近忙忙乎乎，忙忙乎乎。期间还回了趟家，参加了场婚礼。不知道自己一直在外求学的原因，还是什么，对其中发生的一些事情总是有点点不舒服。昨天在家忙完就赶紧搭上了返回学校的汽车，在车上，晕的一塌糊涂，下车吐了。回到学校，依旧和往常一样。宿舍，教学楼，餐厅，每日往往复复，日子就这样过着。 <br/>
+今天上课老师说下学期要分方向了。本学期开了好多的专业基础课，而我却这样马马虎虎的过着。大家有准备考研的，有准备考公务员的，还有其它&#8230;.都在为自己的未来奔波着，忙碌着。想想自己大学生活，也许是自己的学生生涯就这样快要结束了。 <br/>
+秋天总是会无缘无故的感觉到有那么一丝丝的伤感，算了，一切继续，继续hard working&#8230;..</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[linux串口通信]]></title>
+    <link href="http://tuteng.github.io/blog/2013/10/26/linux-chuankou/"/>
+    <updated>2013-10-26T17:00:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2013/10/26/linux-chuankou</id>
+    <content type="html"><![CDATA[<p>上一篇弄完了温度采集部分，这一篇来总结一下linux串口通信的知识。<br/>
+先来看张图：<br/>
+<img src="http://files.note.sdo.com/xBlh9~kCK6iFM72Dk00149" alt="" /><br/>
+这是典型的串口模块的电路图。通过此电路图，我们完全可以自己焊出自己的串口。 <br/>
+下面直接上代码吧</p>
+
+<pre><code>#include&lt;stdio.h&gt;  //标准输入输出
+#include&lt;string.h&gt;  //字符串函数库
+#include&lt;unistd.h&gt;  //unix 标准函数
+#include&lt;fcntl.h&gt;  //文件控制定义
+#include&lt;stdlib.h&gt;  //标准函数库
+#include&lt;time.h&gt;   //时间库函数
+#include&lt;errno.h&gt;  //错误符号定义
+#include&lt;termios.h&gt; //终端控制定义
+
+#define FALSE -1
+#define TRUE 0
+
+#define BUFFSIZE 1024
+//char buf[BUFFSIZE];
+
+int speed_arr[] = { B38400, B19200, B9600, B4800, B2400, B1200, B300,
+          B38400, B19200, B9600, B4800, B2400, B1200, B300, };
+int name_arr[] = {38400,  19200,  9600,  4800,  2400,  1200,  300, 38400,  
+          19200,  9600, 4800, 2400, 1200,  300, };
+//将波特率组织成数组的形式，方便调用
+
+int open_port(void)
+{
+    int fd;
+
+
+    fd=open("/dev/ttyS0",O_RDWR|O_NOCTTY);  //像操作文件一样打开串口
+    if(-1==fd)
+    {
+        perror("open port: unable to open /dev/ttys0 ");
+    }
+    else
+    {
+        printf("chuankou succed\n");
+        fcntl(fd,F_SETFL,0);
+        return(fd);
+    }
+
+}  //打开串口，串口在/dev下，符号一般为ttySx的形式，x代表数字
+
+/*void write_port(int fd)  //往串口写数据
+{
+    int n;
+    n=write(fd,"AIZ\r",4);
+    if(n&lt;0)
+    {
+        fputs("write() of 4 bytes failed!\n",stderr);
+    }
+}*/
+/*char read_port(int fd)  //从串口读数据
+{
+    int n;
+
+//  fcntl(fd,F_SETFL,FNDELAY);
+//  fcntl(fd,F_SETFL,0);
+    n=read(fd,buf,BUFFSIZE);
+    if(n==-1)
+    {
+        perror("read port: error");
+        return 
+    }
+    else
+        return buf;
+}*/
+void set_speed(int fd,int speed)  //设置波特率
+{
+    struct termios options;
+    int i,status;
+
+    if((tcgetattr(fd,&amp;options))!=0)
+    {
+        perror("tcgetattr() error");
+        return;
+    }
+    for(i=0;i&lt;sizeof(speed_arr)/sizeof(int);i++)
+    {
+        if(speed==name_arr[i])
+        {
+                tcflush(fd,TCIOFLUSH);
+                cfsetispeed(&amp;options,name_arr[i]);
+                cfsetospeed(&amp;options,name_arr[i]);
+                status=tcsetattr(fd,TCSANOW,&amp;options);
+                if(status !=0)
+                {
+                    perror("tcsetattr fd");
+                    return;
+                }
+                tcflush(fd,TCIOFLUSH);
+        }
+    }
+
+} //设置波特率
+int set_parity(int fd,int databits, int stopbits,int parity)
+{
+    struct termios options;
+    if(tcgetattr(fd,&amp;options)!=0)
+    {
+        perror("setupserial 1");
+        return(FALSE);
+    }
+    options.c_cflag &amp;= ~CSIZE;
+    switch(databits)
+    {
+        case 7:
+            options.c_cflag |= CS7;
+            break;
+        case 8:
+            options.c_cflag |= CS8;
+            break;
+        default:
+            fprintf(stderr,"unsupported data size\n");
+            return(FALSE);
+    }
+    switch(parity)
+    {
+        case 'n':
+        case 'N':
+            options.c_cflag &amp;= ~PARENB;
+            options.c_iflag &amp;= ~INPCK;
+            break;
+        case 'o':
+        case 'O':
+            options.c_cflag |= PARENB;
+            options.c_cflag |= PARODD;
+            options.c_iflag |= INPCK;
+            break;
+        case 's':
+        case 'S':
+            options.c_cflag &amp;= ~PARENB;
+            options.c_cflag &amp;= ~CSTOPB;
+            break;
+        default:
+            fprintf(stderr,"unsupported parity\n");
+            return(FALSE);
+    }
+    switch(stopbits)
+    {
+        case 1:
+            options.c_cflag &amp;= ~CSTOPB;
+            break;
+        case 2:
+            options.c_cflag |= CSTOPB;
+            break;
+        default:
+            fprintf(stderr,"unsupported stop bits\n");
+            return(FALSE);
+    }
+    if(parity != 'n')
+        options.c_iflag |= INPCK;
+    tcflush(fd,TCIFLUSH);
+    options.c_cc[VTIME]=150;
+    options.c_cc[VMIN]=0;
+    if(tcsetattr(fd,TCSANOW,&amp;options)!=0)
+    {
+        perror("setupserial 3");
+        return(FALSE);
+    }
+    return(0);
+}
+
+int main(int argc,char *argv[])
+{
+    int fd,fd2;
+    time_t now;
+    struct tm  *timenow;
+    int nread;
+    char buff[512];
+    fd2=open("/home/linux/temp.txt",O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+
+    fd=open_port();
+    set_speed(fd,19200);
+    if(set_parity(fd,8,1,'N')==FALSE)
+    {
+        printf("set parity error\n");
+        return(0);
+
+    }
+
+
+        while((nread=read(fd,buff,512))&gt;0)
+        {
+    //      printf("\nlen%d\n",nread);
+            buff[nread+1]='\0';
+            time(&amp;now);
+            timenow=localtime(&amp;now);    
+    //      printf("\n%s",buff);
+            write(fd2,asctime(timenow),24);
+            write(fd2,buff,nread);
+    //      
+    //      printf("write succed");
+        }
+
+
+}
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[基于linux的温度采集系统]]></title>
@@ -226,7 +447,7 @@ void main()
 }
 </code></pre>
 
-<p>最后来张整体的图片。<br/>
+<p>最后来张整体的图片。 <br/>
 <img src="http://files.note.sdo.com/xBlh9~kCK2vVM72Dk0011A" alt="" /></p>
 
 <p>至此，从温度采集到串口发送基本完成。对于linux的串口接收部分在下一篇总结一下。</p>
@@ -1913,15 +2134,6 @@ sudo grub-install /dev/sda
 <p>软件不是很大，但是速度太慢了，从获取<a href="http://download.ni.com/evaluation/labview/ekit/other/downloader/NI_Circuit_Design_Suite_12_0_Education_downloader.exe">下载器的位置</a>，可看出跟刚才那个汉化包，完全不在一块。从下载器的图片可以看出，我们需要的就在这，而且大小都是594M。但是向上几层就会发现有很多更有用的 <a href="http://download.ni.com/evaluation/labview/ekit/other/downloader/">资源</a> 这儿不仅有我们需要的multisim，还有很多其他有用的东东。这些留着以后用的着的时候在来取，先把用到的取下来。最后上个图，全是资源啊。</p>
 
 <p><img src="http://files.note.sdo.com/xBlh9~knOeVVnM2Gw001n-" alt="" /></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[hello world]]></title>
-    <link href="http://tuteng.github.io/blog/2013/04/27/hello-world/"/>
-    <updated>2013-04-27T15:45:00+08:00</updated>
-    <id>http://tuteng.github.io/blog/2013/04/27/hello-world</id>
-    <content type="html"><![CDATA[<p>今天心情很好，体验一下octopress</p>
 ]]></content>
   </entry>
   

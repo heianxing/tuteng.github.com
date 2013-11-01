@@ -1,0 +1,417 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>linux串口通信 - TuTeng'blog</title>
+  <meta name="author" content="图腾">
+
+  
+  <meta name="description" content="上一篇弄完了温度采集部分，这一篇来总结一下linux串口通信的知识。
+先来看张图： 这是典型的串口模块的电路图。通过此电路图，我们完全可以自己焊出自己的串口。 下面直接上代码吧 #include&lt;stdio.h&gt; //标准输入输出
+#include&lt;string.h&gt; // &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tuteng.github.io/blog/2013/10/26/linux-chuankou">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">TuTeng'blog</a></h1>
+  
+    <h2>生命不息，折腾不止</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:tuteng.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/aboutme">Aboutme</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Linux串口通信</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-26T17:00:00+08:00" pubdate data-updated="true">Oct 26<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>上一篇弄完了温度采集部分，这一篇来总结一下linux串口通信的知识。<br/>
+先来看张图：<br/>
+<img src="http://files.note.sdo.com/xBlh9~kCK6iFM72Dk00149" alt="" /><br/>
+这是典型的串口模块的电路图。通过此电路图，我们完全可以自己焊出自己的串口。 <br/>
+下面直接上代码吧</p>
+
+<pre><code>#include&lt;stdio.h&gt;  //标准输入输出
+#include&lt;string.h&gt;  //字符串函数库
+#include&lt;unistd.h&gt;  //unix 标准函数
+#include&lt;fcntl.h&gt;  //文件控制定义
+#include&lt;stdlib.h&gt;  //标准函数库
+#include&lt;time.h&gt;   //时间库函数
+#include&lt;errno.h&gt;  //错误符号定义
+#include&lt;termios.h&gt; //终端控制定义
+
+#define FALSE -1
+#define TRUE 0
+
+#define BUFFSIZE 1024
+//char buf[BUFFSIZE];
+
+int speed_arr[] = { B38400, B19200, B9600, B4800, B2400, B1200, B300,
+          B38400, B19200, B9600, B4800, B2400, B1200, B300, };
+int name_arr[] = {38400,  19200,  9600,  4800,  2400,  1200,  300, 38400,  
+          19200,  9600, 4800, 2400, 1200,  300, };
+//将波特率组织成数组的形式，方便调用
+
+int open_port(void)
+{
+    int fd;
+
+
+    fd=open("/dev/ttyS0",O_RDWR|O_NOCTTY);  //像操作文件一样打开串口
+    if(-1==fd)
+    {
+        perror("open port: unable to open /dev/ttys0 ");
+    }
+    else
+    {
+        printf("chuankou succed\n");
+        fcntl(fd,F_SETFL,0);
+        return(fd);
+    }
+
+}  //打开串口，串口在/dev下，符号一般为ttySx的形式，x代表数字
+
+/*void write_port(int fd)  //往串口写数据
+{
+    int n;
+    n=write(fd,"AIZ\r",4);
+    if(n&lt;0)
+    {
+        fputs("write() of 4 bytes failed!\n",stderr);
+    }
+}*/
+/*char read_port(int fd)  //从串口读数据
+{
+    int n;
+
+//  fcntl(fd,F_SETFL,FNDELAY);
+//  fcntl(fd,F_SETFL,0);
+    n=read(fd,buf,BUFFSIZE);
+    if(n==-1)
+    {
+        perror("read port: error");
+        return 
+    }
+    else
+        return buf;
+}*/
+void set_speed(int fd,int speed)  //设置波特率
+{
+    struct termios options;
+    int i,status;
+
+    if((tcgetattr(fd,&amp;options))!=0)
+    {
+        perror("tcgetattr() error");
+        return;
+    }
+    for(i=0;i&lt;sizeof(speed_arr)/sizeof(int);i++)
+    {
+        if(speed==name_arr[i])
+        {
+                tcflush(fd,TCIOFLUSH);
+                cfsetispeed(&amp;options,name_arr[i]);
+                cfsetospeed(&amp;options,name_arr[i]);
+                status=tcsetattr(fd,TCSANOW,&amp;options);
+                if(status !=0)
+                {
+                    perror("tcsetattr fd");
+                    return;
+                }
+                tcflush(fd,TCIOFLUSH);
+        }
+    }
+
+} //设置波特率
+int set_parity(int fd,int databits, int stopbits,int parity)
+{
+    struct termios options;
+    if(tcgetattr(fd,&amp;options)!=0)
+    {
+        perror("setupserial 1");
+        return(FALSE);
+    }
+    options.c_cflag &amp;= ~CSIZE;
+    switch(databits)
+    {
+        case 7:
+            options.c_cflag |= CS7;
+            break;
+        case 8:
+            options.c_cflag |= CS8;
+            break;
+        default:
+            fprintf(stderr,"unsupported data size\n");
+            return(FALSE);
+    }
+    switch(parity)
+    {
+        case 'n':
+        case 'N':
+            options.c_cflag &amp;= ~PARENB;
+            options.c_iflag &amp;= ~INPCK;
+            break;
+        case 'o':
+        case 'O':
+            options.c_cflag |= PARENB;
+            options.c_cflag |= PARODD;
+            options.c_iflag |= INPCK;
+            break;
+        case 's':
+        case 'S':
+            options.c_cflag &amp;= ~PARENB;
+            options.c_cflag &amp;= ~CSTOPB;
+            break;
+        default:
+            fprintf(stderr,"unsupported parity\n");
+            return(FALSE);
+    }
+    switch(stopbits)
+    {
+        case 1:
+            options.c_cflag &amp;= ~CSTOPB;
+            break;
+        case 2:
+            options.c_cflag |= CSTOPB;
+            break;
+        default:
+            fprintf(stderr,"unsupported stop bits\n");
+            return(FALSE);
+    }
+    if(parity != 'n')
+        options.c_iflag |= INPCK;
+    tcflush(fd,TCIFLUSH);
+    options.c_cc[VTIME]=150;
+    options.c_cc[VMIN]=0;
+    if(tcsetattr(fd,TCSANOW,&amp;options)!=0)
+    {
+        perror("setupserial 3");
+        return(FALSE);
+    }
+    return(0);
+}
+
+int main(int argc,char *argv[])
+{
+    int fd,fd2;
+    time_t now;
+    struct tm  *timenow;
+    int nread;
+    char buff[512];
+    fd2=open("/home/linux/temp.txt",O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+
+    fd=open_port();
+    set_speed(fd,19200);
+    if(set_parity(fd,8,1,'N')==FALSE)
+    {
+        printf("set parity error\n");
+        return(0);
+
+    }
+
+
+        while((nread=read(fd,buff,512))&gt;0)
+        {
+    //      printf("\nlen%d\n",nread);
+            buff[nread+1]='\0';
+            time(&amp;now);
+            timenow=localtime(&amp;now);    
+    //      printf("\n%s",buff);
+            write(fd2,asctime(timenow),24);
+            write(fd2,buff,nread);
+    //      
+    //      printf("write succed");
+        }
+
+
+}
+</code></pre>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">图腾</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-26T17:00:00+08:00" pubdate data-updated="true">Oct 26<span>th</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2013/10/26/linux-chuankou/" data-via="" data-counturl="http://tuteng.github.io/blog/2013/10/26/linux-chuankou/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/10/21/wendu/" title="Previous Post: 基于linux的温度采集系统">&laquo; 基于linux的温度采集系统</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/11/01/xinshi/" title="Next Post: 小记">小记 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/11/01/xinshi/">小记</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/26/linux-chuankou/">linux串口通信</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/21/wendu/">基于linux的温度采集系统</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/21/arm/">嵌入式开发程序裸奔之led</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/16/chaiji/">笔记本清理</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - 图腾 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
