@@ -5,12 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>hello world - TuTeng'blog</title>
+  <title>网络连不上 - TuTeng'blog</title>
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="今天心情很好，体验一下octopress
-">
+  <meta name="description" content="晚上回到宿舍，一直连不上网，之前就遇到过这问题，但是糊里糊涂的解决的，今天说什么也得弄好了。
+问题：开机即可获得以个169.254.xx开头的ip，使用了固定ip后也是这样，这样很明显是不会连上网的，而且子网掩码还是255.255.0.0，没办法，在网上找了找，大致有下面几种方法，最有效的是第三种 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tuteng.github.io/blog/2013/04/27/hello-world">
+  <link rel="canonical" href="http://tuteng.github.io/blog/2013/11/12/lianwang">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
@@ -70,7 +70,7 @@
   
   <header>
     
-      <h1 class="entry-title">Hello World</h1>
+      <h1 class="entry-title">网络连不上</h1>
     
     
       <p class="meta">
@@ -86,14 +86,25 @@
   
 
 
-<time datetime="2013-04-27T15:45:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2013</time>
+<time datetime="2013-11-12T23:39:00+08:00" pubdate data-updated="true">Nov 12<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>今天心情很好，体验一下octopress</p>
+<div class="entry-content"><p>晚上回到宿舍，一直连不上网，之前就遇到过这问题，但是糊里糊涂的解决的，今天说什么也得弄好了。<br/>
+问题：开机即可获得以个169.254.xx开头的ip，使用了固定ip后也是这样，这样很明显是不会连上网的，而且子网掩码还是255.255.0.0，没办法，在网上找了找，大致有下面几种方法，最有效的是第三种。 <br/>
+169.254.X.X是Windows操作系统在DHCP信息租用失败时自动给客户机分配的IP地址。意思就是在你开机之后，网卡自动获取不到合适的ip，所以会自动得到一个微软自带的ip，但是这个会影响下面的正常上网。<br/>
+解决办法：<br/>
+1.分配固定的ip地址，首先你要看一下别人可以正常上网的ip地址，网关，dns等。<br/>
+2.重启下机器或者网卡。 <br/>
+3.使用下面的命令</p>
+
+<pre><code> ipconfig  /renew 清除ip缓存
+ ipconfig /flushdns 清除dns缓存
+ arp -d* 清除arp缓存
+</code></pre>
 </div>
 
 
@@ -116,7 +127,7 @@
   
 
 
-<time datetime="2013-04-27T15:45:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2013</time>
+<time datetime="2013-11-12T23:39:00+08:00" pubdate data-updated="true">Nov 12<span>th</span>, 2013</time>
       
 
 
@@ -124,7 +135,7 @@
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2013/04/27/hello-world/" data-via="" data-counturl="http://tuteng.github.io/blog/2013/04/27/hello-world/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2013/11/12/lianwang/" data-via="" data-counturl="http://tuteng.github.io/blog/2013/11/12/lianwang/" >Tweet</a>
   
   
   
@@ -133,8 +144,8 @@
     
     <p class="meta">
       
+        <a class="basic-alignment left" href="/blog/2013/11/01/xinshi/" title="Previous Post: 小记">&laquo; 小记</a>
       
-        <a class="basic-alignment right" href="/blog/2013/04/27/multisim/" title="Next Post: Multisim">Multisim &raquo;</a>
       
     </p>
   </footer>
