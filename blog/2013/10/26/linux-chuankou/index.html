@@ -283,7 +283,7 @@ int main(int argc,char *argv[])
         {
     //      printf("\nlen%d\n",nread);
             buff[nread+1]='\0';
-            time(&amp;now);
+            time(&amp;now);  //加入时间格式控制
             timenow=localtime(&amp;now);    
     //      printf("\n%s",buff);
             write(fd2,asctime(timenow),24);
@@ -295,6 +295,8 @@ int main(int argc,char *argv[])
 
 }
 </code></pre>
+
+<p>参考文章 <a href="http://www.ibm.com/developerworks/cn/linux/l-serials/index.html">Linux 下串口编程入门</a></p>
 </div>
 
 
