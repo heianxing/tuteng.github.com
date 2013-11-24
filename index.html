@@ -9,8 +9,9 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="晚上回到宿舍，一直连不上网，之前就遇到过这问题，但是糊里糊涂的解决的，今天说什么也得弄好了。
-问题：开机即可获得以个169.254.xx开头的ip，使用了固定ip后也是这样，这样很明显是不会连上网的，而且子网掩码还是255.255.0.0，没办法，在网上找了找，大致有下面几种方法，最有效的是第三种 &hellip;">
+  <meta name="description" content="一直考虑着做个四轴，但都没有时间，只能一点一点的来了，今天下午，先把mpu6050测试好了。还别说，arduino确实是便捷开发，用着很爽。 start 开发环境 arduino1.5.2,硬件arduino uno一块，mpu6050一个。
+库文件
+使用之前要先导入几个库，在文件->参数设置下， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -67,6 +68,408 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/11/24/arduino/">Arduino开发mpu6050</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-24T17:17:00+08:00" pubdate data-updated="true">Nov 24<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>一直考虑着做个四轴，但都没有时间，只能一点一点的来了，今天下午，先把mpu6050测试好了。还别说，arduino确实是便捷开发，用着很爽。</p>
+
+<h5>start</h5>
+
+<p>开发环境 arduino1.5.2,硬件arduino uno一块，mpu6050一个。
+<a href="http://v.to/0I6h4">库文件</a><br/>
+使用之前要先导入几个库，在文件->参数设置下，设置好自己存放库的位置，在此路径下建立一个libraries的文件夹，将需要的第三方库解压到里面即可，这个文件里我们需要的是arduino下的文件。文件存放形式如下图<br/>
+<img src="http://files.note.sdo.com/xBlh9~kF7u9G4M0Mw000O1" alt="" />
+ 现在可以写测试程序了<br/>
+测试程序参考如下<br/>
+http://www.geek-workshop.com/forum.php?mod=viewthread&amp;tid=2471<br/>
+http://www.cnblogs.com/hangxin1940/archive/2013/04/07/3003254.html<br/>
+http://tonylabs.com/zh/tutorials/arduino-mpu6050-tutorials<br/>
+打开串口可以看到下图：<br/>
+<img src="http://files.note.sdo.com/xBlh9~kF7vsl6u1dE000ZD" alt="" /><br/>
+arduino开发起来还是挺快的</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/11/24/uip/">Uip移植</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-24T17:16:00+08:00" pubdate data-updated="true">Nov 24<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近一周直到昨天都一直在折腾uip，昨天，就是昨天终于结束了，其中的酸甜苦辣啊。<br/>
+至于uip是什么，我就不废话了。我主要来记录一下我的移植过程。最主要的目的是先实现一个最简单的功能，即能够ping通，再实现tcp的连接。</p>
+
+<h5>需要的东西</h5>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kF7mvG4M0Mw000Mn" alt="" /></p>
+
+<p>单片机开发板一块如上图<a href="http://note.sdo.com/u/634916397005493321/n/xBlh9~kF7nvq4M0Mw000Mw">单片机选型</a>，rom和ram都最好大一点。我的是stc90c516RD+，至于网络模块，当然是选择比较便宜的enc28j60模块，淘宝上有现成的做好的模块，外接5v电源就可以，因为其接入了一个降压模块ams1117。此网络模块对电压要求比较高，我的开发板输出的电压差不多是4.8，4.9v的样子，但连上网络模块之后始终网口不发亮，一测芯片的电压，就差一点达不到3.3v，没办法，只好找了个5v的电源来给其供电。另外我的单片机rom61k,ram1280字节。空间还是挺大的。开发环境用的是keil。至于uip可以移植到多大空间的地方，我也不是很清楚，反正我这个最后还是成功了。<br/>
+<a href="http://dunkels.com/adam/">uip官方网站</a>  <br/>
+<a href="https://github.com/adamdunkels/uip/tags">uip协议下载地址</a><br/>
+我做的是0.9版本的移植。</p>
+
+<h5>移植过程</h5>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kF7mvG4M0Mw000Mp" alt="" />
+主要有四个文件夹如上图，/app,/doc,/uip,/unix,/app下是开发好的一些例程，有telnet，http，smtp等。/doc下是文档说明，非常有用。/uip下是arp，udp，ip，tcp，icmp等的实现。/unix下是主函数网卡驱动，以及配置文件uipopt.h.</p>
+
+<h6>开始移植</h6>
+
+<p>下图是我添加的所有文件<br/>
+我们需要写网络模块的驱动程序，即enc28j60，不过网上已经有了开发好的，我们可以借鉴一下。对于其中的一些函数我们只要能够看懂就好了。 <br/>
+首先需要对主函数进行设置，直接上代码吧</p>
+
+<pre><code>#include "uip.h"
+#include "uip_arp.h"
+#include "enc28j60.h"
+//#include "uart.h"
+//#include "httpd.h"
+//#include "telnet.h"  //注释掉没有用到的头文件
+#include "uipopt.h"
+#include "app.h"
+
+
+#define BUF ((struct uip_eth_hdr *)&amp;uip_buf[0])
+
+u16_t ipaddr[2];
+#ifndef NULL
+#define NULL (void *)0
+#endif /* NULL */
+
+/*-----------------------------------------------------------------------------------*/
+int
+main(void)
+{
+  u8_t i, arptimer;
+
+//  init_uart();  //初始化串口,方便调试
+  /* Initialize the device driver. */ 
+  dev_init();  //初始化enc28j60，实际调用enc28j60_init（）函数
+
+  uip_arp_init();  //初始化arp
+
+  /* Initialize the uIP TCP/IP stack. */
+  uip_init();   //初始化uip协议栈
+
+
+    /*set host MAC addr*/
+    uip_ethaddr.addr[0] = 0x12;
+    uip_ethaddr.addr[1] = 0x34;
+    uip_ethaddr.addr[2] = 0x56;
+    uip_ethaddr.addr[3] = 0x78;
+    uip_ethaddr.addr[4] = 0x90;
+    uip_ethaddr.addr[5] = 0xAB;  //给enc28j60设置mac地址，要求局域网内不要重复,与uipopt文件中的配置参数配合使用。
+
+
+#if UIP_FIXEDADDR == 0
+    /*host ip addr*/
+    uip_ipaddr(ipaddr, 192,168,0,2);
+    uip_sethostaddr(ipaddr);  //设置enc28j60ip地址
+
+    /*netmask addr*/
+    uip_ipaddr(ipaddr, 255,255,255,0);
+    uip_setnetmask(ipaddr); //设置子网掩码
+
+    /*router ip addr*/
+    uip_ipaddr(ipaddr, 192,168,0,1);
+    uip_setdraddr(ipaddr);  //设置网关
+#endif  //同样与uipopt.h文件配合使用
+    //至此在修改一下uipopt文件就可以实现icmp协议了，即设置好ip地址后就能够ping通，此处必须先要成功才能设置后面。设置uipopt文件在后面。
+    example2_init();
+  /* Initialize the HTTP server. */
+ // httpd_init();
+
+  arptimer = 0;  //arp缓存表更新定时器
+
+  while(1) {
+    /* Let the tapdev network device driver read an entire IP packet
+       into the uip_buf. If it must wait for more than 0.5 seconds, it
+       will return with the return value 0. If so, we know that it is
+       time to call upon the uip_periodic(). Otherwise, the tapdev has
+       received an IP packet that is to be processed by uIP. */
+    uip_len = dev_poll(); //查询网卡是否有包收到
+    if(uip_len == 0) {
+      for(i = 0; i &lt; UIP_CONNS; i++) {
+    uip_periodic(i);  //协议栈解析，组包，状态监测
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value &gt; 0. */
+    if(uip_len &gt; 0) {
+      uip_arp_out();  
+      dev_send();   //有包要发送
+        }
+      }
+
+#if UIP_UDP  //此处在宏定义中UIP_UDP为0不会执行
+      for(i = 0; i &lt; UIP_UDP_CONNS; i++) {
+            uip_udp_periodic(i);
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value &gt; 0. */
+    if(uip_len &gt; 0) {
+        uip_arp_out();
+        dev_send();
+        }
+      }
+#endif /* UIP_UDP */
+
+      /* Call the ARP timer function every 10 seconds. */
+      if(++arptimer == 20) {    
+        uip_arp_timer();  //更新arp缓存
+        arptimer = 0;
+      }
+
+    } else {  
+      if(BUF-&gt;type == htons(UIP_ETHTYPE_IP)) {
+    uip_arp_ipin();
+    uip_input();
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value &gt; 0. */
+    if(uip_len &gt; 0) {
+      uip_arp_out();
+      dev_send();
+        }  //处理IP包
+      } else if(BUF-&gt;type == htons(UIP_ETHTYPE_ARP)) {
+    uip_arp_arpin();
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value &gt; 0. */    
+    if(uip_len &gt; 0) {   
+      dev_send();
+        }//处理arp包
+      }
+    }
+
+  }
+  return 0;
+}
+/*-----------------------------------------------------------------------------------*/
+/*void
+uip_log(char *m)
+{
+  printf("uIP log message: %s\n", m);
+}
+*/
+/*-----------------------------------------------------------------------------------*/
+</code></pre>
+
+<p>配置文件如下：</p>
+
+<pre><code>#define UIP_FIXEDADDR    0  //为0时可以像主函数中那样配置ip地址
+
+/**
+ * Ping IP address asignment.
+ *
+ * uIP uses a "ping" packets for setting its own IP address if this
+ * option is set. If so, uIP will start with an empty IP address and
+ * the destination IP address of the first incoming "ping" (ICMP echo)
+ * packet will be used for setting the hosts IP address.
+ *
+ * \note This works only if UIP_FIXEDADDR is 0.
+ *
+ * \hideinitializer
+ */
+#define UIP_PINGADDRCONF 0
+
+#define UIP_IPADDR0     192 /**&lt; The first octet of the IP address of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_IPADDR1     168 /**&lt; The second octet of the IP address of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_IPADDR2     0   /**&lt; The third octet of the IP address of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_IPADDR3     2   /**&lt; The fourth octet of the IP address of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+
+#define UIP_NETMASK0    255 /**&lt; The first octet of the netmask of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_NETMASK1    255 /**&lt; The second octet of the netmask of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_NETMASK2    255 /**&lt; The third octet of the netmask of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_NETMASK3    0   /**&lt; The fourth octet of the netmask of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+
+#define UIP_DRIPADDR0   192 /**&lt; The first octet of the IP address of
+                   the default router, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_DRIPADDR1   168 /**&lt; The second octet of the IP address of
+                   the default router, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_DRIPADDR2   0   /**&lt; The third octet of the IP address of
+                   the default router, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_DRIPADDR3   1   /**&lt; The fourth octet of the IP address of
+                   the default router, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+
+/**
+ * Specifies if the uIP ARP module should be compiled with a fixed
+ * Ethernet MAC address or not.
+ *
+ * If this configuration option is 0, the macro uip_setethaddr() can
+ * be used to specify the Ethernet address at run-time.
+ *
+ * \hideinitializer
+ */
+#define UIP_FIXEDETHADDR 1  //设置mac地址，此处必须和主函数中设置的相同，而且此参数不能为0，原因不知道为什么。
+
+#define UIP_ETHADDR0    0x12  /**&lt; The first octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+#define UIP_ETHADDR1    0x34  /**&lt; The second octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+#define UIP_ETHADDR2    0x56  /**&lt; The third octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+#define UIP_ETHADDR3    0x78  /**&lt; The fourth octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+#define UIP_ETHADDR4    0x90  /**&lt; The fifth octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+#define UIP_ETHADDR5    0xAB  /**&lt; The sixth octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+
+
+/**
+ * The size of the uIP packet buffer.
+ *
+ * The uIP packet buffer should not be smaller than 60 bytes, and does
+ * not need to be larger than 1500 bytes. Lower size results in lower
+ * TCP throughput, larger size results in higher TCP throughput.
+ *
+ * \hideinitializer
+ */
+#define UIP_BUFSIZE     400  //设置包缓存大小，跟ram有关，很重要，错了后网卡初始化陷入死循环。这个值可以多试几次，根据自己的ram大小来确定。
+
+
+
+#ifndef LITTLE_ENDIAN
+#define LITTLE_ENDIAN  3412
+#endif /* LITTLE_ENDIAN */
+#ifndef BIG_ENDIAN
+#define BIG_ENDIAN     1234
+#endif /* BIGE_ENDIAN */
+
+#ifndef BYTE_ORDER
+#define BYTE_ORDER     BIG_ENDIAN
+#endif /* BYTE_ORDER */  //配置大小端，很重要，配置错了，收不到包。
+
+
+#include "app.h"  //调用UIP_APPCALL,其中可以加入自己写的应用，我们开发业主要是实现自己的UIP_APPCALL
+</code></pre>
+
+<p>以上就是配置文件了，对于其他的参数等我们熟练了可以在适当的修改。<br/>
+<a href="">参数配置参考</a><br/>
+对于硬件连接这里就不介绍了。
+文档中的例子</p>
+
+<pre><code>void example2_init(void) {
+    uip_listen(2345);  //监听2345端口
+}
+void example2_app(void) {
+struct  example2_state *s;
+    s = (struct  example2_state *)uip_conn-&gt;appstate;
+    if(uip_connected()) {
+    s-&gt;state = WELCOME_SENT;
+    uip_send("Welcome!\n", 9); //连接成功,发送消息
+return;
+}
+    if(uip_acked() &amp;&amp; s-&gt;state == WELCOME_SENT) {
+        s-&gt;state = WELCOME_ACKED;
+    }
+    if(uip_newdata()) {
+    uip_send("ok1\n", 4);
+    led_on();  //添加自己的应用。可以先取得包中数据的详细信息，在确定自己的应用可以使用uip_appdata指针指向tcp数据的开头。
+//  while(1);
+    led_off();
+    }
+    if(uip_rexmit()) { 
+        switch(s-&gt;state) {
+            case WELCOME_SENT:
+                uip_send("Welcome!\n", 9);
+                break;
+            case WELCOME_ACKED:
+                uip_send("ok2\n", 4);
+                break;
+        }
+    }
+}    
+</code></pre>
+
+<p>现在差不多就搞完了。<br/>
+<a href="http://blog.csdn.net/lxj_com2006/article/details/6928177">参考文章</a><br/>
+<a href="http://v.to/0I6h2">uipopt.h配置文件</a><br/>
+<a href="https://github.com/tuteng/uip">完整代码</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1090,291 +1493,6 @@ imshow(I); %打印图片
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/08/26/hongwaijieshou/">红外接收并解码</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-08-26T19:03:00+08:00" pubdate data-updated="true">Aug 26<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>真囧，红外接收搞了两天，终于给弄好了。有好多天没有记录了，废话少说吧，start<br/>
-在嵌入式领域，结合各种芯片，红外模块可以用来控制各种设备。常用的有我们平时使用的各种遥控器，今天从软件的领域来研究一下红外就收的解码过程。</p>
-
-<h5>电路图如下</h5>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kxIUsFM72zw0005Q" alt="红外一体接收" />
-<img src="http://files.note.sdo.com/xBlh9~kxIVna4M0vU0008Z" alt="实物图" /></p>
-
-<p>以这两张图片来说明今天的代码。从图中看，红外接收模块还是很简单的，就只有三个引脚，但是我们用的是时候只用其中的一个，其他两个都已经给我们固定好了。</p>
-
-<h5>红外遥控系统</h5>
-
-<p>通用红外遥控系统由发射和接收两大部分组成，应用编/解码专用集成电路芯片来进行控制。<br/>
-发射部分包括键盘矩阵、编码调制、LED红外发送器；<br/>
-接收部分包括光、电转换放大器、解调、解码电路。<br/>
-遥控发射器专用芯片很多，根据编码格式可以分成两大类，这里我们以运用比较广泛，解码比较容易的一类来加以说明，现以日本NEC的uPD6121G组成发射电路为例说明编码原理（一般家庭用的DVD、VCD、音响都使用这种编码方式）。当发射器按键按下后，即有遥控码发出，所按的键不同遥控编码也不同。这种遥控码具有以下特征：
-采用脉宽调制的串行码，以脉宽为0.565ms、间隔0.56ms、周期为1.125ms的组合表示二进制的“0”；以脉宽为0.565ms、间隔1.685ms、周期为2.25ms的组合表示二进制的“1”，其波形如图所示。</p>
-
-<p><img src="http://hi.csdn.net/attachment/201107/12/0_1310458705pbeL.gif" alt="" /></p>
-
-<p>如图可见，0与1前端的低电平持续都是0.56ms，那么就是后面的高电平持续时间不同，0为0.56ms，1为1.685ms，找到不同之处，编程时就有识别的依据了！</p>
-
-<p><img src="http://hi.csdn.net/attachment/201107/12/0_1310458680N8mF.gif" alt="" /></p>
-
-<p>UPD6121G产生的遥控编码是连续的32位二进制码组，其中前16位为用户识别码，能区别不同的电器设备，防止不同机种遥控码互相干扰。该芯片的用户识别码固定为十六进制01H；后16位为8位操作码（功能码）及其反码。UPD6121G最多额128种不同组合的编码。<br/>
-当一个键按下超过36ms，振荡器使芯片激活，将发射一组108ms的编码脉冲,这108ms发射代码由一个引导码（9ms）,一个结果码（4.5ms）,低8位地址码（9ms~18ms）,高8位地址码（9ms~18ms）,8位数据码（9ms~18ms）和这8位数据的反码（9ms~18ms）组成。如果键按下超过108ms仍未松开，接下来发射的代码（连发码）将仅由起始码（9ms）和结束码（2.25ms）组成。（实际上人手的动作是很慢的，即使你快速的按下按键，可能对于芯片来说还是超过108ms，所以如何处理连发码是很关键的）<br/>
-遥控器在按键按下后，周期性地发出同一种32位二进制码，周期约为108ms。一组码本身的持续时间随它包含的二进制“0”和“1”的个数不同而不同，大约在45～63ms之间，图为发射波形图。</p>
-
-<p><img src="http://hi.csdn.net/attachment/201107/12/0_13104587170sq6.gif" alt="" /></p>
-
-<p><img src="http://hi.csdn.net/attachment/201107/12/0_13104587243Hms.gif" alt="" /></p>
-
-<h5>代码部分</h5>
-
-<pre><code>void dsjsq0(void) interrupt 1
-{
-    time++;
-}//定时器计数器0中断，全局变量time，用来计数，time每次加1，时间过去255us
-
-void wbzd0(void) interrupt 0
-{
-    static uchar i;
-    static bit flag;
-    if(flag)
-    {
-        if(time&lt;60&amp;&amp;time&gt;=30)  //晶振频率为12MH，当时间经过255*30到255*60之间时，即可进入函数将time存储
-                i=0;
-
-        irdata[i]=time;// 将time存储等待后续将其翻译成二进制，其中irdata[0]存储的是前导码的时间。
-//      write_data(time);//用来测试time是否含有数据 
-        time=0;  //将time归零等待下面的32位数据
-        i++;  
-
-        if(33==i)  //数据存储完毕
-        {
-            irok=1;  //存储完毕标志
-            i=0;
-        }
-    }  
-    else
-    {
-        flag=1;  //进入函数处理的标志
-        time=0;
-    }
-//  write_data(irdata); //测试用
- } //外部中断0，下降沿触发，利用外部中断的最高优先级来讲time存到全局数组中
-
-void wbzd0_init()
-{
-    IT0=1;   //下降沿触发
-    EA=1;    //打开全局中断
-    EX0=1;   //外部中断0中断允许
-//  PX0=1;   //外部中断0中断优先级控制位
-
-
-} //外部中断0初始化
-
-void dsjsq0_init(void)
-{
-    TMOD=0X02;  //工作方式选择位，方式2，8位初值自动重装的8位定时器计数器
-    TH0=0X00;   //装入初值，高8位
-    TL0=0X00;   //低8位
-    ET0=1;      //定时器计数器0中断允许位
-    TR0=1;      //定时器0运行控制位
-}  //定时器计数器0总段初始化
-
-void irchuli(void)
-{
-    uchar i,j,k,timedata,value;
-    k=1;
-        for(i=0;i&lt;4;i++)  
-        {
-            for(j=0;j&lt;8;j++)
-            {   timedata=irdata[k]; //irdata[0]为引导码的时间，所以从irdata[1]开始处理
-                if(timedata&gt;7)  //判断时间，来决定数组中的数据是0还是1
-                    value|=0x80;  //与0x80取或，将转换后0或1的数据存储到value中
-                if(j&lt;7)    //注意此处是j，不是timedata，在这里纠结了好久才发现这个错误
-                    value&gt;&gt;=1;  //通过右移，获得一个字节的数据
-                k++;
-            }  //处理一个字节
-            tempdata[i]=value;  //将单个字节存到数组中
-    //      write_data(tempdata); //测试用
-            value=0;
-        } //32位，4个字节，每个字节8位，
-    irchuliok=1;    
-}  //红外处理部分
-void irzhuan(void)
-{
-    uchar i;
-    tempdata2[0]=table[tempdata[0]/16];  //处理客户码
-    tempdata2[1]=table[tempdata[0]%16];
-    tempdata2[2]='-';
-    tempdata2[3]=table[tempdata[1]/16];  //处理处理客户码
-    tempdata2[4]=table[tempdata[1]%16];
-    tempdata2[5]='-';
-    tempdata2[6]=table[tempdata[2]/16];  //处理数据码
-    tempdata2[7]=table[tempdata[2]%16];
-    tempdata2[8]='-';
-    tempdata2[9]=table[tempdata[3]/16];   //处理数据反码
-    tempdata2[10]=table[tempdata[3]%16];
-    write_com(0xc0+5);
-    for(i=0;i&lt;11;i++)
-    {   
-        write_data(tempdata2[i]);
-        delay(5);
-    }  //利用for循环将解码显示到lcd上
-/*  write_data(tempdata2[0]);
-    write_data(tempdata2[1]);
-    write_data(tempdata2[2]);
-    write_data(tempdata2[3]);
-//  write_data(tempdata2[4]);
-//  write_data(tempdata2[5]);
-*/
-    irchuliok=0;  //红外部分处理完毕标志
-
-}  //4个字节的红外转换部分
-</code></pre>
-
-<p>完整代码请查看<a href="https://github.com/tuteng/hongwaijiema">这里</a>  <br/>
-参考文章<a href="http://blog.csdn.net/mhjerry/article/details/6600414">红外遥控系统原理及单片机软件解码程序，我的编写经历(C版本)</a><br/>
-<a href="http://my.oschina.net/jayzonex/blog/10649">51单片机红外解码程序</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/31/ad/">AD转换并显示在1602上</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-31T10:31:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4>AD转换实现</h4>
-
-<p>pcf8591电路图：
-<img src="http://files.note.sdo.com/xBlh9~kvxTDFM71NI002aE" alt="" /> <br/>
-PCF8591是一个单片集成、单独供电、低功耗、8-bit CMOS数据获取器件。PCF8591具有4个模拟输入、1个模拟输出和1个串行I2C总线接口。PCF8591的3个地址引脚A0, A1和A2可用于硬件地址编程，允许在同个I2C总线上接入8个PCF8591器件，而无需额外的硬件。在PCF8591器件上输入输出的地址、控制和数据信号都是通过双线双向I2C总线以串行的方式进行传输对于iic总线可参考<a href="http://tuteng.github.io/blog/2013/07/31/danpianji/">前一篇文章</a>。这是我的板子上的AD/DA模块，其中j31，j32是通道选择通过跳帽来选择通道，同时只能选择两个通道，w3，w4是两个电位器，这里用来产生模拟量，其中w3来控制第2通道和第3通道，w4用来控制0通道和1通道。对于pcf851的详细描述可参考如下：<a href="http://v.to/0I6RU">pcf8591中文参考手册</a> <br/>
-部分程序代码如下:</p>
-
-<pre><code>void write_data_iic(uchar ch){
-    start();    
-    write_one_data(ADDW);  //首先发送地址，这里ADDW为0x90（10010000），  AD模块的硬件地址，前四位固定不变，  第5位到第七位可编程，但从电路图中可看出，A2，A1，A0全接了地，所以此三位为0，最后一位位读写控制位，写为0，读为1
-    respons();
-    write_one_data(0x40|ch);  //通道选择位，0x40（01000000）只打开了第二位，相当于使能端打开，通过与ch取或来到达选择通道的目的。 
-    respons();
-    end();
-
-}//利用iic总线向通道写入数据
-uchar read_data_iic(uchar ch){
-    uchar num;
-    start();    //iic总线开始
-    write_one_data(ADDW); //读数据前要先进行写操作，目的是写入器件地址以寻找合适的器件，当器件与地址匹配时，器件会发出一个应答信号，这样就可以开始读取数据
-    respons();
-    write_one_data(0x40|ch); //通道选择位，同上
-    respons();
-    start();
-    write_one_data(ADDR); //再次发送设备地址，只是这次最后一位为读命令
-    respons();
-    num=read_one_data();  //读取数据并存入变量num中
-    respons();
-    end();
-    return num;
-}//利用iic总线从总线读取数据
-</code></pre>
-
-<h4>1602液晶模块</h4>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kvxTDpM71NI002aC" alt="" /><br/>
-1602液晶也叫1602字符型液晶，它是一种专门用来显示字母、数字、符号等的点阵型液晶模块,它由若干个5X7或者5X11等点阵字符位组成，每个点阵字符位都可以显示一个字符，每位之间有一个点距的间隔，每行之间也有间隔，起到了字符间距和行间距的作用。管脚功能参看1602数据手册。</p>
-
-<h6>lcd部分程序代码</h6>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kvyY156u0I800042" alt="" /></p>
-
-<pre><code>void write_com(uchar com){
-        lcdrs=0;  //RS引脚，寄存器选择，1：数据寄存器；0：指令寄存器
-        P0=com;
-        lcdrw=0;  //RW引脚，读写操作选择，1：读；0：写
-        delayms(5); //延时函数
-        lcden=1;    //使能信号，高电平有效
-        delayms(5);
-        lcden=0;
-        }    //lcd写命令操作
-void write_data(uchar dat){ //参数同样不可以使用data
-        lcdrs=1;  //数据寄存器
-        P0=dat;     //将数据传到P0口
-        lcdrw=0;  //写操作
-        delayms(5);
-        lcden=1;
-        delayms(5);
-        lcden=0;
-        }  //lcd写数据操作
-</code></pre>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kvy-G9M70Ew000bO" alt="" /></p>
-
-<pre><code>        void init_lcd(){
-            lcden=0;
-            write_com(0x38);
-            write_com(0x0c);
-            write_com(0x06);
-            write_com(0x01);
-            }   //lcd初始化操作
-</code></pre>
-
-<p>将以上各部分代码稍加组合，即可实现所需功能，完整代码在<a href="https://github.com/tuteng/danpianji">这里</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1390,6 +1508,14 @@ void write_data(uchar dat){ //参数同样不可以使用data
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/11/24/arduino/">arduino开发mpu6050</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/11/24/uip/">uip移植</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/11/12/lianwang/">网络连不上</a>
       </li>
     
@@ -1399,14 +1525,6 @@ void write_data(uchar dat){ //参数同样不可以使用data
     
       <li class="post">
         <a href="/blog/2013/10/26/linux-chuankou/">linux串口通信</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/10/21/wendu/">基于linux的温度采集系统</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/09/21/arm/">嵌入式开发程序裸奔之led</a>
       </li>
     
   </ul>

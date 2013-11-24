@@ -4,7 +4,7 @@
   <title><![CDATA[TuTeng'blog]]></title>
   <link href="http://tuteng.github.io/atom.xml" rel="self"/>
   <link href="http://tuteng.github.io/"/>
-  <updated>2013-11-12T23:44:27+08:00</updated>
+  <updated>2013-11-24T19:15:47+08:00</updated>
   <id>http://tuteng.github.io/</id>
   <author>
     <name><![CDATA[图腾]]></name>
@@ -12,6 +12,354 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[arduino开发mpu6050]]></title>
+    <link href="http://tuteng.github.io/blog/2013/11/24/arduino/"/>
+    <updated>2013-11-24T17:17:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2013/11/24/arduino</id>
+    <content type="html"><![CDATA[<p>一直考虑着做个四轴，但都没有时间，只能一点一点的来了，今天下午，先把mpu6050测试好了。还别说，arduino确实是便捷开发，用着很爽。</p>
+
+<h5>start</h5>
+
+<p>开发环境 arduino1.5.2,硬件arduino uno一块，mpu6050一个。
+<a href="http://v.to/0I6h4">库文件</a><br/>
+使用之前要先导入几个库，在文件->参数设置下，设置好自己存放库的位置，在此路径下建立一个libraries的文件夹，将需要的第三方库解压到里面即可，这个文件里我们需要的是arduino下的文件。文件存放形式如下图<br/>
+<img src="http://files.note.sdo.com/xBlh9~kF7u9G4M0Mw000O1" alt="" />
+ 现在可以写测试程序了<br/>
+测试程序参考如下<br/>
+http://www.geek-workshop.com/forum.php?mod=viewthread&amp;tid=2471<br/>
+http://www.cnblogs.com/hangxin1940/archive/2013/04/07/3003254.html<br/>
+http://tonylabs.com/zh/tutorials/arduino-mpu6050-tutorials<br/>
+打开串口可以看到下图：<br/>
+<img src="http://files.note.sdo.com/xBlh9~kF7vsl6u1dE000ZD" alt="" /><br/>
+arduino开发起来还是挺快的</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[uip移植]]></title>
+    <link href="http://tuteng.github.io/blog/2013/11/24/uip/"/>
+    <updated>2013-11-24T17:16:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2013/11/24/uip</id>
+    <content type="html"><![CDATA[<p>最近一周直到昨天都一直在折腾uip，昨天，就是昨天终于结束了，其中的酸甜苦辣啊。<br/>
+至于uip是什么，我就不废话了。我主要来记录一下我的移植过程。最主要的目的是先实现一个最简单的功能，即能够ping通，再实现tcp的连接。</p>
+
+<h5>需要的东西</h5>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kF7mvG4M0Mw000Mn" alt="" /></p>
+
+<p>单片机开发板一块如上图<a href="http://note.sdo.com/u/634916397005493321/n/xBlh9~kF7nvq4M0Mw000Mw">单片机选型</a>，rom和ram都最好大一点。我的是stc90c516RD+，至于网络模块，当然是选择比较便宜的enc28j60模块，淘宝上有现成的做好的模块，外接5v电源就可以，因为其接入了一个降压模块ams1117。此网络模块对电压要求比较高，我的开发板输出的电压差不多是4.8，4.9v的样子，但连上网络模块之后始终网口不发亮，一测芯片的电压，就差一点达不到3.3v，没办法，只好找了个5v的电源来给其供电。另外我的单片机rom61k,ram1280字节。空间还是挺大的。开发环境用的是keil。至于uip可以移植到多大空间的地方，我也不是很清楚，反正我这个最后还是成功了。<br/>
+<a href="http://dunkels.com/adam/">uip官方网站</a>  <br/>
+<a href="https://github.com/adamdunkels/uip/tags">uip协议下载地址</a><br/>
+我做的是0.9版本的移植。</p>
+
+<h5>移植过程</h5>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kF7mvG4M0Mw000Mp" alt="" />
+主要有四个文件夹如上图，/app,/doc,/uip,/unix,/app下是开发好的一些例程，有telnet，http，smtp等。/doc下是文档说明，非常有用。/uip下是arp，udp，ip，tcp，icmp等的实现。/unix下是主函数网卡驱动，以及配置文件uipopt.h.</p>
+
+<h6>开始移植</h6>
+
+<p>下图是我添加的所有文件<br/>
+我们需要写网络模块的驱动程序，即enc28j60，不过网上已经有了开发好的，我们可以借鉴一下。对于其中的一些函数我们只要能够看懂就好了。 <br/>
+首先需要对主函数进行设置，直接上代码吧</p>
+
+<pre><code>#include "uip.h"
+#include "uip_arp.h"
+#include "enc28j60.h"
+//#include "uart.h"
+//#include "httpd.h"
+//#include "telnet.h"  //注释掉没有用到的头文件
+#include "uipopt.h"
+#include "app.h"
+
+
+#define BUF ((struct uip_eth_hdr *)&amp;uip_buf[0])
+
+u16_t ipaddr[2];
+#ifndef NULL
+#define NULL (void *)0
+#endif /* NULL */
+
+/*-----------------------------------------------------------------------------------*/
+int
+main(void)
+{
+  u8_t i, arptimer;
+
+//  init_uart();  //初始化串口,方便调试
+  /* Initialize the device driver. */ 
+  dev_init();  //初始化enc28j60，实际调用enc28j60_init（）函数
+
+  uip_arp_init();  //初始化arp
+
+  /* Initialize the uIP TCP/IP stack. */
+  uip_init();   //初始化uip协议栈
+
+
+    /*set host MAC addr*/
+    uip_ethaddr.addr[0] = 0x12;
+    uip_ethaddr.addr[1] = 0x34;
+    uip_ethaddr.addr[2] = 0x56;
+    uip_ethaddr.addr[3] = 0x78;
+    uip_ethaddr.addr[4] = 0x90;
+    uip_ethaddr.addr[5] = 0xAB;  //给enc28j60设置mac地址，要求局域网内不要重复,与uipopt文件中的配置参数配合使用。
+
+
+#if UIP_FIXEDADDR == 0
+    /*host ip addr*/
+    uip_ipaddr(ipaddr, 192,168,0,2);
+    uip_sethostaddr(ipaddr);  //设置enc28j60ip地址
+
+    /*netmask addr*/
+    uip_ipaddr(ipaddr, 255,255,255,0);
+    uip_setnetmask(ipaddr); //设置子网掩码
+
+    /*router ip addr*/
+    uip_ipaddr(ipaddr, 192,168,0,1);
+    uip_setdraddr(ipaddr);  //设置网关
+#endif  //同样与uipopt.h文件配合使用
+    //至此在修改一下uipopt文件就可以实现icmp协议了，即设置好ip地址后就能够ping通，此处必须先要成功才能设置后面。设置uipopt文件在后面。
+    example2_init();
+  /* Initialize the HTTP server. */
+ // httpd_init();
+
+  arptimer = 0;  //arp缓存表更新定时器
+
+  while(1) {
+    /* Let the tapdev network device driver read an entire IP packet
+       into the uip_buf. If it must wait for more than 0.5 seconds, it
+       will return with the return value 0. If so, we know that it is
+       time to call upon the uip_periodic(). Otherwise, the tapdev has
+       received an IP packet that is to be processed by uIP. */
+    uip_len = dev_poll(); //查询网卡是否有包收到
+    if(uip_len == 0) {
+      for(i = 0; i &lt; UIP_CONNS; i++) {
+    uip_periodic(i);  //协议栈解析，组包，状态监测
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value &gt; 0. */
+    if(uip_len &gt; 0) {
+      uip_arp_out();  
+      dev_send();   //有包要发送
+        }
+      }
+
+#if UIP_UDP  //此处在宏定义中UIP_UDP为0不会执行
+      for(i = 0; i &lt; UIP_UDP_CONNS; i++) {
+            uip_udp_periodic(i);
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value &gt; 0. */
+    if(uip_len &gt; 0) {
+        uip_arp_out();
+        dev_send();
+        }
+      }
+#endif /* UIP_UDP */
+
+      /* Call the ARP timer function every 10 seconds. */
+      if(++arptimer == 20) {    
+        uip_arp_timer();  //更新arp缓存
+        arptimer = 0;
+      }
+
+    } else {  
+      if(BUF-&gt;type == htons(UIP_ETHTYPE_IP)) {
+    uip_arp_ipin();
+    uip_input();
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value &gt; 0. */
+    if(uip_len &gt; 0) {
+      uip_arp_out();
+      dev_send();
+        }  //处理IP包
+      } else if(BUF-&gt;type == htons(UIP_ETHTYPE_ARP)) {
+    uip_arp_arpin();
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value &gt; 0. */    
+    if(uip_len &gt; 0) {   
+      dev_send();
+        }//处理arp包
+      }
+    }
+
+  }
+  return 0;
+}
+/*-----------------------------------------------------------------------------------*/
+/*void
+uip_log(char *m)
+{
+  printf("uIP log message: %s\n", m);
+}
+*/
+/*-----------------------------------------------------------------------------------*/
+</code></pre>
+
+<p>配置文件如下：</p>
+
+<pre><code>#define UIP_FIXEDADDR    0  //为0时可以像主函数中那样配置ip地址
+
+/**
+ * Ping IP address asignment.
+ *
+ * uIP uses a "ping" packets for setting its own IP address if this
+ * option is set. If so, uIP will start with an empty IP address and
+ * the destination IP address of the first incoming "ping" (ICMP echo)
+ * packet will be used for setting the hosts IP address.
+ *
+ * \note This works only if UIP_FIXEDADDR is 0.
+ *
+ * \hideinitializer
+ */
+#define UIP_PINGADDRCONF 0
+
+#define UIP_IPADDR0     192 /**&lt; The first octet of the IP address of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_IPADDR1     168 /**&lt; The second octet of the IP address of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_IPADDR2     0   /**&lt; The third octet of the IP address of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_IPADDR3     2   /**&lt; The fourth octet of the IP address of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+
+#define UIP_NETMASK0    255 /**&lt; The first octet of the netmask of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_NETMASK1    255 /**&lt; The second octet of the netmask of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_NETMASK2    255 /**&lt; The third octet of the netmask of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_NETMASK3    0   /**&lt; The fourth octet of the netmask of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+
+#define UIP_DRIPADDR0   192 /**&lt; The first octet of the IP address of
+                   the default router, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_DRIPADDR1   168 /**&lt; The second octet of the IP address of
+                   the default router, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_DRIPADDR2   0   /**&lt; The third octet of the IP address of
+                   the default router, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_DRIPADDR3   1   /**&lt; The fourth octet of the IP address of
+                   the default router, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+
+/**
+ * Specifies if the uIP ARP module should be compiled with a fixed
+ * Ethernet MAC address or not.
+ *
+ * If this configuration option is 0, the macro uip_setethaddr() can
+ * be used to specify the Ethernet address at run-time.
+ *
+ * \hideinitializer
+ */
+#define UIP_FIXEDETHADDR 1  //设置mac地址，此处必须和主函数中设置的相同，而且此参数不能为0，原因不知道为什么。
+
+#define UIP_ETHADDR0    0x12  /**&lt; The first octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+#define UIP_ETHADDR1    0x34  /**&lt; The second octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+#define UIP_ETHADDR2    0x56  /**&lt; The third octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+#define UIP_ETHADDR3    0x78  /**&lt; The fourth octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+#define UIP_ETHADDR4    0x90  /**&lt; The fifth octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+#define UIP_ETHADDR5    0xAB  /**&lt; The sixth octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+
+
+/**
+ * The size of the uIP packet buffer.
+ *
+ * The uIP packet buffer should not be smaller than 60 bytes, and does
+ * not need to be larger than 1500 bytes. Lower size results in lower
+ * TCP throughput, larger size results in higher TCP throughput.
+ *
+ * \hideinitializer
+ */
+#define UIP_BUFSIZE     400  //设置包缓存大小，跟ram有关，很重要，错了后网卡初始化陷入死循环。这个值可以多试几次，根据自己的ram大小来确定。
+
+
+
+#ifndef LITTLE_ENDIAN
+#define LITTLE_ENDIAN  3412
+#endif /* LITTLE_ENDIAN */
+#ifndef BIG_ENDIAN
+#define BIG_ENDIAN     1234
+#endif /* BIGE_ENDIAN */
+
+#ifndef BYTE_ORDER
+#define BYTE_ORDER     BIG_ENDIAN
+#endif /* BYTE_ORDER */  //配置大小端，很重要，配置错了，收不到包。
+
+
+#include "app.h"  //调用UIP_APPCALL,其中可以加入自己写的应用，我们开发业主要是实现自己的UIP_APPCALL
+</code></pre>
+
+<p>以上就是配置文件了，对于其他的参数等我们熟练了可以在适当的修改。<br/>
+<a href="">参数配置参考</a><br/>
+对于硬件连接这里就不介绍了。
+文档中的例子</p>
+
+<pre><code>void example2_init(void) {
+    uip_listen(2345);  //监听2345端口
+}
+void example2_app(void) {
+struct  example2_state *s;
+    s = (struct  example2_state *)uip_conn-&gt;appstate;
+    if(uip_connected()) {
+    s-&gt;state = WELCOME_SENT;
+    uip_send("Welcome!\n", 9); //连接成功,发送消息
+return;
+}
+    if(uip_acked() &amp;&amp; s-&gt;state == WELCOME_SENT) {
+        s-&gt;state = WELCOME_ACKED;
+    }
+    if(uip_newdata()) {
+    uip_send("ok1\n", 4);
+    led_on();  //添加自己的应用。可以先取得包中数据的详细信息，在确定自己的应用可以使用uip_appdata指针指向tcp数据的开头。
+//  while(1);
+    led_off();
+    }
+    if(uip_rexmit()) { 
+        switch(s-&gt;state) {
+            case WELCOME_SENT:
+                uip_send("Welcome!\n", 9);
+                break;
+            case WELCOME_ACKED:
+                uip_send("ok2\n", 4);
+                break;
+        }
+    }
+}    
+</code></pre>
+
+<p>现在差不多就搞完了。<br/>
+<a href="http://blog.csdn.net/lxj_com2006/article/details/6928177">参考文章</a><br/>
+<a href="http://v.to/0I6h2">uipopt.h配置文件</a><br/>
+<a href="https://github.com/tuteng/uip">完整代码</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[网络连不上]]></title>
@@ -2065,77 +2413,6 @@ Arduino，是一个开源的单片机控制器，它使用了Atmel AVR单片机�
 <p><img src="http://files.note.sdo.com/xBlh9~koEJnR6u0GA005W8" alt="arduino电子器件价格参考" /></p>
 
 <p>最后打算用它做一个智能小车的东西，算是入门吧</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[todu]]></title>
-    <link href="http://tuteng.github.io/blog/2013/05/05/jihua/"/>
-    <updated>2013-05-05T21:18:00+08:00</updated>
-    <id>http://tuteng.github.io/blog/2013/05/05/jihua</id>
-    <content type="html"><![CDATA[<h4>专业基础课</h4>
-
-<p>《信号与系统》第四章，傅里叶变换，采样定理很重要，马上就要学完。<br/>
-《通信电子线路》开始了第六章，中间有个第四章还没有学习，其中第五章正弦波振荡器部分必须认真看几遍，学会画交流通路。参考书籍《高频电子线路》张肃文<br/>
-《数字电路基础》掌握触发器（RS型，jk型，D型，T型）学习第六章时序逻辑电路的分析。</p>
-
-<h4>课余学习</h4>
-
-<p>《深入理解计算机系统》努力看完第三章，继续往下看。<br/>
-《tcp/ip详解》卷一，掌握tcp的传输原理。<br/>
-《c primer plus》尽量快的往下看。</p>
-
-<h4>想搞的东西</h4>
-
-<p>基于51单片机的3d水立方，智能小车。</p>
-
-<h4>新发现的好玩意</h4>
-
-<h6>软件无线电</h6>
-
-<p>gnuradio（致力于硬件开源），据说是很强悍的东东，需要有python和c++基础。</p>
-
-<h4>正在做还没弄完的</h4>
-
-<p>clfs，环境已经搭建好，而且前几步编译也很顺利。将x86刷成openwrt的路由器</p>
-
-<h4>应该掌握的软件</h4>
-
-<p>multisim，altium designer，orcad，会画电路图会对电路图进行分析</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Grub Rescue]]></title>
-    <link href="http://tuteng.github.io/blog/2013/04/30/grubrescue/"/>
-    <updated>2013-04-30T15:45:00+08:00</updated>
-    <id>http://tuteng.github.io/blog/2013/04/30/grubrescue</id>
-    <content type="html"><![CDATA[<p>今天因为折腾点东西系统出了点故障，重启之后，就进入了rescue模式用别人的电脑查了下，顺利解决问题。<br/>
-grub rescue模式下，只有几个命令可以使用 set，ls，prefix，root，insmod <br/>
-用set查看当前prefix和root的配置。 <br/>
-ls列出所有分区，分区格式为（hdx）或者（hdx，msdosx）我们要做的就是找到我们的当前系统的grub在哪。因为以前装过linux没有删除干净，所以要用ls多看几次。命令如下:</p>
-
-<pre><code>ls (hdx)/  
-ls (hdx,msdosx)/  
-</code></pre>
-
-<p>一般如果你的grub2存在的话，下面会跟着很多的文件。找到之后就好办了。<br/>
-注意：ls命令<strong>最后的 / </strong>必须有。<br/>
-对于boot是单独分区的情况，使用如下命令：</p>
-
-<pre><code>set root=(hdx,msdosx)
-set prefix=(hdx,msdosx)/grub
-insmod /grub/normal.mod 
-normal
-</code></pre>
-
-<p>这样便能进入正常的grub了，进入系统之后在更新一下grub：</p>
-
-<pre><code>sudo update-grub
-sudo grub-install /dev/sda
-</code></pre>
-
-<p>最后一定是/deb/sda.</p>
 ]]></content>
   </entry>
   
