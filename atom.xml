@@ -4,7 +4,7 @@
   <title><![CDATA[TuTeng'blog]]></title>
   <link href="http://tuteng.github.io/atom.xml" rel="self"/>
   <link href="http://tuteng.github.io/"/>
-  <updated>2013-11-24T19:17:58+08:00</updated>
+  <updated>2014-01-03T19:54:11+08:00</updated>
   <id>http://tuteng.github.io/</id>
   <author>
     <name><![CDATA[图腾]]></name>
@@ -12,6 +12,33 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[逝去的2013]]></title>
+    <link href="http://tuteng.github.io/blog/2014/01/03/zongjie/"/>
+    <updated>2014-01-03T19:25:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2014/01/03/zongjie</id>
+    <content type="html"><![CDATA[<p>今天考完了最后一科&#8230;&#8230; <br/>
+看看博客，一个多月都没有更新了，中间也折腾过一点东西，但都断断续续，大部分的时间还是给了课后的复习，不知道这样的考试突击到底能够有多大的作用&#8230;&#8230;<br/>
+2013就这样过去了，新的一年已然来临，我是否要停下来思考一下。  <br/>
+在过去的一年有收获也有失去，总之伴随着快乐，也伴随着难过。  <br/>
+因为喜欢，所以去做&#8230;&#8230;</p>
+
+<h6>关于学习</h6>
+
+<p>计算机方面的知识多多少少也了解了一些，感觉这些东西还是蛮有用的，很多东西不仅要知其然，最好也要知其所以然。好书始终是最好的学习方式，一直都很喜欢在图书管里被阳光洒满的地方读书的感觉。我喜欢将自己的想法变成现实的感觉，可能这中间要经历很多，要学很多的东西，但是我在努力。在学习的路上要找到自己的成就感，这样才能坚持下去，才会有动力。新的一年，展望很多，物联网，嵌入式，找到自己喜欢的工作&#8230;&#8230;</p>
+
+<h6>关于生活</h6>
+
+<p>每天按时吃早饭不在是一种苛求，吃了早饭感觉一天的工作都很有精神。但是还有熬夜的恶习，正在慢慢的戒掉。</p>
+
+<h6>关于运动</h6>
+
+<p>每天晚上只要天气不是很差，就会坚持跑步，在跑步中会萌生很多有意思的想法，调代码时的bug有时也会因为跑步后大脑的清醒而有了新的思路，跑步，我会坚持下去的&#8230;&#8230;</p>
+
+<p>昨天晚上给我哥打电话，我哥建议我考研，但是却没有任何的概念（真的没有考虑过），明天就是研究生考试了，在此祝愿所有考生取得佳绩。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[arduino开发mpu6050]]></title>
@@ -2392,28 +2419,6 @@ no_hide:共享NFS目录的子目录</p></blockquote>
 service 服务 stop
 service 服务 restart
 </code></pre>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[arduino]]></title>
-    <link href="http://tuteng.github.io/blog/2013/05/08/arduino/"/>
-    <updated>2013-05-08T18:25:00+08:00</updated>
-    <id>http://tuteng.github.io/blog/2013/05/08/arduino</id>
-    <content type="html"><![CDATA[<p>最近准备入手一个arduino的板子，据说这东东很好玩，趁今天下午没事，先收了一下关于它的资料。下面是维基对于其的介绍：<br/>
-Arduino，是一个开源的单片机控制器，它使用了Atmel AVR单片机，采用了基于开放源代码的软硬件平台，构建于开放源代码 simple I/O 接口版，并且具有使用类似Java，C 语言的Processing/Wiring开发环境。<br/>
-下面是关于它的一些资料：</p>
-
-<p><a href="http://arduino.cc/">arduino官网</a> <br/>
-<a href="http://chaishushan.googlecode.com/svn/doc/arduino/r106/index.html">arduino开发文档</a><br/>
-<a href="http://arduino123.net/">arduino中文网</a><br/>
-<a href="http://www.arduino.tw/">arduino台湾网</a></p>
-
-<p>再来张图片,关于arduino电子器件的，从网上找的，不过没有发现是谁的，在此引用一下</p>
-
-<p><img src="http://files.note.sdo.com/xBlh9~koEJnR6u0GA005W8" alt="arduino电子器件价格参考" /></p>
-
-<p>最后打算用它做一个智能小车的东西，算是入门吧</p>
 ]]></content>
   </entry>
   
