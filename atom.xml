@@ -4,7 +4,7 @@
   <title><![CDATA[TuTeng'blog]]></title>
   <link href="http://tuteng.github.io/atom.xml" rel="self"/>
   <link href="http://tuteng.github.io/"/>
-  <updated>2014-01-03T19:54:11+08:00</updated>
+  <updated>2014-01-12T11:17:28+08:00</updated>
   <id>http://tuteng.github.io/</id>
   <author>
     <name><![CDATA[图腾]]></name>
@@ -12,6 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[小四轴]]></title>
+    <link href="http://tuteng.github.io/blog/2014/01/12/start/"/>
+    <updated>2014-01-12T11:15:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2014/01/12/start</id>
+    <content type="html"><![CDATA[<p>四轴飞行器开始了！！！！！</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[逝去的2013]]></title>
@@ -2251,173 +2260,6 @@ gcc -o hello -O2 hello.c -I../     进行二级优化
 .PHONY:clean
 clean:
         rm hello.s hello.o   #方便使用make clean命令清除不必要的文件
-</code></pre>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[rhel服务搭建]]></title>
-    <link href="http://tuteng.github.io/blog/2013/05/19/rhel/"/>
-    <updated>2013-05-19T19:05:00+08:00</updated>
-    <id>http://tuteng.github.io/blog/2013/05/19/rhel</id>
-    <content type="html"><![CDATA[<p>最近在学习arm，需要搭建一些服务，在此记录一下。</p>
-
-<h2>tftp服务搭建</h2>
-
-<p>首先检查一下，有没有安装：</p>
-
-<pre><code>netstat -a | grep tftp
-</code></pre>
-
-<p>没有安装什么都不会显示，若是安装了就会显示一些关于该服务的信息。没有安装可以从网上下载tftp的rpm包，或者从安装光盘里找到。</p>
-
-<h6>执行安装</h6>
-
-<pre><code>rpm -ivh xxxxx.rpm
-</code></pre>
-
-<p>安装完毕会在根目录下产生一个tftpboot的工作目录，没有的话自己建立。</p>
-
-<h6>配置</h6>
-
-<p>tftp的配置文件在/etc/xinetd.d/tftp,将disable修改成yes，server args中-s指定tftp的工作目录。其他的可以选择默认。</p>
-
-<h6>启动与停止</h6>
-
-<pre><code>/etc/init.d/xinetd start  启动
-/etc/init.d/xinetd stop   停止
-/etc/init.d/xinetd resart 重启
-</code></pre>
-
-<h6>查看服务状态</h6>
-
-<pre><code>service tftp status
-</code></pre>
-
-<h2>nfs服务搭建</h2>
-
-<p>跟上面顺序差不多，在此直接上代码。</p>
-
-<pre><code>netstat -a | grep nfs
-</code></pre>
-
-<p>或者</p>
-
-<pre><code>rpm -qa | grep nfs
-</code></pre>
-
-<p>都可以用来查看nfs是否已经安装</p>
-
-<h6>安装</h6>
-
-<pre><code>rpm -ivh xxxxx.rpm
-</code></pre>
-
-<h6>配置</h6>
-
-<p>配置文件位于/etc/exports文件中，配置规则如下：</p>
-
-<pre><code>共享的目录 主机名称1或IP1（参数1，参数2） 主机名称2或IP2（参数3，参数4）  
-</code></pre>
-
-<blockquote><p>exports中的主要参数：<br/>
-rw:可读写权限<br/>
-ro:只读权限   <br/>
-no_root_squash:对于登陆NFS主机的共享目录用户如果是root的话则对该目录具有root权限。这样做极不安全，建议不用为好！<br/>
-root_squash:对于登陆NFS主机的共享目录用户使用者如果是root则它的权限将被压缩成匿名使用者，同时它的UID和GID都会变成nobody那个系统账号的身份。<br/>
-all_squash:不管登陆NFS主机用户身份如何，它的身份都会被压缩成匿名使用者，通常就是nobody<br/>
-anonuid:anonuid=xxx,制定NFS服务器/etc/passwd中匿名用户的UID<br/>
-anongid:anonuid=xxx,制定NFS服务器/etc/passwd中匿名用户的GID<br/>
-sync:数据在请求时写入共享(使硬盘与内存保持同步）<br/>
-async:NFS在写入数据前可响应请求（数据先暂存于内存中，而不是立即存入硬盘）<br/>
-secure:NFS通过1024以下的安全端口发送<br/>
-insecure:NFS通过1024以上端口发送<br/>
-hide:不共享NFS目录的子目录<br/>
-no_hide:共享NFS目录的子目录</p></blockquote>
-
-<p>我的配置如下：/home 192.168.1.*(rw,sync,no_root_squash)</p>
-
-<h6>启动与停止</h6>
-
-<pre><code>/etc/init.d/nfs start
-/etc/init.d/nfs stop
-/etc/init.d/nfs restart
-</code></pre>
-
-<h6>使用</h6>
-
-<pre><code>mount -t NFS servername：shared_dir /localdir
-</code></pre>
-
-<h2>samba服务搭建</h2>
-
-<p>查看是否安装</p>
-
-<pre><code>rpm -qa | grep samba
-</code></pre>
-
-<h6>安装</h6>
-
-<pre><code>rpm -ivh xxxx.rpm
-</code></pre>
-
-<h6>配置</h6>
-
-<p>配置文件位于/etc/samba/smb.conf修改配置文件，我的配置文件如下</p>
-
-<pre><code>[root]
-        comment = root Directories      #共享说明
-        browseable = yes                #浏览权限
-        writable = yes                  #写权限
-        path = /                        #共享目录
-;       valid users = smb               #共享用户
-[homes]
-        comment = Home Directories
-        browseable = no
-        writable = yes
-;       valid users = %S
-;       valid users = MYDOMAIN\%S
-
-[printers]
-        comment = All Printers
-        path = /var/spool/samba
-        browseable = no
-        guest ok = no
-        writable = no
-        printable = yes
-</code></pre>
-
-<h6>使用</h6>
-
-<p> 增加smb用户</p>
-
-<pre><code>useradd smb
-</code></pre>
-
-<p>设置密码</p>
-
-<pre><code>passwd smb
-</code></pre>
-
-<p>在windows中使用</p>
-
-<pre><code>\\ip地址
-</code></pre>
-
-<h6>启动与停止</h6>
-
-<pre><code>/etc/init.d/smb start
-/etc/init.d/smb stop
-/etc/init.d/smb restart
-</code></pre>
-
-<h2>总</h2>
-
-<p>对于上面的服务，都可以使用下面的方法来启动，停止或者重启</p>
-
-<pre><code>service 服务 start
-service 服务 stop
-service 服务 restart
 </code></pre>
 ]]></content>
   </entry>

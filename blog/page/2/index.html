@@ -9,8 +9,7 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="大三了，大三了，他妈的怎么大三了呢？仿佛昨天才刚刚走进校门，而现在却不得不抓紧为自己的将来更加努力了。
-有人说大三是大学四年中最为重要的时候，经历了大一的懵懂，大二的历练，大三才渐渐的开始成熟，并对自己所学的专业有些自己的认识。大三到底有多重要，其实从我们学的专业课中就已经可以看出来了， &hellip;">
+  <meta name="description" content="据说matlab是个很神奇的工具，这学期又要学数字信号处理，老师也是一再要求要装上软件，熟悉工具。因此，回来之后就先把工具给装上了，可这几天却没怎么用，直到昨天，一同学参加数学建模大赛，问我会不会用matlab给做个题，真是囧啊，亏得同学这么相信咱。今天是星期天，没什么事情，就先用用吧。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -67,6 +66,126 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/09/15/matlab/">Matlab初学</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-15T20:51:00+08:00" pubdate data-updated="true">Sep 15<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>据说matlab是个很神奇的工具，这学期又要学数字信号处理，老师也是一再要求要装上软件，熟悉工具。因此，回来之后就先把工具给装上了，可这几天却没怎么用，直到昨天，一同学参加数学建模大赛，问我会不会用matlab给做个题，真是囧啊，亏得同学这么相信咱。今天是星期天，没什么事情，就先用用吧。顺便做点笔记。</p>
+
+<h5>matlab安装</h5>
+
+<p>和常规win下的软件一样，将软件下载下来，找到setup，双击，一路next，安装完毕。只不过这个东东有点大啊，都快5G了，花了我两个多小时才给搞定。如果下载的是iso的文件还要加载到虚拟光驱。反正不管怎样只要找到setup基本就算成功了，这里我也就不多废话了，网上的教程也是一摞一摞的。</p>
+
+<h5>matlab使用</h5>
+
+<p>同学把题发给了我，具体要求是这样</p>
+
+<blockquote><blockquote><blockquote><pre><code>          B题  碎纸片的拼接复原
+   破碎文件的拼接在司法物证复原、历史文献修复以及军事情报获取等领域都有着重要的应用。传统上，拼接复原工作需由人工完成，准确率较高，但效率很低。特别是当碎片数量巨大，人工拼接很难在短时间内完成任务。随着计算机技术的发展，人们试图开发碎纸片的自动拼接技术，以提高拼接复原效率。请讨论以下问题：
+1. 对于给定的来自同一页印刷文字文件的碎纸机破碎纸片（仅纵切），建立碎纸片拼接复原模型和算法，并针对附件1、附件2给出的中、英文各一页文件的碎片数据进行拼接复原。如果复原过程需要人工干预，请写出干预方式及干预的时间节点。复原结果以图片形式及表格形式表达（见【结果表达格式说明】）。
+2. 对于碎纸机既纵切又横切的情形，请设计碎纸片拼接复原模型和算法，并针对附件3、附件4给出的中、英文各一页文件的碎片数据进行拼接复原。如果复原过程需要人工干预，请写出干预方式及干预的时间节点。复原结果表达要求同上。
+3. 上述所给碎片数据均为单面打印文件，从现实情形出发，还可能有双面打印文件的碎纸片拼接复原问题需要解决。附件5给出的是一页英文印刷文字双面打印文件的碎片数据。请尝试设计相应的碎纸片拼接复原模型与算法，并就附件5的碎片数据给出拼接复原结果，结果表达要求同上。  
+</code></pre></blockquote></blockquote></blockquote>
+
+<p>像咱这种人，这要求当时一看就蒙了。幸亏同学比较耐心，给咱大致说了一下原理。原理基本上是这样的。对于每张图片，基本上都是一个矩阵，这个矩阵大小是1980x72，第一题比较简单都是竖着切的，要求还说是碎纸片，一看就是切好的，那个规整。咱不管了，咱就做题。根据图片的灰度，我们可以得到矩阵的最左边和最右边的灰度值，然后将其累加求和，再用第一张的最右边的值与剩下的18张的最左边的和值作差，一共19张图片，做18次减法在求出其中的最小值，这是即可求出第二张图片，依次循环，最终将所有图片拼接起来。题目关键的是找到第一张图片并人工将其改为001，而且图片不能出现000，因为matlab不好处理。怎么将找到的第一张图片改为001，本人没有找到好的用程序修改的方法，最后只能用人工干预了，囧。</p>
+
+<p>今天慢慢的搞了一天，到下午才基本上把第一问给整出来。下面就贴代码了。</p>
+
+<pre><code>clear;clc;
+Files=dir(fullfile('I:\matlab33\matlab\','*.bmp')); %打开所有图片，注意最后的反斜杠
+LengthFiles=length(Files);
+for i=1:LengthFiles;
+ Img{i}=imread(strcat('I:\matlab33\matlab\',Files(i).name));
+end
+a=(1:19);
+b=(1:19); %定义数组并将其初始化为1到19
+for a1=1:19
+    a2=Img{a1}(:,1);
+    a3(a1)=sum(a2);
+end
+[a4 a5]=max(a3);  %首先找到第一个
+a(1)=a5;         %并将第一份赋值给数组a中的一个元素
+if exist('I:\matlab33\matlab\019.bmp','file')==0  %判断019文件是否存在
+    old_path='I:\matlab33\matlab2\000.bmp';
+    new_path='I:\matlab33\matlab2\019.bmp';
+    movefile(old_path,new_path);   %将000改为019
+end
+
+for i=1:18
+    for j=1:19
+        c=Img{a(i)}(:,end)-Img{j}(:,1);  %计算差值
+         b(j)=sum(c);  %求和 
+    end
+          [l m]=min(b(2:end)); %从第二个开始，到最后一个
+          a(i+1)=m+1;   %将剩余的元素排序     
+end
+ %将图片打印在屏幕上
+ I1=imread(strcat('I:\matlab33\matlab\',Files(a(1)).name));
+ I2=imread(strcat('I:\matlab33\matlab\',Files(a(2)).name));
+ I3=imread(strcat('I:\matlab33\matlab\',Files(a(3)).name));
+ I4=imread(strcat('I:\matlab33\matlab\',Files(a(4)).name));
+ I5=imread(strcat('I:\matlab33\matlab\',Files(a(5)).name));
+ I6=imread(strcat('I:\matlab33\matlab\',Files(a(6)).name));
+ I7=imread(strcat('I:\matlab33\matlab\',Files(a(7)).name));
+ I8=imread(strcat('I:\matlab33\matlab\',Files(a(8)).name));
+ I9=imread(strcat('I:\matlab33\matlab\',Files(a(9)).name));
+ I10=imread(strcat('I:\matlab33\matlab\',Files(a(10)).name));
+ I11=imread(strcat('I:\matlab33\matlab\',Files(a(11)).name));
+ I12=imread(strcat('I:\matlab33\matlab\',Files(a(12)).name));
+ I13=imread(strcat('I:\matlab33\matlab\',Files(a(13)).name));
+ I14=imread(strcat('I:\matlab33\matlab\',Files(a(14)).name));
+ I15=imread(strcat('I:\matlab33\matlab\',Files(a(15)).name));
+ I16=imread(strcat('I:\matlab33\matlab\',Files(a(16)).name));
+ I17=imread(strcat('I:\matlab33\matlab\',Files(a(17)).name));
+ I18=imread(strcat('I:\matlab33\matlab\',Files(a(18)).name));
+ I19=imread(strcat('I:\matlab33\matlab\',Files(a(19)).name));
+
+
+
+I=[I1,I2,I3,I4,I5,I6,I7,I8,I9,I10,I11,I12,I13,I14,I15,I16,I17,I18,I19];
+figure(1);
+imshow(I); %打印图片
+</code></pre>
+
+<h5>程序运行结果</h5>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kzr6QG4M0oI002pz" alt="matlab" /><br/>
+汗，好好的图片让我弄的都快显示不清楚了，因为技术还不到家，就没有在调整大小，最后运行结果时，显示了一个警告，说是尺寸给压缩了。</p>
+
+<h5>总结</h5>
+
+<p>matlab的语法很灵活，使用起来很舒服，用一天的时间基本上都是在百度，google其语法，不得不说，matlab处理图像的能力还是很强悍的，不知道和开源的opencv比起来怎么样，以后有时间在整剩下的题吧。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1394,200 +1513,6 @@ clean:
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/19/rhel/">Rhel服务搭建</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-19T19:05:00+08:00" pubdate data-updated="true">May 19<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>最近在学习arm，需要搭建一些服务，在此记录一下。</p>
-
-<h2>tftp服务搭建</h2>
-
-<p>首先检查一下，有没有安装：</p>
-
-<pre><code>netstat -a | grep tftp
-</code></pre>
-
-<p>没有安装什么都不会显示，若是安装了就会显示一些关于该服务的信息。没有安装可以从网上下载tftp的rpm包，或者从安装光盘里找到。</p>
-
-<h6>执行安装</h6>
-
-<pre><code>rpm -ivh xxxxx.rpm
-</code></pre>
-
-<p>安装完毕会在根目录下产生一个tftpboot的工作目录，没有的话自己建立。</p>
-
-<h6>配置</h6>
-
-<p>tftp的配置文件在/etc/xinetd.d/tftp,将disable修改成yes，server args中-s指定tftp的工作目录。其他的可以选择默认。</p>
-
-<h6>启动与停止</h6>
-
-<pre><code>/etc/init.d/xinetd start  启动
-/etc/init.d/xinetd stop   停止
-/etc/init.d/xinetd resart 重启
-</code></pre>
-
-<h6>查看服务状态</h6>
-
-<pre><code>service tftp status
-</code></pre>
-
-<h2>nfs服务搭建</h2>
-
-<p>跟上面顺序差不多，在此直接上代码。</p>
-
-<pre><code>netstat -a | grep nfs
-</code></pre>
-
-<p>或者</p>
-
-<pre><code>rpm -qa | grep nfs
-</code></pre>
-
-<p>都可以用来查看nfs是否已经安装</p>
-
-<h6>安装</h6>
-
-<pre><code>rpm -ivh xxxxx.rpm
-</code></pre>
-
-<h6>配置</h6>
-
-<p>配置文件位于/etc/exports文件中，配置规则如下：</p>
-
-<pre><code>共享的目录 主机名称1或IP1（参数1，参数2） 主机名称2或IP2（参数3，参数4）  
-</code></pre>
-
-<blockquote><p>exports中的主要参数：<br/>
-rw:可读写权限<br/>
-ro:只读权限   <br/>
-no_root_squash:对于登陆NFS主机的共享目录用户如果是root的话则对该目录具有root权限。这样做极不安全，建议不用为好！<br/>
-root_squash:对于登陆NFS主机的共享目录用户使用者如果是root则它的权限将被压缩成匿名使用者，同时它的UID和GID都会变成nobody那个系统账号的身份。<br/>
-all_squash:不管登陆NFS主机用户身份如何，它的身份都会被压缩成匿名使用者，通常就是nobody<br/>
-anonuid:anonuid=xxx,制定NFS服务器/etc/passwd中匿名用户的UID<br/>
-anongid:anonuid=xxx,制定NFS服务器/etc/passwd中匿名用户的GID<br/>
-sync:数据在请求时写入共享(使硬盘与内存保持同步）<br/>
-async:NFS在写入数据前可响应请求（数据先暂存于内存中，而不是立即存入硬盘）<br/>
-secure:NFS通过1024以下的安全端口发送<br/>
-insecure:NFS通过1024以上端口发送<br/>
-hide:不共享NFS目录的子目录<br/>
-no_hide:共享NFS目录的子目录</p></blockquote>
-
-<p>我的配置如下：/home 192.168.1.*(rw,sync,no_root_squash)</p>
-
-<h6>启动与停止</h6>
-
-<pre><code>/etc/init.d/nfs start
-/etc/init.d/nfs stop
-/etc/init.d/nfs restart
-</code></pre>
-
-<h6>使用</h6>
-
-<pre><code>mount -t NFS servername：shared_dir /localdir
-</code></pre>
-
-<h2>samba服务搭建</h2>
-
-<p>查看是否安装</p>
-
-<pre><code>rpm -qa | grep samba
-</code></pre>
-
-<h6>安装</h6>
-
-<pre><code>rpm -ivh xxxx.rpm
-</code></pre>
-
-<h6>配置</h6>
-
-<p>配置文件位于/etc/samba/smb.conf修改配置文件，我的配置文件如下</p>
-
-<pre><code>[root]
-        comment = root Directories      #共享说明
-        browseable = yes                #浏览权限
-        writable = yes                  #写权限
-        path = /                        #共享目录
-;       valid users = smb               #共享用户
-[homes]
-        comment = Home Directories
-        browseable = no
-        writable = yes
-;       valid users = %S
-;       valid users = MYDOMAIN\%S
-
-[printers]
-        comment = All Printers
-        path = /var/spool/samba
-        browseable = no
-        guest ok = no
-        writable = no
-        printable = yes
-</code></pre>
-
-<h6>使用</h6>
-
-<p> 增加smb用户</p>
-
-<pre><code>useradd smb
-</code></pre>
-
-<p>设置密码</p>
-
-<pre><code>passwd smb
-</code></pre>
-
-<p>在windows中使用</p>
-
-<pre><code>\\ip地址
-</code></pre>
-
-<h6>启动与停止</h6>
-
-<pre><code>/etc/init.d/smb start
-/etc/init.d/smb stop
-/etc/init.d/smb restart
-</code></pre>
-
-<h2>总</h2>
-
-<p>对于上面的服务，都可以使用下面的方法来启动，停止或者重启</p>
-
-<pre><code>service 服务 start
-service 服务 stop
-service 服务 restart
-</code></pre>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1605,6 +1530,10 @@ service 服务 restart
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/01/12/start/">小四轴</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/01/03/zongjie/">逝去的2013</a>
       </li>
     
@@ -1618,10 +1547,6 @@ service 服务 restart
     
       <li class="post">
         <a href="/blog/2013/11/12/lianwang/">网络连不上</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/11/01/xinshi/">小记</a>
       </li>
     
   </ul>
