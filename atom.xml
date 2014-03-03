@@ -4,7 +4,7 @@
   <title><![CDATA[TuTeng'blog]]></title>
   <link href="http://tuteng.github.io/atom.xml" rel="self"/>
   <link href="http://tuteng.github.io/"/>
-  <updated>2014-01-12T11:17:28+08:00</updated>
+  <updated>2014-03-03T17:07:14+08:00</updated>
   <id>http://tuteng.github.io/</id>
   <author>
     <name><![CDATA[图腾]]></name>
@@ -12,6 +12,18 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[开学头一天]]></title>
+    <link href="http://tuteng.github.io/blog/2014/03/03/hello/"/>
+    <updated>2014-03-03T16:53:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2014/03/03/hello</id>
+    <content type="html"><![CDATA[<p>转眼之间就开学了，昨天匆匆忙忙的回到学校，路上还好晕车不大严重。<br/>
+这个寒假应该是最长的一个寒假了，回校的当天刚好是二月二龙抬头的日子。这个假期没有写多少文章，倒不是因为自己懒（又在为自己找理由）。假期里也折腾了不少东西，每天都能感到自己在变化，但是每每提笔写东西的时候，就会发现自己这写作水平差的太远，心里想的挺好就是不知道如何合理的通过文字描述出来，自己以前写的一些东西，现在看看只是在记流水账罢了。更为关键的一点是，学长推荐了一个firefox的插件scrapbook，能直接把别人的好的文章保存到本地，当然我们也可以同步到网盘，随时随地的使用，看看自己写的，在看看别人的，最后还是选择了别人的。用着这个插件也有一段时间了，感觉还是挺方便的。  <br/>
+但是博客还是不要荒废的好，今后就用它记录记录生活，作作计划。以鞭策自己不断进取。  <br/>
+生活就是这样，不断变化，不断前进&#8230;&#8230;..</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[小四轴]]></title>
@@ -2184,83 +2196,6 @@ nameserver xxx.xxx.xxx.xxx #根据自己的实际情况制定
 <h6>总结</h6>
 
 <p>学习硬件动手很重要，有的东西如果明白了原理在动手实验的话，往往会达到事半功倍的效果。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[gcc和makefile]]></title>
-    <link href="http://tuteng.github.io/blog/2013/05/24/gcc/"/>
-    <updated>2013-05-24T21:41:00+08:00</updated>
-    <id>http://tuteng.github.io/blog/2013/05/24/gcc</id>
-    <content type="html"><![CDATA[<h3>gcc常用命令</h3>
-
-<blockquote><p>-E 仅作预处理，不进行编译，汇编和链接<br/>
--S 编译到汇编语言，不进行链接<br/>
--c 编译，汇编到目标代码，不进行链接<br/>
--o 输出到文件。
--g 对代码进行调试，加上此选项<br/>
--O1 进行一级优化<br/>
--O2 进行二级优化<br/>
--static 对代码进行静态链接<br/>
--Wall 打印出所有警告<br/>
--Werror 打印出所有错误<br/>
- -I /home/hello/include表示将/home/hello/include目录作为第一个寻找头文件的目录，寻找的顺序是：/home/hello/include&#8211;>/usr/include&#8211;>/usr/local/include<br/>
--L /home/hello/lib表示将/home/hello/lib目录作为第一个寻找库文件的目录，寻找的顺序是：/home/hello/lib&#8211;>/lib&#8211;>/usr/lib&#8211;>/usr/local/lib<br/>
- -lworld表示在上面的lib的路径中寻找libworld.so动态库文件（如果gcc编译选项中加入了“-static”表示寻找libworld.a静态库文件）</p></blockquote>
-
-<p>hello文件</p>
-
-<pre><code>#include"a.h"
-int main()
-{
-            print();
-}
-</code></pre>
-
-<p>a.h文件在上一层目录中，即../中</p>
-
-<pre><code>#include&lt;stdlib.h&gt;
-#include&lt;stdio.h&gt;
-void print(){
-            printf("hello world\n");
-}
-</code></pre>
-
-<h6>gcc命令使用</h6>
-
-<pre><code>gcc -E hello.c -o hello.i -I../    对源文件进行预处理，-I指定第一个寻找头文件的目录
-gcc -S hello.i -o hello.s          将预处理文件编译到汇编代码
-gcc -c hello.s -o hello.o          将汇编代码编译到目标文件
-gcc hello.o -o hello               对目标文件进行链接
-</code></pre>
-
-<h6>优化</h6>
-
-<pre><code>gcc -o hello -O1 hello.c -I../     进行一级优化
-gcc -o hello -O2 hello.c -I../     进行二级优化
-</code></pre>
-
-<h3>makefile简单使用</h3>
-
-<p>将上面的命令进行总结并写入到一个文件，并将此文件命名为makefile</p>
-
-<h6>语法</h6>
-
-<pre><code>target ... : prerequisites ...
-             command
-</code></pre>
-
-<p>上面程序的makefile语法</p>
-
-<pre><code>hello.o:hello.c
-        gcc -E hello.c -o hello.i -I../ 
-        gcc -S hello.i -o hello.s
-        gcc -c hello.s -o hello.o
-        gcc hello.o -o hello
-.PHONY:clean
-clean:
-        rm hello.s hello.o   #方便使用make clean命令清除不必要的文件
-</code></pre>
 ]]></content>
   </entry>
   
