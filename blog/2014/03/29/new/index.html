@@ -5,12 +5,16 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>小四轴 - TuTeng'blog</title>
+  <title>二分查找 - TuTeng'blog</title>
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="四轴飞行器开始了！！！！！
-">
+  <meta name="description" content="#include &lt;iostream&gt;
+using namespace std;
+int search(int arr[],int k,int n);
+int main()
+{ int arr[15]={0,1,2,2,2,2,3,3,3,4,5,6,7,8,9};
+int a= &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +23,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tuteng.github.io/blog/2014/01/12/start">
+  <link rel="canonical" href="http://tuteng.github.io/blog/2014/03/29/new">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
@@ -70,7 +74,7 @@
   
   <header>
     
-      <h1 class="entry-title">小四轴</h1>
+      <h1 class="entry-title">二分查找</h1>
     
     
       <p class="meta">
@@ -86,14 +90,56 @@
   
 
 
-<time datetime="2014-01-12T11:15:00+08:00" pubdate data-updated="true">Jan 12<span>th</span>, 2014</time>
+<time datetime="2014-03-29T09:47:00+08:00" pubdate data-updated="true">Mar 29<span>th</span>, 2014</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>四轴飞行器开始了！！！！！</p>
+<div class="entry-content"><pre><code>#include &lt;iostream&gt;
+using namespace std;
+int search(int arr[],int k,int n);
+int main()
+{
+
+int arr[15]={0,1,2,2,2,2,3,3,3,4,5,6,7,8,9};
+int a=search(arr,2,15);
+if(a==-1)
+    cout&lt;&lt;"出错 "&lt;&lt;endl;
+else 
+    cout&lt;&lt;"数组下标："&lt;&lt;a&lt;&lt;endl;
+return 0;
+}
+
+int search(int arr[],int k,int n)
+{
+    int start,end,mid;
+    start=0;
+    end=n-1;
+    while(start&lt;=end)   //判断条件
+    {
+        mid=(start+end)/2;  //取中间值
+        if(k==arr[mid])
+        {
+            while(k==arr[mid])
+            {
+                mid++;
+            }
+    /*
+        加上while可以获取最右边的第一个出现的索引，不加while为最左边第一次出现的索引
+    */
+            return mid-1;
+        }
+        else if(k&lt;arr[mid])  //继续往左查找
+            end=mid-1;
+        else
+            start=mid+1;  //往右查找
+
+    }
+return -1;
+}
+</code></pre>
 </div>
 
 
@@ -116,7 +162,7 @@
   
 
 
-<time datetime="2014-01-12T11:15:00+08:00" pubdate data-updated="true">Jan 12<span>th</span>, 2014</time>
+<time datetime="2014-03-29T09:47:00+08:00" pubdate data-updated="true">Mar 29<span>th</span>, 2014</time>
       
 
 
@@ -124,7 +170,7 @@
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2014/01/12/start/" data-via="" data-counturl="http://tuteng.github.io/blog/2014/01/12/start/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2014/03/29/new/" data-via="" data-counturl="http://tuteng.github.io/blog/2014/03/29/new/" >Tweet</a>
   
   
   
@@ -133,10 +179,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2014/01/03/zongjie/" title="Previous Post: 逝去的2013">&laquo; 逝去的2013</a>
+        <a class="basic-alignment left" href="/blog/2014/03/27/dmp/" title="Previous Post: 数字图像处理">&laquo; 数字图像处理</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2014/03/03/hello/" title="Next Post: 开学头一天">开学头一天 &raquo;</a>
       
     </p>
   </footer>
