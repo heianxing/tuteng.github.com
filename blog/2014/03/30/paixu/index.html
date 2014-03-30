@@ -5,20 +5,14 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>gcc和makefile - TuTeng'blog</title>
+  <title>插入排序 - TuTeng'blog</title>
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="gcc常用命令 -E 仅作预处理，不进行编译，汇编和链接
--S 编译到汇编语言，不进行链接
--c 编译，汇编到目标代码，不进行链接
--o 输出到文件。
--g 对代码进行调试，加上此选项
--O1 进行一级优化
--O2 进行二级优化
--static 对代码进行静态链接
--Wall 打印出所有警告
-- &hellip;">
+  <meta name="description" content="#include &lt;iostream&gt;
+using namespace std;
+//参数为数组和其大小
+void insert(int *data,int n) { int target; for(int i=1; i&lt;n; i++) { int j = i; target &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -27,7 +21,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tuteng.github.io/blog/2013/05/24/gcc">
+  <link rel="canonical" href="http://tuteng.github.io/blog/2014/03/30/paixu">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
@@ -78,7 +72,7 @@
   
   <header>
     
-      <h1 class="entry-title">Gcc和makefile</h1>
+      <h1 class="entry-title">插入排序</h1>
     
     
       <p class="meta">
@@ -94,81 +88,48 @@
   
 
 
-<time datetime="2013-05-24T21:41:00+08:00" pubdate data-updated="true">May 24<span>th</span>, 2013</time>
+<time datetime="2014-03-30T20:19:00+08:00" pubdate data-updated="true">Mar 30<span>th</span>, 2014</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><h3>gcc常用命令</h3>
-
-<blockquote><p>-E 仅作预处理，不进行编译，汇编和链接<br/>
--S 编译到汇编语言，不进行链接<br/>
--c 编译，汇编到目标代码，不进行链接<br/>
--o 输出到文件。
--g 对代码进行调试，加上此选项<br/>
--O1 进行一级优化<br/>
--O2 进行二级优化<br/>
--static 对代码进行静态链接<br/>
--Wall 打印出所有警告<br/>
--Werror 打印出所有错误<br/>
- -I /home/hello/include表示将/home/hello/include目录作为第一个寻找头文件的目录，寻找的顺序是：/home/hello/include&#8211;>/usr/include&#8211;>/usr/local/include<br/>
--L /home/hello/lib表示将/home/hello/lib目录作为第一个寻找库文件的目录，寻找的顺序是：/home/hello/lib&#8211;>/lib&#8211;>/usr/lib&#8211;>/usr/local/lib<br/>
- -lworld表示在上面的lib的路径中寻找libworld.so动态库文件（如果gcc编译选项中加入了“-static”表示寻找libworld.a静态库文件）</p></blockquote>
-
-<p>hello文件</p>
-
-<pre><code>#include"a.h"
-int main()
+<div class="entry-content"><pre><code>#include &lt;iostream&gt;
+using namespace std;
+//参数为数组和其大小
+void insert(int *data,int n)  
 {
-            print();
+    int target;
+    for(int i=1; i&lt;n; i++) 
+    {
+        int j = i;
+        target = data[i]; //将要排序的元素
+        while(j &gt; 0 &amp;&amp; target &lt; data[j-1])  //排序的条件，j大于0，并且将要排序的元素要找到从左边起第一个大于它的元素，放在这个元素的左边，
+        {
+            data[j] = data[j-1];
+            j--;
+            //后边的元素整体后移一个
+        }
+        data[j] = target;
+    }
+    for(int i = 0;i &lt; n; i++)
+        cout &lt;&lt; data[i] &lt;&lt;",";
 }
-</code></pre>
 
-<p>a.h文件在上一层目录中，即../中</p>
+void main()
+{
+    int data[]={6,4,2,3,1,7,9};
+    int n=7;
+    cout &lt;&lt; "排序前：";
+    for(int i = 0;i &lt; 7; i++)
+        cout &lt;&lt; data[i] &lt;&lt;  ",";
 
-<pre><code>#include&lt;stdlib.h&gt;
-#include&lt;stdio.h&gt;
-void print(){
-            printf("hello world\n");
+    cout &lt;&lt; "排序后：";
+    insert(data,n);
+    cout &lt;&lt; endl;
 }
-</code></pre>
-
-<h6>gcc命令使用</h6>
-
-<pre><code>gcc -E hello.c -o hello.i -I../    对源文件进行预处理，-I指定第一个寻找头文件的目录
-gcc -S hello.i -o hello.s          将预处理文件编译到汇编代码
-gcc -c hello.s -o hello.o          将汇编代码编译到目标文件
-gcc hello.o -o hello               对目标文件进行链接
-</code></pre>
-
-<h6>优化</h6>
-
-<pre><code>gcc -o hello -O1 hello.c -I../     进行一级优化
-gcc -o hello -O2 hello.c -I../     进行二级优化
-</code></pre>
-
-<h3>makefile简单使用</h3>
-
-<p>将上面的命令进行总结并写入到一个文件，并将此文件命名为makefile</p>
-
-<h6>语法</h6>
-
-<pre><code>target ... : prerequisites ...
-             command
-</code></pre>
-
-<p>上面程序的makefile语法</p>
-
-<pre><code>hello.o:hello.c
-        gcc -E hello.c -o hello.i -I../ 
-        gcc -S hello.i -o hello.s
-        gcc -c hello.s -o hello.o
-        gcc hello.o -o hello
-.PHONY:clean
-clean:
-        rm hello.s hello.o   #方便使用make clean命令清除不必要的文件
+//平均时间复杂度O(n2)
 </code></pre>
 </div>
 
@@ -192,7 +153,7 @@ clean:
   
 
 
-<time datetime="2013-05-24T21:41:00+08:00" pubdate data-updated="true">May 24<span>th</span>, 2013</time>
+<time datetime="2014-03-30T20:19:00+08:00" pubdate data-updated="true">Mar 30<span>th</span>, 2014</time>
       
 
 
@@ -200,7 +161,7 @@ clean:
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2013/05/24/gcc/" data-via="" data-counturl="http://tuteng.github.io/blog/2013/05/24/gcc/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2014/03/30/paixu/" data-via="" data-counturl="http://tuteng.github.io/blog/2014/03/30/paixu/" >Tweet</a>
   
   
   
@@ -209,10 +170,8 @@ clean:
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/05/19/rhel/" title="Previous Post: rhel服务搭建">&laquo; rhel服务搭建</a>
+        <a class="basic-alignment left" href="/blog/2014/03/29/new/" title="Previous Post: 二分查找">&laquo; 二分查找</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/06/06/yingjian/" title="Next Post: 纯硬件打造数字秒表">纯硬件打造数字秒表 &raquo;</a>
       
     </p>
   </footer>

@@ -9,11 +9,9 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="A A, Asub A-interface A接口
-AC Alternating Current 交流
-AC Access Class (C0 to C15) 接入级别（C0到C15）
-ACCH Associated Control Channel 随路控制信道
-ACELP Algebraic &hellip;">
+  <meta name="description" content="使用octopress有一段时间了，可是还是不怎么熟练，这不今天又遇到了问题，害的我中午饭都没吃好，不过最终还是把问题给解决了。在此记录一下octopress的使用方法。 用rake管理 rake install 安装默认主题
+rake install['主题名字']安装自己喜欢的主题
+rake &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -70,6 +68,55 @@ ACELP Algebraic &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/22/github/">Github博客操作</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-22T16:12:00+08:00" pubdate data-updated="true">Jul 22<span>nd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>使用octopress有一段时间了，可是还是不怎么熟练，这不今天又遇到了问题，害的我中午饭都没吃好，不过最终还是把问题给解决了。在此记录一下octopress的使用方法。</p>
+
+<h5>用rake管理</h5>
+
+<pre><code>rake install  安装默认主题
+rake install['主题名字']安装自己喜欢的主题
+rake gennerate 每次做了改变都提交一次
+rake preview  生成本地预览，可以在4000端口查看
+rake new_post['帖子名字'] 生成新的帖子，可以用markdown编辑
+rake new_page['about'] 生成一个新的页面，但生成之后还不能立即使用，需要修改/source/_includes/custom/navigation.html这个文件，按照相同的格式来编辑。
+rake deploy 将你的博客提交到服务器
+</code></pre>
+
+<p>先记录这些，有空在补充</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1298,43 +1345,9 @@ sudo grub-install /dev/sda
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/27/hello-world/">Hello World</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-27T15:45:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>今天心情很好，体验一下octopress</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="/blog/page/4/">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -1347,6 +1360,10 @@ sudo grub-install /dev/sda
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/03/30/paixu/">插入排序</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2014/03/29/new/">二分查找</a>
@@ -1362,10 +1379,6 @@ sudo grub-install /dev/sda
     
       <li class="post">
         <a href="/blog/2014/03/03/hello/">开学头一天</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/01/12/start/">小四轴</a>
       </li>
     
   </ul>
