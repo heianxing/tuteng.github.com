@@ -9,9 +9,7 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="使用octopress有一段时间了，可是还是不怎么熟练，这不今天又遇到了问题，害的我中午饭都没吃好，不过最终还是把问题给解决了。在此记录一下octopress的使用方法。 用rake管理 rake install 安装默认主题
-rake install['主题名字']安装自己喜欢的主题
-rake &hellip;">
+  <meta name="description" content="iic总线实现 iic总线只需要两个接口就可以实现，因此是十分节省资源的。iic总线的实现分为下面几个步骤：开始，结束，应答，接收一个字节，写一个字节，通过这几个调用模块可以实现接收数据，发送数据。在51开发板上，用于串口通信的接口主要是P2.0和P2.1接口，连线可以说是非常的简单。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +66,136 @@ rake &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/31/danpianji/">Iic总线</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-31T09:11:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4>iic总线实现</h4>
+
+<p>iic总线只需要两个接口就可以实现，因此是十分节省资源的。iic总线的实现分为下面几个步骤：开始，结束，应答，接收一个字节，写一个字节，通过这几个调用模块可以实现接收数据，发送数据。在51开发板上，用于串口通信的接口主要是P2.0和P2.1接口，连线可以说是非常的简单。 <br/>
+在iic总线通信期间，只有SCL为高电平时，数据的发送才是有效的，因此若不想使用，可以暂时将其拉低</p>
+
+<pre><code>    //SDA和SCL分别代表iic总线的数据线和时钟线
+void delay(){
+        _nop_();
+        _nop_();
+        _nop_();
+        _nop_();
+        _nop_();
+        _nop_();
+    }       //延时函数，么个_nop_()大约为1us，为了接收稳定信号，当SCL和SDA变化时都要延时至少4.5us            
+
+void init_iic(){
+        SCL=1;
+        delay();
+        SDA=1;
+        delay();
+
+    }   //iic总线初始化，将SCL和SDA线拉高
+</code></pre>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kvy1tFM71NI002fA" alt="" /></p>
+
+<pre><code>    void start(){
+            SDA=1;
+            delay();
+            SCL=1;
+            delay();
+            SDA=0;
+            delay();
+    }     //iic总线启动信号，在时钟信号为高的情况下，SDA由高电平拉为低电平
+    void end(){
+            SDA=0;
+            delay();
+            SCL=1;
+            delay();
+            SDA=1;
+            delay();
+    }       //iic总线结束信号，在时钟信号为低电平时，SDA由低电平拉为高电平  
+</code></pre>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kvy1FW4M2Vw002ej" alt="" /></p>
+
+<pre><code>    void respons(){
+            unsigned char i;
+            SCL=1;
+            delay();
+            while((SDA==1)&amp;&amp;(i&lt;255))  
+                i++; //若SDA一直为高，则在此处循环255次，防止从机始终不应答，陷入死循环
+            SCL=0;
+            delay();
+        }       //应答信号，时钟信号为高时，SDA被从机自动从高电平拉为低电平  
+</code></pre>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kvy1tFM71NI002fy" alt="" /></p>
+
+<pre><code>    void write_one_data(unsigned char dat){  //此处参数不能为data，这个在头文件中已被定义
+            unsigned char i,temp;
+            temp=dat;
+            for(i=0;i&lt;8;i++){ 
+                temp=temp&lt;&lt;1;//数据左移一位，最高位溢出被存在CY中，次高位变为最高位
+                SCL=0;
+                delay();
+                SDA=CY;  //将数据暂存到数据线上，准备发送
+                delay();
+                SCL=1;  //将时钟线拉高，数据开始发送
+                delay();
+            }//发送一个字节（8位）的数据，CY（PSW.7）：即PSW的D7位，进位、借位标志，在头文件reg52.h中有定义
+            SCL=0;
+            delay();
+            SDA=1;
+            delay();
+        }
+    unsigned int read_one_data(){
+
+            unsigned char i,k=0;
+            SCL=0;
+            delay();
+            SDA=1;
+            for(i=0;i&lt;8;i++)
+            {
+                SCL=1;
+                delay();
+                k=(k&lt;&lt;1)|SDA;   //将k左移一位后与数据线取或，即可得到传输的数据，发送数据时从最高位开始，接收时数据在最低位，在经左移和循环恢复原来的数据
+                SCL=0;
+                delay();
+            }   //读一个字节的数据
+            delay();
+            return k; //返回一个字节的数据
+
+        }
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1298,53 +1426,6 @@ sudo grub-install /dev/sda
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/27/multisim/">Multisim</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-27T21:45:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>对于myltisim这个软件，在上学期已经接触过，但是却从来没有使用过，上课的时候也是在看老师给我们演示。前几天确从模电老师那里了解了eda的真正含义，以及这个软件的真正强大之处。于是决定回来折腾一下，当然，对于通信专业的学生来说，电路的分析是必须要掌握的，因此这个软件更得好好的折腾折腾。<br/>
-要使用软件，首先就是得安装。于是先找度娘问了下，真是有些扫兴，上边最先出现的不是它们的官网，而是这破解，那绿色。果断放弃，进了google。google确实不错。进入之后，前三条就是我想要的信息。multisim的<a href="http://www.ni.com/multisim/zhs/">官网</a>，而且我还发现了更令人兴奋的事情，那就是下边的<strong>针对教育</strong>，<strong>针对学生</strong>。感觉这个软件厂家想的还真是周到。点击<strong>获取学生版</strong>随便注册了一下，真是有点小激动，正版软件就要用上了。而且功能看它的介绍也是蛮强悍的，对我这学生来说也是错错有余了。而且人家还为我们想到了语言不通的问题，提供了汉化包。<br/>
-接下来，我就开始下载了，但是事有不顺哪，500多兆的软件每秒那个几十KB，这得下到哪年啊，果断放弃了这种直接下载的方法，那软件还是得装哪。仔细想了想，我要是能够得到下载的地址就好了，直接用叫什么雷的玩意下载不就好了。就是这样吗。本来想用抓包工具直接看看数据包从哪来的呢。但windows下却没有现成的软件。于是就抱着试试看的态度，从下载下来的软件包入手。我一共下载了两个包，一个汉化包，一个下载器（就是从网络安装）。从汉化包的<a href="ftp://ftp.ni.com/pub/branches/china/Multisim_topic.zip">位置</a>可以看出这是一个ftp站点啊，果断后退了几层，发现了大量的资源。<a href="ftp://ftp.ni.com/">ftp站点</a>截图如下：</p>
-
-<p><img src="http://files.note.sdo.com/xBlh9~knOeT9nM2Gw001nj" alt="" /></p>
-
-<p>但是还是没有multisim这个东东。只好从下载器入手了，下面是ni下载器的图片：<br/>
-<img src="http://files.note.sdo.com/xBlh9~knOeVFnM2Gw001nX" alt="" /></p>
-
-<p>软件不是很大，但是速度太慢了，从获取<a href="http://download.ni.com/evaluation/labview/ekit/other/downloader/NI_Circuit_Design_Suite_12_0_Education_downloader.exe">下载器的位置</a>，可看出跟刚才那个汉化包，完全不在一块。从下载器的图片可以看出，我们需要的就在这，而且大小都是594M。但是向上几层就会发现有很多更有用的 <a href="http://download.ni.com/evaluation/labview/ekit/other/downloader/">资源</a> 这儿不仅有我们需要的multisim，还有很多其他有用的东东。这些留着以后用的着的时候在来取，先把用到的取下来。最后上个图，全是资源啊。</p>
-
-<p><img src="http://files.note.sdo.com/xBlh9~knOeVVnM2Gw001n-" alt="" /></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -1362,6 +1443,10 @@ sudo grub-install /dev/sda
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/03/31/lvbo/">均值滤波</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/03/30/paixu/">插入排序</a>
       </li>
     
@@ -1375,10 +1460,6 @@ sudo grub-install /dev/sda
     
       <li class="post">
         <a href="/blog/2014/03/16/start/">告一段落</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/03/03/hello/">开学头一天</a>
       </li>
     
   </ul>
