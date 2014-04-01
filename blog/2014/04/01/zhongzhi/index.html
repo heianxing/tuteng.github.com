@@ -5,16 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>二分查找 - TuTeng'blog</title>
+  <title>基于灰度最小方差的均值滤波 - TuTeng'blog</title>
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="#include &lt;iostream&gt;
-using namespace std;
-int search(int arr[],int k,int n);
-int main()
-{ int arr[15]={0,1,2,2,2,2,3,3,3,4,5,6,7,8,9};
-int a= &hellip;">
+  <meta name="description" content="function var = variance(a,x,y) %x=i; %y=j; %屋型模板 mu = zeros(1,9); muban1=[a(x,y),a(x-1,y-2),a(x-1,y-1),a(x,y-2),a(x,y-1),a(x+1,y-2),a(x+1,y-1)]; mu(1 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -23,7 +18,7 @@ int a= &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tuteng.github.io/blog/2014/03/29/new">
+  <link rel="canonical" href="http://tuteng.github.io/blog/2014/04/01/zhongzhi">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
@@ -74,7 +69,7 @@ int a= &hellip;">
   
   <header>
     
-      <h1 class="entry-title">二分查找</h1>
+      <h1 class="entry-title">基于灰度最小方差的均值滤波</h1>
     
     
       <p class="meta">
@@ -90,55 +85,41 @@ int a= &hellip;">
   
 
 
-<time datetime="2014-03-29T09:47:00+08:00" pubdate data-updated="true">Mar 29<span>th</span>, 2014</time>
+<time datetime="2014-04-01T18:48:00+08:00" pubdate data-updated="true">Apr 1<span>st</span>, 2014</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><pre><code>#include &lt;iostream&gt;
-using namespace std;
-int search(int arr[],int k,int n);
-int main()
-{
+<div class="entry-content"><pre><code>function var = variance(a,x,y)
+    %x=i;
+    %y=j;
+    %屋型模板
+    mu = zeros(1,9);
+    muban1=[a(x,y),a(x-1,y-2),a(x-1,y-1),a(x,y-2),a(x,y-1),a(x+1,y-2),a(x+1,y-1)];
+    mu(1)=mean(muban1);
+    muban2=[a(x,y),a(x-2,y-1),a(x-2,y),a(x-2,y+1),a(x-1,y-1),a(x-1,y),a(x-1,y+1)];
+    mu(2)=mean(muban2);
+    muban3=[a(x,y),a(x-1,y+1),a(x-1,y+2),a(x,y+1),a(x,y+2),a(x+1,y+1),a(x+1,y+2)];
+    mu(3)=mean(muban3);
+    muban4=[a(x,y),a(x+1,y-1),a(x+1,y),a(x+1,y+1),a(x+2,y-1),a(x+2,y),a(x+2,y+1)];
+    mu(4)=mean(muban4);
+    %六边形模板
+    muban5=[a(x,y),a(x-2,y-2),a(x-1,y-2),a(x-2,y-1),a(x-1,y-1),a(x-1,y),a(x,y-1)];
+    mu(5)=mean(muban5);
+    muban6=[a(x,y),a(x,y-1),a(x+1,y-1),a(x+1,y-1),a(x+1,y),a(x+2,y-2),a(x+2,y-1)];
+    mu(6)=mean(muban6);
+    muban7=[a(x,y),a(x,y+1),a(x-1,y),a(x-1,y+1),a(x-1,y+2),a(x-2,y+1),a(x-2,y+2)];
+    mu(7)=mean(muban7);
+    muban8=[a(x,y),a(x,y+1),a(x+1,y),a(x+1,y+1),a(x+1,y+2),a(x+2,y+1),a(x+2,y+2)];
+    mu(8)=mean(muban8);
+    %矩形模板
+    muban9=[a(x,y),a(x,y-1),a(x,y+1),a(x-1,y-1),a(x-1,y),a(x-1,y+1),a(x+1,y-1),a(x+1,y),a(x+1,y+1)];
+    mu(9)=mean(muban9);
 
-int arr[15]={0,1,2,2,2,2,3,3,3,4,5,6,7,8,9};
-int a=search(arr,2,15);
-if(a==-1)
-    cout&lt;&lt;"出错 "&lt;&lt;endl;
-else 
-    cout&lt;&lt;"数组下标："&lt;&lt;a&lt;&lt;endl;
-return 0;
-}
-
-int search(int arr[],int k,int n)
-{
-    int start,end,mid;
-    start=0;
-    end=n-1;
-    while(start&lt;=end)   //判断条件
-    {
-        mid=(start+end)/2;  //取中间值
-        if(k==arr[mid])
-        {
-            while(k==arr[mid])
-            {
-                mid++;
-            }
-    /*
-        加上while可以获取最右边的第一个出现的索引，不加while为最左边第一次出现的索引
-    */
-            return mid-1;
-        }
-        else if(k&lt;arr[mid])  //继续往左查找
-            end=mid-1;
-        else
-            start=mid+1;  //往右查找
-
-    }
-return -1;
-}
+    var = min(mu);
+    %程序中的问题，运行速度太慢，有待优化
 </code></pre>
 </div>
 
@@ -162,7 +143,7 @@ return -1;
   
 
 
-<time datetime="2014-03-29T09:47:00+08:00" pubdate data-updated="true">Mar 29<span>th</span>, 2014</time>
+<time datetime="2014-04-01T18:48:00+08:00" pubdate data-updated="true">Apr 1<span>st</span>, 2014</time>
       
 
 
@@ -170,7 +151,7 @@ return -1;
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2014/03/29/new/" data-via="" data-counturl="http://tuteng.github.io/blog/2014/03/29/new/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2014/04/01/zhongzhi/" data-via="" data-counturl="http://tuteng.github.io/blog/2014/04/01/zhongzhi/" >Tweet</a>
   
   
   
@@ -179,10 +160,8 @@ return -1;
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2014/03/27/dmp/" title="Previous Post: 数字图像处理">&laquo; 数字图像处理</a>
+        <a class="basic-alignment left" href="/blog/2014/03/31/lvbo/" title="Previous Post: 均值滤波">&laquo; 均值滤波</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2014/03/30/paixu/" title="Next Post: 插入排序">插入排序 &raquo;</a>
       
     </p>
   </footer>
