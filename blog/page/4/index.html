@@ -9,8 +9,16 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="今天因为折腾点东西系统出了点故障，重启之后，就进入了rescue模式用别人的电脑查了下，顺利解决问题。
-grub rescue模式下，只有几个命令可以使用 set，ls，prefix，root，insmod 用set查看当前prefix和root的配置。 ls列出所有分区，分区格式为（hdx）或者 &hellip;">
+  <meta name="description" content="gcc常用命令 -E 仅作预处理，不进行编译，汇编和链接
+-S 编译到汇编语言，不进行链接
+-c 编译，汇编到目标代码，不进行链接
+-o 输出到文件。
+-g 对代码进行调试，加上此选项
+-O1 进行一级优化
+-O2 进行二级优化
+-static 对代码进行静态链接
+-Wall 打印出所有警告
+- &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -67,6 +75,417 @@ grub rescue模式下，只有几个命令可以使用 set，ls，prefix，root�
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/24/gcc/">Gcc和makefile</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-24T21:41:00+08:00" pubdate data-updated="true">May 24<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>gcc常用命令</h3>
+
+<blockquote><p>-E 仅作预处理，不进行编译，汇编和链接<br/>
+-S 编译到汇编语言，不进行链接<br/>
+-c 编译，汇编到目标代码，不进行链接<br/>
+-o 输出到文件。
+-g 对代码进行调试，加上此选项<br/>
+-O1 进行一级优化<br/>
+-O2 进行二级优化<br/>
+-static 对代码进行静态链接<br/>
+-Wall 打印出所有警告<br/>
+-Werror 打印出所有错误<br/>
+ -I /home/hello/include表示将/home/hello/include目录作为第一个寻找头文件的目录，寻找的顺序是：/home/hello/include&#8211;>/usr/include&#8211;>/usr/local/include<br/>
+-L /home/hello/lib表示将/home/hello/lib目录作为第一个寻找库文件的目录，寻找的顺序是：/home/hello/lib&#8211;>/lib&#8211;>/usr/lib&#8211;>/usr/local/lib<br/>
+ -lworld表示在上面的lib的路径中寻找libworld.so动态库文件（如果gcc编译选项中加入了“-static”表示寻找libworld.a静态库文件）</p></blockquote>
+
+<p>hello文件</p>
+
+<pre><code>#include"a.h"
+int main()
+{
+            print();
+}
+</code></pre>
+
+<p>a.h文件在上一层目录中，即../中</p>
+
+<pre><code>#include&lt;stdlib.h&gt;
+#include&lt;stdio.h&gt;
+void print(){
+            printf("hello world\n");
+}
+</code></pre>
+
+<h6>gcc命令使用</h6>
+
+<pre><code>gcc -E hello.c -o hello.i -I../    对源文件进行预处理，-I指定第一个寻找头文件的目录
+gcc -S hello.i -o hello.s          将预处理文件编译到汇编代码
+gcc -c hello.s -o hello.o          将汇编代码编译到目标文件
+gcc hello.o -o hello               对目标文件进行链接
+</code></pre>
+
+<h6>优化</h6>
+
+<pre><code>gcc -o hello -O1 hello.c -I../     进行一级优化
+gcc -o hello -O2 hello.c -I../     进行二级优化
+</code></pre>
+
+<h3>makefile简单使用</h3>
+
+<p>将上面的命令进行总结并写入到一个文件，并将此文件命名为makefile</p>
+
+<h6>语法</h6>
+
+<pre><code>target ... : prerequisites ...
+             command
+</code></pre>
+
+<p>上面程序的makefile语法</p>
+
+<pre><code>hello.o:hello.c
+        gcc -E hello.c -o hello.i -I../ 
+        gcc -S hello.i -o hello.s
+        gcc -c hello.s -o hello.o
+        gcc hello.o -o hello
+.PHONY:clean
+clean:
+        rm hello.s hello.o   #方便使用make clean命令清除不必要的文件
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/19/rhel/">Rhel服务搭建</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-19T19:05:00+08:00" pubdate data-updated="true">May 19<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近在学习arm，需要搭建一些服务，在此记录一下。</p>
+
+<h2>tftp服务搭建</h2>
+
+<p>首先检查一下，有没有安装：</p>
+
+<pre><code>netstat -a | grep tftp
+</code></pre>
+
+<p>没有安装什么都不会显示，若是安装了就会显示一些关于该服务的信息。没有安装可以从网上下载tftp的rpm包，或者从安装光盘里找到。</p>
+
+<h6>执行安装</h6>
+
+<pre><code>rpm -ivh xxxxx.rpm
+</code></pre>
+
+<p>安装完毕会在根目录下产生一个tftpboot的工作目录，没有的话自己建立。</p>
+
+<h6>配置</h6>
+
+<p>tftp的配置文件在/etc/xinetd.d/tftp,将disable修改成yes，server args中-s指定tftp的工作目录。其他的可以选择默认。</p>
+
+<h6>启动与停止</h6>
+
+<pre><code>/etc/init.d/xinetd start  启动
+/etc/init.d/xinetd stop   停止
+/etc/init.d/xinetd resart 重启
+</code></pre>
+
+<h6>查看服务状态</h6>
+
+<pre><code>service tftp status
+</code></pre>
+
+<h2>nfs服务搭建</h2>
+
+<p>跟上面顺序差不多，在此直接上代码。</p>
+
+<pre><code>netstat -a | grep nfs
+</code></pre>
+
+<p>或者</p>
+
+<pre><code>rpm -qa | grep nfs
+</code></pre>
+
+<p>都可以用来查看nfs是否已经安装</p>
+
+<h6>安装</h6>
+
+<pre><code>rpm -ivh xxxxx.rpm
+</code></pre>
+
+<h6>配置</h6>
+
+<p>配置文件位于/etc/exports文件中，配置规则如下：</p>
+
+<pre><code>共享的目录 主机名称1或IP1（参数1，参数2） 主机名称2或IP2（参数3，参数4）  
+</code></pre>
+
+<blockquote><p>exports中的主要参数：<br/>
+rw:可读写权限<br/>
+ro:只读权限   <br/>
+no_root_squash:对于登陆NFS主机的共享目录用户如果是root的话则对该目录具有root权限。这样做极不安全，建议不用为好！<br/>
+root_squash:对于登陆NFS主机的共享目录用户使用者如果是root则它的权限将被压缩成匿名使用者，同时它的UID和GID都会变成nobody那个系统账号的身份。<br/>
+all_squash:不管登陆NFS主机用户身份如何，它的身份都会被压缩成匿名使用者，通常就是nobody<br/>
+anonuid:anonuid=xxx,制定NFS服务器/etc/passwd中匿名用户的UID<br/>
+anongid:anonuid=xxx,制定NFS服务器/etc/passwd中匿名用户的GID<br/>
+sync:数据在请求时写入共享(使硬盘与内存保持同步）<br/>
+async:NFS在写入数据前可响应请求（数据先暂存于内存中，而不是立即存入硬盘）<br/>
+secure:NFS通过1024以下的安全端口发送<br/>
+insecure:NFS通过1024以上端口发送<br/>
+hide:不共享NFS目录的子目录<br/>
+no_hide:共享NFS目录的子目录</p></blockquote>
+
+<p>我的配置如下：/home 192.168.1.*(rw,sync,no_root_squash)</p>
+
+<h6>启动与停止</h6>
+
+<pre><code>/etc/init.d/nfs start
+/etc/init.d/nfs stop
+/etc/init.d/nfs restart
+</code></pre>
+
+<h6>使用</h6>
+
+<pre><code>mount -t NFS servername：shared_dir /localdir
+</code></pre>
+
+<h2>samba服务搭建</h2>
+
+<p>查看是否安装</p>
+
+<pre><code>rpm -qa | grep samba
+</code></pre>
+
+<h6>安装</h6>
+
+<pre><code>rpm -ivh xxxx.rpm
+</code></pre>
+
+<h6>配置</h6>
+
+<p>配置文件位于/etc/samba/smb.conf修改配置文件，我的配置文件如下</p>
+
+<pre><code>[root]
+        comment = root Directories      #共享说明
+        browseable = yes                #浏览权限
+        writable = yes                  #写权限
+        path = /                        #共享目录
+;       valid users = smb               #共享用户
+[homes]
+        comment = Home Directories
+        browseable = no
+        writable = yes
+;       valid users = %S
+;       valid users = MYDOMAIN\%S
+
+[printers]
+        comment = All Printers
+        path = /var/spool/samba
+        browseable = no
+        guest ok = no
+        writable = no
+        printable = yes
+</code></pre>
+
+<h6>使用</h6>
+
+<p> 增加smb用户</p>
+
+<pre><code>useradd smb
+</code></pre>
+
+<p>设置密码</p>
+
+<pre><code>passwd smb
+</code></pre>
+
+<p>在windows中使用</p>
+
+<pre><code>\\ip地址
+</code></pre>
+
+<h6>启动与停止</h6>
+
+<pre><code>/etc/init.d/smb start
+/etc/init.d/smb stop
+/etc/init.d/smb restart
+</code></pre>
+
+<h2>总</h2>
+
+<p>对于上面的服务，都可以使用下面的方法来启动，停止或者重启</p>
+
+<pre><code>service 服务 start
+service 服务 stop
+service 服务 restart
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/08/arduino/">Arduino</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-08T18:25:00+08:00" pubdate data-updated="true">May 8<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近准备入手一个arduino的板子，据说这东东很好玩，趁今天下午没事，先收了一下关于它的资料。下面是维基对于其的介绍：<br/>
+Arduino，是一个开源的单片机控制器，它使用了Atmel AVR单片机，采用了基于开放源代码的软硬件平台，构建于开放源代码 simple I/O 接口版，并且具有使用类似Java，C 语言的Processing/Wiring开发环境。<br/>
+下面是关于它的一些资料：</p>
+
+<p><a href="http://arduino.cc/">arduino官网</a> <br/>
+<a href="http://chaishushan.googlecode.com/svn/doc/arduino/r106/index.html">arduino开发文档</a><br/>
+<a href="http://arduino123.net/">arduino中文网</a><br/>
+<a href="http://www.arduino.tw/">arduino台湾网</a></p>
+
+<p>再来张图片,关于arduino电子器件的，从网上找的，不过没有发现是谁的，在此引用一下</p>
+
+<p><img src="http://files.note.sdo.com/xBlh9~koEJnR6u0GA005W8" alt="arduino电子器件价格参考" /></p>
+
+<p>最后打算用它做一个智能小车的东西，算是入门吧</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/05/jihua/">Todu</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-05T21:18:00+08:00" pubdate data-updated="true">May 5<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4>专业基础课</h4>
+
+<p>《信号与系统》第四章，傅里叶变换，采样定理很重要，马上就要学完。<br/>
+《通信电子线路》开始了第六章，中间有个第四章还没有学习，其中第五章正弦波振荡器部分必须认真看几遍，学会画交流通路。参考书籍《高频电子线路》张肃文<br/>
+《数字电路基础》掌握触发器（RS型，jk型，D型，T型）学习第六章时序逻辑电路的分析。</p>
+
+<h4>课余学习</h4>
+
+<p>《深入理解计算机系统》努力看完第三章，继续往下看。<br/>
+《tcp/ip详解》卷一，掌握tcp的传输原理。<br/>
+《c primer plus》尽量快的往下看。</p>
+
+<h4>想搞的东西</h4>
+
+<p>基于51单片机的3d水立方，智能小车。</p>
+
+<h4>新发现的好玩意</h4>
+
+<h6>软件无线电</h6>
+
+<p>gnuradio（致力于硬件开源），据说是很强悍的东东，需要有python和c++基础。</p>
+
+<h4>正在做还没弄完的</h4>
+
+<p>clfs，环境已经搭建好，而且前几步编译也很顺利。将x86刷成openwrt的路由器</p>
+
+<h4>应该掌握的软件</h4>
+
+<p>multisim，altium designer，orcad，会画电路图会对电路图进行分析</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -227,23 +646,23 @@ sudo grub-install /dev/sda
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/05/22/">stm32</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/21/tt/">情怀</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/05/10/erfenfa/">嵌入式比赛总结</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/04/26/shixi/">写在实习后</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/04/01/zhongzhi/">基于灰度最小方差的均值滤波</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/03/31/lvbo/">均值滤波</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/03/30/paixu/">插入排序</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/03/29/new/">二分查找</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/03/27/dmp/">数字图像处理</a>
       </li>
     
   </ul>

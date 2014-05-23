@@ -4,7 +4,7 @@
   <title><![CDATA[TuTeng'blog]]></title>
   <link href="http://tuteng.github.io/atom.xml" rel="self"/>
   <link href="http://tuteng.github.io/"/>
-  <updated>2014-04-01T18:53:11+08:00</updated>
+  <updated>2014-05-23T08:36:09+08:00</updated>
   <id>http://tuteng.github.io/</id>
   <author>
     <name><![CDATA[图腾]]></name>
@@ -12,6 +12,70 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[stm32]]></title>
+    <link href="http://tuteng.github.io/blog/2014/05/22/"/>
+    <updated>2014-05-22T00:35:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2014/05/</id>
+    <content type="html"><![CDATA[<p>最近打算继续折腾四轴了，因为寒假的时候用的arduino不知道什么原因死活烧不尽程序去了，所以打算用stm32继续折腾。arduino做的四轴姿态解算部分已经完工，完全可以直接移植到stm上来，对于遥控部分，先用蓝牙测试，因为已经有了现成的客户端。等稳定了，可以考虑zigbee，不得不说zigbee的通信能力确实很强，加上天线穿几堵墙是不成问题的，还有跑openwrt的路由器也可以，路由器并不是版本越高了越好，wr740n的v5/v6版本真是缩水了不少，flash，ram都严重缩水，只能实行硬件改装，可惜快递不给力，都快一个星期了买的东西还没到。还是先弄stm32吧</p>
+
+<p>手头上有两块stm32.这几天先熟悉了一下它的时钟机制，毕竟时钟是根本嘛。跑通了几个程序，但是对gpio口的八种模式还是不大理解，什么叫推挽输出，开漏输出&#8230;..看来得好好复习一下数电模电了。</p>
+
+<p>感觉最终的难点部分会是在pid的调节部分，这是最终的部分，也是靠大量的实验测出来的，慢慢的折腾吧。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[情怀]]></title>
+    <link href="http://tuteng.github.io/blog/2014/05/21/tt/"/>
+    <updated>2014-05-21T23:33:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2014/05/21/tt</id>
+    <content type="html"><![CDATA[<p>过了五一，感觉就要毕业的样子。同学都在努力的为未来准备，考研，考公，培训，就业，明显感觉到了与以往的不同。</p>
+
+<p>各大培训机构的宣讲会犹如强奸一般，根本没有给你反应思考的时间，或许大学生活真的就要结束，今年又是最难就业年，应届毕业生比去年还要多，不知道还应不应该感谢高等教育的普及，像我这种人也搞了个二本的院校接受高等教育。我想我还是应该感谢的，大学应该是我人生最美好的时候了，每天都有很多时间做自己喜欢的事情，认识许多不一样的人，我感觉这就挺好的，但是美好的日子总是会过的很快，看见别人的匆忙，自己心里也不免有些着急，幸好在宿舍的日子不是很多&#8230;&#8230;</p>
+
+<p>从前两个星期开始，感觉异常的忙碌，给老师做东西，帮同学忙，上课，自己在学一些喜欢的东西，就这样一直不停的折腾，折腾，直到前两天总算是大部分都弄完了，终于可以安心做自己的事情了。说实话，这种集体开弓的日子真是不大好过，就嵌入式比赛还学了点东西，其他的感觉没有做什么，日子就这样空洞洞的过了，还好一切都差不多快要结束了，可以专心折腾自己没有完活的飞行器了</p>
+
+<p>昨天晚上学校艺术大坑举办了十佳歌手比赛，说心里话，在实验室里听着感觉都挺好的（我五音不全），乱哄哄的。而昨天也是一个特殊的日子，520嘛，老罗的锤子发布会。老罗是一个幽默的人，一直不看好他去做手机，开始看直播还有点困，但后来发现老罗是个靠谱的人，对于锤子的工业设计，外观，内部系统的优化都是下了功夫的，最看好的是对于大屏幕的手机，如何实现单手对全屏的操作，一直认为一个手能够把握住全屏的手机才是好手机，老罗做到了。下面还将100万门票费捐给了openssl，就这点给老罗必须赞一个。“我不关心输赢，我就是认真”，真是有些感动，我是不是也要成为脑残的罗粉了呢。做一个理想主义青年也挺好的&#8230;.. 其实不管怎样，用心做东西真的不错。</p>
+
+<p>老罗做了两年，做的还不错，至少从视频上看，可以秒杀大部分国产机，“彪悍的人生不需要解释”。慢慢的来吧，先把手头上自己喜欢的东西做好，顺便找一下有没有合适的实习，尽量让时光过的慢些吧。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[嵌入式比赛总结]]></title>
+    <link href="http://tuteng.github.io/blog/2014/05/10/erfenfa/"/>
+    <updated>2014-05-10T17:20:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2014/05/10/erfenfa</id>
+    <content type="html"><![CDATA[<p>劳动节已经过去，五一假期一直在实验室呆着，每天忙忙碌碌，服务器端的例程耗时两天总算弄懂了。大致的框架是  <br/>
+下端zigbee终端设备和各传感器之间通过串口采集传感器的数据，zigbee上跑的是zstack协议栈，关于zstack协议栈，以后再进行分析，这个协议栈总的来说是根据zigbee标准制定的用来做物联网的。当zigbee终端设备采集到数据之后，会通过无线网络传到协调器处，协调器实际也是一个zigbee设备，只是通过软件对其进行了类别划分，它可以管理其他的zigbee设备，它收到终端设备发过来的数据后会在通过串口传输到arm网关部分，在arm上可以对数据进行处理，包括数据的显示，分析，开关控制，报警等功能。 <br/>
+对于设备中arm上的开机跑的智能家居的例程，其逻辑主要如下：<br/>
+arm上实现了两个程序，一个是c语言实现的服务器端，另一个是qt实现的客户端，qt并没有直接通过串口和zigbee或者rfid或者gprs或者蓝牙通信，一切的数据获取，报警短信，开关控制都要通过服务器端的程序。服务器端和zigbee，服务器端和qt客户端都有一个简单地协议，服务器和qt端通过socket通信。并且两方都通过select机制监听可读事件。服务器端使用了libev这个库，据说这个库为libevent的升级版。花了两天的时间大致了解了一下libevent的源代码，参考文章如下<br/>
+<a href="http://blog.csdn.net/sparkliang/article/category/660506">libevent代码分析</a><br/>
+其中越往下看，越发现数据结构与算法才是根本。涉及到了链表，堆排序等。看这种代码确实能够学到很多东西，借着这个机会熟悉了一下二叉树，以前并不知道堆是怎么存储的，现在才知道其实堆就是用二叉树这种数据结构来实现的（囧）,因此操作堆就是操作二叉树，并且堆总是一个完全二叉树，
+对其可以进行遍历（前序，中序，后序等），还有查找，插入，删除等一系列操作。而二叉树的操作又是建立在迭代的基础之上。libevent库中使用了最小堆排序。对于不同的事件，IO，定时器，信号，都有不同的数据结构与算法来实现，至今也只是了解了一点皮毛。 <br/>
+服务器端的程序大量使用了多线程，这个时候我们就要小心线程之间的数据共享等问题。 <br/>
+比赛中发现自己真是没有写多少代码，总是在别人的基础上进行修改，增添一些自己的功能。倒是下端的zigbee对于其数据的传输逻辑了解了不少。包括串口的初始化，任务id的注册，怎么通过无线发送数据，从无线端传过来的数据怎么处理，不同的设备如何识别。终端设备如何加入自己的传感器以及与传感器之间的接口如何实现等现在了解的都差不多了。但是对于大量的节点身份如何识别，如何选择路径，何时加入网络，何时选择网络，传感器的自组网算法等都有待进一步的学习。最近也了解了一下contiki这个开源的操作系统，跑了个串口的例子，没想到一下就跑通了。所以打算深入的了解一下它的源代码，等以后有空了在作总结。 <br/>
+慢慢的来吧，虽说快要结束了，但是学习这件事情是急不得的。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[写在实习后]]></title>
+    <link href="http://tuteng.github.io/blog/2014/04/26/shixi/"/>
+    <updated>2014-04-26T20:05:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2014/04/26/shixi</id>
+    <content type="html"><![CDATA[<p>两周的金工实习结束了，东西校的奔波也随着结束了，实习的日子真是累并快乐着。<br/>
+我们平时见到的用到的机械零件基本上在这里都可以做出来，两周之中每天早晨8点集合，中午一个小时的休息时间，下午4点40结束，每天一个工种，理论结合实践，车间进进出出。  <br/>
+实习的日子里每天回来都感觉挺累的，可能是自己太虚了，因为我们确实没有干什么活，有的工种直接就是看着老师跟我们演示。<br/>
+打铁，热处理，特种加工，铸造&#8230;&#8230;这可能就是工科生不一样的乐趣吧。 <br/>
+舍友造了个大力神杯，送给了文学院的女神。</p>
+
+<p>实习期间，晚上去实验室准备比赛，结果看着看着代码，眼睛已经闭上。<br/>
+劳动节就要到了，没有打算回家，把服务端的例程代码弄懂&#8230;&#8230;</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[基于灰度最小方差的均值滤波]]></title>
@@ -1274,336 +1338,6 @@ go 0x50000000
 </code></pre>
 
 <p>ok了，这几天的劳动就先总结到这了。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[笔记本清理]]></title>
-    <link href="http://tuteng.github.io/blog/2013/09/16/chaiji/"/>
-    <updated>2013-09-16T17:11:00+08:00</updated>
-    <id>http://tuteng.github.io/blog/2013/09/16/chaiji</id>
-    <content type="html"><![CDATA[<p>自从买了笔记本，一直在折腾，却没怎么注意“保养”，用着越来越难用了，闲着没事，花了几个小时打扫了一下卫生。 <br/>
-我的笔记本是acer4752G，当时买的时候花了4000多大洋。下面进入正题。</p>
-
-<h5>工具</h5>
-
-<p>一把螺丝刀，一个银行卡片。这都是参考的网上成功的经验准备的工具</p>
-
-<h5>拆卸过程</h5>
-
-<p>从后面开始，卸完大部分的螺丝
-<img src="http://files.note.sdo.com/xBlh9~kyigGB6u1pc000uQ" alt="" />  <br/>
-背面有电池，内存条，硬盘，无线网卡</p>
-
-<h6>内存条</h6>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kyigIB6u1pc000v1" alt="" /></p>
-
-<h6>硬盘</h6>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kyigIl6u1pc000u-" alt="" /></p>
-
-<h6>光驱</h6>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kyigG56u1pc000uM" alt="" />  <br/>
-光驱最好卸了</p>
-
-<h6>键盘</h6>
-
-<p>卸键盘的时候要注意，别把排线给扯坏了，用银行卡顺着，一点一点的。
-<img src="http://files.note.sdo.com/xBlh9~kyigGl6u1pc000uO" alt="" /><br/>
-键盘后的排线<br/>
-<img src="http://files.note.sdo.com/xBlh9~kyigI56u1pc000uZ" alt="" /><br/>
-键盘卸完后<br/>
-<img src="http://files.note.sdo.com/xBlh9~kyigHl6u1pc000uV" alt="" />
-触摸板排线<br/>
-<img src="http://files.note.sdo.com/xBlh9~kyigHR6u1pc000uX" alt="" />
-额的键盘那叫一个脏啊，真想用水给冲几遍。我这图是打扫完的，看上去还算干净点了吧。</p>
-
-<h6>大件全景图</h6>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kyigFB6u1pc000uI" alt="全景图" /></p>
-
-<h6>核心部件</h6>
-
-<p>主板 <br/>
-<img src="http://files.note.sdo.com/xBlh9~kyigJR6u1pc000v7" alt="主板" /><br/>
-注意排线<br/>
-<img src="http://files.note.sdo.com/xBlh9~kyigJ56u1pc000v3" alt="" /><br/>
-卸完后的架子<br/>
-<img src="http://files.note.sdo.com/xBlh9~kyigJB6u1pc000v5" alt="" /><br/>
-主板全景<br/>
-<img src="http://files.note.sdo.com/xBlh9~kyigGR6u1pc000uS" alt="" /><br/>
-两个导热的铜片，同学的联想只有一个，深深的优越感啊，哈哈<br/>
-主板拆完<br/>
-<img src="http://files.note.sdo.com/xBlh9~kyigFl6u1pc000uG" alt="" /><br/>
-风扇里的灰也是够多的了<br/>
-ok了，一次还算完美的拆机，最后装上之后，出了点小叉子，显示器没反应，当时有点蒙，以为哪里给整坏了，后来接了个外接显示器，还是没反应，原来是系统没起来，又拔下内存条，重新插了一遍，好了。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[matlab初学]]></title>
-    <link href="http://tuteng.github.io/blog/2013/09/15/matlab/"/>
-    <updated>2013-09-15T20:51:00+08:00</updated>
-    <id>http://tuteng.github.io/blog/2013/09/15/matlab</id>
-    <content type="html"><![CDATA[<p>据说matlab是个很神奇的工具，这学期又要学数字信号处理，老师也是一再要求要装上软件，熟悉工具。因此，回来之后就先把工具给装上了，可这几天却没怎么用，直到昨天，一同学参加数学建模大赛，问我会不会用matlab给做个题，真是囧啊，亏得同学这么相信咱。今天是星期天，没什么事情，就先用用吧。顺便做点笔记。</p>
-
-<h5>matlab安装</h5>
-
-<p>和常规win下的软件一样，将软件下载下来，找到setup，双击，一路next，安装完毕。只不过这个东东有点大啊，都快5G了，花了我两个多小时才给搞定。如果下载的是iso的文件还要加载到虚拟光驱。反正不管怎样只要找到setup基本就算成功了，这里我也就不多废话了，网上的教程也是一摞一摞的。</p>
-
-<h5>matlab使用</h5>
-
-<p>同学把题发给了我，具体要求是这样</p>
-
-<blockquote><blockquote><blockquote><pre><code>          B题  碎纸片的拼接复原
-   破碎文件的拼接在司法物证复原、历史文献修复以及军事情报获取等领域都有着重要的应用。传统上，拼接复原工作需由人工完成，准确率较高，但效率很低。特别是当碎片数量巨大，人工拼接很难在短时间内完成任务。随着计算机技术的发展，人们试图开发碎纸片的自动拼接技术，以提高拼接复原效率。请讨论以下问题：
-1. 对于给定的来自同一页印刷文字文件的碎纸机破碎纸片（仅纵切），建立碎纸片拼接复原模型和算法，并针对附件1、附件2给出的中、英文各一页文件的碎片数据进行拼接复原。如果复原过程需要人工干预，请写出干预方式及干预的时间节点。复原结果以图片形式及表格形式表达（见【结果表达格式说明】）。
-2. 对于碎纸机既纵切又横切的情形，请设计碎纸片拼接复原模型和算法，并针对附件3、附件4给出的中、英文各一页文件的碎片数据进行拼接复原。如果复原过程需要人工干预，请写出干预方式及干预的时间节点。复原结果表达要求同上。
-3. 上述所给碎片数据均为单面打印文件，从现实情形出发，还可能有双面打印文件的碎纸片拼接复原问题需要解决。附件5给出的是一页英文印刷文字双面打印文件的碎片数据。请尝试设计相应的碎纸片拼接复原模型与算法，并就附件5的碎片数据给出拼接复原结果，结果表达要求同上。  
-</code></pre></blockquote></blockquote></blockquote>
-
-<p>像咱这种人，这要求当时一看就蒙了。幸亏同学比较耐心，给咱大致说了一下原理。原理基本上是这样的。对于每张图片，基本上都是一个矩阵，这个矩阵大小是1980x72，第一题比较简单都是竖着切的，要求还说是碎纸片，一看就是切好的，那个规整。咱不管了，咱就做题。根据图片的灰度，我们可以得到矩阵的最左边和最右边的灰度值，然后将其累加求和，再用第一张的最右边的值与剩下的18张的最左边的和值作差，一共19张图片，做18次减法在求出其中的最小值，这是即可求出第二张图片，依次循环，最终将所有图片拼接起来。题目关键的是找到第一张图片并人工将其改为001，而且图片不能出现000，因为matlab不好处理。怎么将找到的第一张图片改为001，本人没有找到好的用程序修改的方法，最后只能用人工干预了，囧。</p>
-
-<p>今天慢慢的搞了一天，到下午才基本上把第一问给整出来。下面就贴代码了。</p>
-
-<pre><code>clear;clc;
-Files=dir(fullfile('I:\matlab33\matlab\','*.bmp')); %打开所有图片，注意最后的反斜杠
-LengthFiles=length(Files);
-for i=1:LengthFiles;
- Img{i}=imread(strcat('I:\matlab33\matlab\',Files(i).name));
-end
-a=(1:19);
-b=(1:19); %定义数组并将其初始化为1到19
-for a1=1:19
-    a2=Img{a1}(:,1);
-    a3(a1)=sum(a2);
-end
-[a4 a5]=max(a3);  %首先找到第一个
-a(1)=a5;         %并将第一份赋值给数组a中的一个元素
-if exist('I:\matlab33\matlab\019.bmp','file')==0  %判断019文件是否存在
-    old_path='I:\matlab33\matlab2\000.bmp';
-    new_path='I:\matlab33\matlab2\019.bmp';
-    movefile(old_path,new_path);   %将000改为019
-end
-
-for i=1:18
-    for j=1:19
-        c=Img{a(i)}(:,end)-Img{j}(:,1);  %计算差值
-         b(j)=sum(c);  %求和 
-    end
-          [l m]=min(b(2:end)); %从第二个开始，到最后一个
-          a(i+1)=m+1;   %将剩余的元素排序     
-end
- %将图片打印在屏幕上
- I1=imread(strcat('I:\matlab33\matlab\',Files(a(1)).name));
- I2=imread(strcat('I:\matlab33\matlab\',Files(a(2)).name));
- I3=imread(strcat('I:\matlab33\matlab\',Files(a(3)).name));
- I4=imread(strcat('I:\matlab33\matlab\',Files(a(4)).name));
- I5=imread(strcat('I:\matlab33\matlab\',Files(a(5)).name));
- I6=imread(strcat('I:\matlab33\matlab\',Files(a(6)).name));
- I7=imread(strcat('I:\matlab33\matlab\',Files(a(7)).name));
- I8=imread(strcat('I:\matlab33\matlab\',Files(a(8)).name));
- I9=imread(strcat('I:\matlab33\matlab\',Files(a(9)).name));
- I10=imread(strcat('I:\matlab33\matlab\',Files(a(10)).name));
- I11=imread(strcat('I:\matlab33\matlab\',Files(a(11)).name));
- I12=imread(strcat('I:\matlab33\matlab\',Files(a(12)).name));
- I13=imread(strcat('I:\matlab33\matlab\',Files(a(13)).name));
- I14=imread(strcat('I:\matlab33\matlab\',Files(a(14)).name));
- I15=imread(strcat('I:\matlab33\matlab\',Files(a(15)).name));
- I16=imread(strcat('I:\matlab33\matlab\',Files(a(16)).name));
- I17=imread(strcat('I:\matlab33\matlab\',Files(a(17)).name));
- I18=imread(strcat('I:\matlab33\matlab\',Files(a(18)).name));
- I19=imread(strcat('I:\matlab33\matlab\',Files(a(19)).name));
-
-
-
-I=[I1,I2,I3,I4,I5,I6,I7,I8,I9,I10,I11,I12,I13,I14,I15,I16,I17,I18,I19];
-figure(1);
-imshow(I); %打印图片
-</code></pre>
-
-<h5>程序运行结果</h5>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kzr6QG4M0oI002pz" alt="matlab" /><br/>
-汗，好好的图片让我弄的都快显示不清楚了，因为技术还不到家，就没有在调整大小，最后运行结果时，显示了一个警告，说是尺寸给压缩了。</p>
-
-<h5>总结</h5>
-
-<p>matlab的语法很灵活，使用起来很舒服，用一天的时间基本上都是在百度，google其语法，不得不说，matlab处理图像的能力还是很强悍的，不知道和开源的opencv比起来怎么样，以后有时间在整剩下的题吧。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[新的开始]]></title>
-    <link href="http://tuteng.github.io/blog/2013/09/02/xin/"/>
-    <updated>2013-09-02T20:10:00+08:00</updated>
-    <id>http://tuteng.github.io/blog/2013/09/02/xin</id>
-    <content type="html"><![CDATA[<p>大三了，大三了，他妈的怎么大三了呢？仿佛昨天才刚刚走进校门，而现在却不得不抓紧为自己的将来更加努力了。<br/>
-有人说大三是大学四年中最为重要的时候，经历了大一的懵懂，大二的历练，大三才渐渐的开始成熟，并对自己所学的专业有些自己的认识。大三到底有多重要，其实从我们学的专业课中就已经可以看出来了，被认为是天书的《电磁场与电磁波》，还有《通信原理》，《信息论与编码》，《微型计算机原理及应用》，《数字信号处理》，这里边哪一个拿出来都够我们喝一壶的。<br/>
-今天是开学的第一天，但是心里却没有什么感觉，这个假期在家里呆了有一个多星期，其他时间都是在学里忙着比赛的事情，毕竟是第一次参加国赛，虽然我们已经学了数电与模电，但是真心感觉学的真是皮毛中的皮毛，不知道是我自己这样，还是国内大学都是这种情况？学院这边对比赛也不是很重视，只能自己默默的努力了，就当是给自己一个交代了吧。假期里又把以前寒假里学的单片机继续搞了搞，最后将自己的小车用红外模块实现了控制，虽然功能简单，但是自己还是挺高兴的，这也算自己做的一个小项目了吧，由于红外的通信效果不大好，有时会将红外线挡住，影响小车的运动，以后会考虑使用蓝牙，wifi，或者zigbee来进行通信。 <br/>
-再过一个星期，比赛就彻底结束了，等比赛完了，就要全身心的投入到新的学习中了。</p>
-
-<h6>未来的计划</h6>
-
-<p>现在自己或多或少的能做点小的项目了，等比赛结束了，淘宝买的一些东西也快到了。同学买了块arduino的板子，打算用它实现一个四轴的飞行器，今年的比赛很有可能就有飞行器的东东，可是我们都没有接触过，只是以前从网上看过国外的好多大牛实现过，看上去确实很酷，arduino的代码比较容易实现，只是飞行器的零件有点小贵啊。<br/>
-现在物联网很火，也很好玩，自己投资买了个zigbee模块，打算没事的时候自己搞搞。<br/>
-学习嵌入式最终还是要接触arm的。幸亏我这边还有两块arm的开发板，以后这就要当重点学了。linux的系统管理，软件编程都是自己要重点掌握的。<br/>
-还有自己的一些专业课，对于非计算机专业的我来说，专业课决定着自己以后发展的高度，用软件将通信的东西实现出来。<br/>
-还有自己拿不出手的四级，从来没有认真的学习过英语，虽然没有挂过科，但是自己的水平还是知道的，在英语方面努努力，争取将四级拿下。<br/>
-身体是革命的本钱，这次开学搬宿舍，累了个半死啊，而且以后又没了体育课，因此要为以后锻炼身体做个详细的计划了。<br/>
-比赛虽然还没有开始，但是结果已经可以确定。从比赛之前的准备过程中可以发现团队合作是多么的重要，单打独斗是成不了大气候的。不管是今后自己创业，还是为别人打工，与别人合作是少不了的。为了提高自己这方面的能力，打算以后找几个同学合作做几个好玩的项目。<br/>
-新的开始，努力吧。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[红外接收并解码]]></title>
-    <link href="http://tuteng.github.io/blog/2013/08/26/hongwaijieshou/"/>
-    <updated>2013-08-26T19:03:00+08:00</updated>
-    <id>http://tuteng.github.io/blog/2013/08/26/hongwaijieshou</id>
-    <content type="html"><![CDATA[<p>真囧，红外接收搞了两天，终于给弄好了。有好多天没有记录了，废话少说吧，start<br/>
-在嵌入式领域，结合各种芯片，红外模块可以用来控制各种设备。常用的有我们平时使用的各种遥控器，今天从软件的领域来研究一下红外就收的解码过程。</p>
-
-<h5>电路图如下</h5>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kxIUsFM72zw0005Q" alt="红外一体接收" />
-<img src="http://files.note.sdo.com/xBlh9~kxIVna4M0vU0008Z" alt="实物图" /></p>
-
-<p>以这两张图片来说明今天的代码。从图中看，红外接收模块还是很简单的，就只有三个引脚，但是我们用的是时候只用其中的一个，其他两个都已经给我们固定好了。</p>
-
-<h5>红外遥控系统</h5>
-
-<p>通用红外遥控系统由发射和接收两大部分组成，应用编/解码专用集成电路芯片来进行控制。<br/>
-发射部分包括键盘矩阵、编码调制、LED红外发送器；<br/>
-接收部分包括光、电转换放大器、解调、解码电路。<br/>
-遥控发射器专用芯片很多，根据编码格式可以分成两大类，这里我们以运用比较广泛，解码比较容易的一类来加以说明，现以日本NEC的uPD6121G组成发射电路为例说明编码原理（一般家庭用的DVD、VCD、音响都使用这种编码方式）。当发射器按键按下后，即有遥控码发出，所按的键不同遥控编码也不同。这种遥控码具有以下特征：
-采用脉宽调制的串行码，以脉宽为0.565ms、间隔0.56ms、周期为1.125ms的组合表示二进制的“0”；以脉宽为0.565ms、间隔1.685ms、周期为2.25ms的组合表示二进制的“1”，其波形如图所示。</p>
-
-<p><img src="http://hi.csdn.net/attachment/201107/12/0_1310458705pbeL.gif" alt="" /></p>
-
-<p>如图可见，0与1前端的低电平持续都是0.56ms，那么就是后面的高电平持续时间不同，0为0.56ms，1为1.685ms，找到不同之处，编程时就有识别的依据了！</p>
-
-<p><img src="http://hi.csdn.net/attachment/201107/12/0_1310458680N8mF.gif" alt="" /></p>
-
-<p>UPD6121G产生的遥控编码是连续的32位二进制码组，其中前16位为用户识别码，能区别不同的电器设备，防止不同机种遥控码互相干扰。该芯片的用户识别码固定为十六进制01H；后16位为8位操作码（功能码）及其反码。UPD6121G最多额128种不同组合的编码。<br/>
-当一个键按下超过36ms，振荡器使芯片激活，将发射一组108ms的编码脉冲,这108ms发射代码由一个引导码（9ms）,一个结果码（4.5ms）,低8位地址码（9ms~18ms）,高8位地址码（9ms~18ms）,8位数据码（9ms~18ms）和这8位数据的反码（9ms~18ms）组成。如果键按下超过108ms仍未松开，接下来发射的代码（连发码）将仅由起始码（9ms）和结束码（2.25ms）组成。（实际上人手的动作是很慢的，即使你快速的按下按键，可能对于芯片来说还是超过108ms，所以如何处理连发码是很关键的）<br/>
-遥控器在按键按下后，周期性地发出同一种32位二进制码，周期约为108ms。一组码本身的持续时间随它包含的二进制“0”和“1”的个数不同而不同，大约在45～63ms之间，图为发射波形图。</p>
-
-<p><img src="http://hi.csdn.net/attachment/201107/12/0_13104587170sq6.gif" alt="" /></p>
-
-<p><img src="http://hi.csdn.net/attachment/201107/12/0_13104587243Hms.gif" alt="" /></p>
-
-<h5>代码部分</h5>
-
-<pre><code>void dsjsq0(void) interrupt 1
-{
-    time++;
-}//定时器计数器0中断，全局变量time，用来计数，time每次加1，时间过去255us
-
-void wbzd0(void) interrupt 0
-{
-    static uchar i;
-    static bit flag;
-    if(flag)
-    {
-        if(time&lt;60&amp;&amp;time&gt;=30)  //晶振频率为12MH，当时间经过255*30到255*60之间时，即可进入函数将time存储
-                i=0;
-
-        irdata[i]=time;// 将time存储等待后续将其翻译成二进制，其中irdata[0]存储的是前导码的时间。
-//      write_data(time);//用来测试time是否含有数据 
-        time=0;  //将time归零等待下面的32位数据
-        i++;  
-
-        if(33==i)  //数据存储完毕
-        {
-            irok=1;  //存储完毕标志
-            i=0;
-        }
-    }  
-    else
-    {
-        flag=1;  //进入函数处理的标志
-        time=0;
-    }
-//  write_data(irdata); //测试用
- } //外部中断0，下降沿触发，利用外部中断的最高优先级来讲time存到全局数组中
-
-void wbzd0_init()
-{
-    IT0=1;   //下降沿触发
-    EA=1;    //打开全局中断
-    EX0=1;   //外部中断0中断允许
-//  PX0=1;   //外部中断0中断优先级控制位
-
-
-} //外部中断0初始化
-
-void dsjsq0_init(void)
-{
-    TMOD=0X02;  //工作方式选择位，方式2，8位初值自动重装的8位定时器计数器
-    TH0=0X00;   //装入初值，高8位
-    TL0=0X00;   //低8位
-    ET0=1;      //定时器计数器0中断允许位
-    TR0=1;      //定时器0运行控制位
-}  //定时器计数器0总段初始化
-
-void irchuli(void)
-{
-    uchar i,j,k,timedata,value;
-    k=1;
-        for(i=0;i&lt;4;i++)  
-        {
-            for(j=0;j&lt;8;j++)
-            {   timedata=irdata[k]; //irdata[0]为引导码的时间，所以从irdata[1]开始处理
-                if(timedata&gt;7)  //判断时间，来决定数组中的数据是0还是1
-                    value|=0x80;  //与0x80取或，将转换后0或1的数据存储到value中
-                if(j&lt;7)    //注意此处是j，不是timedata，在这里纠结了好久才发现这个错误
-                    value&gt;&gt;=1;  //通过右移，获得一个字节的数据
-                k++;
-            }  //处理一个字节
-            tempdata[i]=value;  //将单个字节存到数组中
-    //      write_data(tempdata); //测试用
-            value=0;
-        } //32位，4个字节，每个字节8位，
-    irchuliok=1;    
-}  //红外处理部分
-void irzhuan(void)
-{
-    uchar i;
-    tempdata2[0]=table[tempdata[0]/16];  //处理客户码
-    tempdata2[1]=table[tempdata[0]%16];
-    tempdata2[2]='-';
-    tempdata2[3]=table[tempdata[1]/16];  //处理处理客户码
-    tempdata2[4]=table[tempdata[1]%16];
-    tempdata2[5]='-';
-    tempdata2[6]=table[tempdata[2]/16];  //处理数据码
-    tempdata2[7]=table[tempdata[2]%16];
-    tempdata2[8]='-';
-    tempdata2[9]=table[tempdata[3]/16];   //处理数据反码
-    tempdata2[10]=table[tempdata[3]%16];
-    write_com(0xc0+5);
-    for(i=0;i&lt;11;i++)
-    {   
-        write_data(tempdata2[i]);
-        delay(5);
-    }  //利用for循环将解码显示到lcd上
-/*  write_data(tempdata2[0]);
-    write_data(tempdata2[1]);
-    write_data(tempdata2[2]);
-    write_data(tempdata2[3]);
-//  write_data(tempdata2[4]);
-//  write_data(tempdata2[5]);
-*/
-    irchuliok=0;  //红外部分处理完毕标志
-
-}  //4个字节的红外转换部分
-</code></pre>
-
-<p>完整代码请查看<a href="https://github.com/tuteng/hongwaijiema">这里</a>  <br/>
-参考文章<a href="http://blog.csdn.net/mhjerry/article/details/6600414">红外遥控系统原理及单片机软件解码程序，我的编写经历(C版本)</a><br/>
-<a href="http://my.oschina.net/jayzonex/blog/10649">51单片机红外解码程序</a></p>
 ]]></content>
   </entry>
   
