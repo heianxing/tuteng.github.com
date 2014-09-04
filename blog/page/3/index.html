@@ -9,7 +9,8 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="自从买了笔记本，一直在折腾，却没怎么注意“保养”，用着越来越难用了，闲着没事，花了几个小时打扫了一下卫生。 我的笔记本是acer4752G，当时买的时候花了4000多大洋。下面进入正题。 工具 一把螺丝刀，一个银行卡片。这都是参考的网上成功的经验准备的工具 拆卸过程 从后面开始，卸完大部分的螺丝 &hellip;">
+  <meta name="description" content="中秋节到了，今年假期没有和国庆挨上，所以就没有回家。在学里折腾了三天，终于在嵌入式方面迈出了一小步。
+暑假里熟悉了单片机，就天真的以为嵌入式不过如此。这几天搞arm裸奔，搞的我是心烦气躁啊，就差要放弃了，但最后又坚持了一下，过去了这个坎。下面进入正题吧 环境搭建 做开发吗，首先就是要先有环境。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +67,198 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/09/21/arm/">嵌入式开发程序裸奔之led</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-21T19:22:00+08:00" pubdate data-updated="true">Sep 21<span>st</span>, 2013</time>
+        
+         
+                   | <a href="/blog/2013/09/21/arm/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>中秋节到了，今年假期没有和国庆挨上，所以就没有回家。在学里折腾了三天，终于在嵌入式方面迈出了一小步。<br/>
+暑假里熟悉了单片机，就天真的以为嵌入式不过如此。这几天搞arm裸奔，搞的我是心烦气躁啊，就差要放弃了，但最后又坚持了一下，过去了这个坎。下面进入正题吧</p>
+
+<h6>环境搭建</h6>
+
+<p>做开发吗，首先就是要先有环境。<br/>
+硬件：tiny6410（arm11），jlinkv8及转接板，串口线一条，usb线一条<br/>
+usb线如下：<br/>
+<img src="http://files.note.sdo.com/xBlh9~kzS4ZpM719Y001gc" alt="" /> <br/>
+在搭建裸奔环境之前，最好先给开发板刷上uboot，就跟电脑的bios差不多，可以用sdcard启动，也可由将其刷到nandflash上，tiny6410提供的是sdflasher工具，制作一张可以启动的sdcard，然后将串口线和usb线插好，将启动开关拨到sdcard一边，在电脑上打开dnw或其他的终端工具，打开电源， 如出现如下界面<br/>
+<img src="http://files.note.sdo.com/xBlh9~kzSieVM719Y001jj" alt="" />
+说明sdcard制作成功，这时既可以给开发板装系统，也可以刷入其他的裸奔程序，我就给板子装了个ubuntu，利用光盘里的镜像文件，先格式化了nandflash，又刷入uboot，linux内核，最后是文件系统，这就跟刷手机似得，但是这个不用担心变砖。现在，关掉电源将启动方式改为nandflash启动，在打开电源，即可进入ubuntu，若快速的在三秒之内按下回车键，即可进入uboot，做裸奔程序就是要在这里开始。
+软件：rvds2.2，jlink驱动<br/>
+rvds的安装比较繁琐，但仅仅是繁琐，并不难。对于rvds我发现这个东东只能安装，不能卸载，至少至今我还没有找到卸载的办法。希望哪位大牛能指点一下。安装完rvds，我们可以发现有好几个软件，我们一般只用codewarrior for rvds和axd如下图<br/>
+<img src="http://files.note.sdo.com/xBlh9~kzS88pM719Y001gG" alt="" />
+<img src="http://files.note.sdo.com/xBlh9~kzS88pM719Y001gE" alt="" /><br/>
+还有jlink驱动<br/>
+最后可以测试一下jlink是否安装好，首先将jlink连接好，打开gdb server如下：
+<img src="http://files.note.sdo.com/xBlh9~kzSif9M719Y001jr" alt="" />
+如上说明jlink驱动安装好。在安装jlink驱动的时候本人还出了点小叉子，换了台电脑后，jlink说什么也没反应了，灯也不亮了。当时就纳闷不会完蛋了吧。后来从网上的资料看应该是jlink的固件丢失了。重新刷入就好了。刷固件时，按照网上的教程一步步的来，最后就一定会成功，一次不行可以多来几次。关键是胆大心细。<br/>
+注意：最后打开axd的时候，可能会提示你缺少jlinktdi.dll，不要点确定，它在你安装的jlink的驱动的文件夹里可以找到，找到后，将它拷贝到缺少该文件的那个目录里，在点击确定就ok了。
+至此环境就算搭建好了</p>
+
+<h6>led程序的编写</h6>
+
+<p>首先查看技术手册
+<img src="http://files.note.sdo.com/xBlh9~kzSif9M719Y001jv" alt="" />
+从图中可以看出，led灯是低电平有效，且控制led灯的是gpk4，gpk5，gpk6，gpk7四个IO口，到时候我们给它送低电平就可以了。  <br/>
+再来看看芯片手册</p>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kzSif9M719Y001jp" alt="" />
+<img src="http://files.note.sdo.com/xBlh9~kzSif9M719Y001jn" alt="" /></p>
+
+<p>程序如下</p>
+
+<pre><code>    //#include "def.h"
+//#include "GPIO.H"   //因为资料不全，这两个头文件的具体内容至今没有找到
+//下面是tiny6410的视屏中的代码修改的，自己加了点注释
+#define LED1_ON ~(1&lt;&lt;4) 
+#define LED2_ON ~(1&lt;&lt;5)
+#define LED3_ON ~(1&lt;&lt;6) 
+#define LED4_ON ~(1&lt;&lt;7)  //各个灯打开
+#define LEDALL_ON ~(0XF&lt;&lt;4)  //所有灯打开
+
+#define LED1_OFF (1&lt;&lt;4)
+#define LED2_OFF (1&lt;&lt;5)
+#define LED3_OFF (1&lt;&lt;6)
+#define LED4_OFF (1&lt;&lt;7)  //各个灯关闭
+#define LEDALL_OFF (0XF&lt;&lt;4)  //所有灯关闭
+
+//#define GPIO_BASE (0X7F008000)
+//#define GPIO ((volatile oGPIO_REGS *)GPIO_BASE) 
+typedef unsigned long       u32; 
+#define rGPIOKCON0 (*(volatile u32 *)0x7f008800)   //IO口的配置位
+#define rGPIOKDAT (*(volatile u32 *)0x7f008808)   //IO口的数据位
+
+void delay(int times);
+void LedRun(void);
+void LedPortInit(void);
+int main(void)
+{
+
+
+    LedPortInit();
+    LedRun();
+
+
+}
+void delay(int times)
+{
+    int i;
+    for(;times&gt;0;times--)
+        for(i=0;i&lt;3000;i++);
+} //延时函数，可能有问题，但还没有找到，单步执行没有问题
+void LedPortInit(void)
+{
+    u32 uConValue;
+    uConValue=rGPIOKCON0;
+    uConValue&amp;=~(0xffff&lt;&lt;16);   
+    //0xfffff即二进制1111111111111111，左移16位为11111111111111110000000000000000
+    //取反00000000000000001111111111111111，在和配置位相与,目的是将将高16位置0，个人感觉有点麻烦
+    uConValue|=0x1111&lt;&lt;16;
+    //开始配置，0x1111即0001000100010001左移16位后为00010001000100010000000000000000
+    //从上面的图中可以看出，高16位需配置成0001000100010001即保证输出模式
+    rGPIOKCON0=uConValue;
+    //最后将值在赋回去
+} //初始化函数
+void LedRun(void)
+{
+    rGPIOKDAT |= LEDALL_OFF;
+    //所有灯关闭
+    delay(100);
+    rGPIOKDAT &amp;= LEDALL_ON;
+    //所有灯打开
+} //led运行函数  
+</code></pre>
+
+<p>至此，代码写完，该配置了。</p>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kzSifpM719Y001jF" alt="" />
+<img src="http://files.note.sdo.com/xBlh9~kzSifpM719Y001jH" alt="" /></p>
+
+<p>下边搞了好久才通过，主要就是视频中使用的是scattered选项，并加了如下的文件</p>
+
+<pre><code>    DRAM 0x50200000
+{
+  CODE 0x50200000
+  {
+    startup.o(Init,+FIRST)
+
+    * (+RO)
+    * (+RW, +ZI)
+  }
+}
+</code></pre>
+
+<p>但是始终就是通不过，并且报有下面的错误</p>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kzSjma4M2xM001tF" alt="" /></p>
+
+<p>最终只好放弃这种方法，改用下面的引导代码</p>
+
+<pre><code> IMPORT main   
+     AREA |C$$code|,CODE,READONLY 
+     global        start
+start 
+     bl         main 
+     END 
+</code></pre>
+
+<p>第一行的前面有个空格，现在对这段代码的意思还不大明白，以后会慢慢懂得。</p>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kzSif9M719Y001jx" alt="" />
+<img src="http://files.note.sdo.com/xBlh9~kzSifpM719Y001jB" alt="" />
+<img src="http://files.note.sdo.com/xBlh9~kzSif9M719Y001jz" alt="" /></p>
+
+<p>编译器选择</p>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kzSieVM719Y001jf" alt="" />
+<img src="http://files.note.sdo.com/xBlh9~kzSieVM719Y001jh" alt="" /></p>
+
+<p>现在再make就没什么问题了，亦可以将程序下载到ram中运行。</p>
+
+<p>方法如下</p>
+
+<pre><code>先进入uboot
+按q键，执行如下命令
+dnw 0x50000000
+再选择你的bin文件
+再执行
+go 0x50000000
+</code></pre>
+
+<p>ok了，这几天的劳动就先总结到这了。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1440,97 +1633,6 @@ nameserver xxx.xxx.xxx.xxx #根据自己的实际情况制定
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/06/06/yingjian/">纯硬件打造数字秒表</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-06-06T15:26:00+08:00" pubdate data-updated="true">Jun 6<span>th</span>, 2013</time>
-        
-         
-                   | <a href="/blog/2013/06/06/yingjian/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>一直以来就很喜欢那种把想法变成现实的感觉，尤其是把想的东西变成可以看得见摸得着的东东，就有一种成就感。在最后一次数字电路的实验中，和同学亲手打造了一个秒表，纯硬件，在此记录一下实验原理。</p>
-
-<h5>材料</h5>
-
-<p>数码管两个，74ls47或74ls247两片，74ls160两片，74ls00两片，10uf电容一个，0.01uf电容一个，上拉电阻14个，555定时器一片。</p>
-
-<h5>工作原理</h5>
-
-<h6>74ls47原理</h6>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kr10A9M70gM000d9" alt="74ls47" /><br/>
-<img src="http://admin22.51dzw.com/uploadfiles/201202/20120215205259686.jpg" alt="功能表" /><br/>
-由功能表可看出，若要显示数字0~9可以将3,4,5管脚置为高电平，且输入端的D，C，B，A（对应6,2,1,7）管脚可以将输入的0~9的二进制数据转换到数码管的显示。</p>
-
-<h6>数码管原理</h6>
-
-<blockquote><blockquote><blockquote><p><img src="http://memberpic.114my.cn/yixianyin/uploadfile/20118/2011813104654.jpg" alt="数码管图片" /></p></blockquote></blockquote></blockquote>
-
-<p>数码管分为共阳极与共阴极，这里我们用的是共阳极，即输入低电平有效。</p>
-
-<h6>74ls160原理</h6>
-
-<p><img src="http://www.hqew.com/File/Images/250000-259999/251555/Promotion/20100228131839671SSAZ1Q.JPG" alt="74ls160" />
-<img src="http://files.note.sdo.com/xBlh9~kr1KTq4M0bs000ig" alt="74ls160" /><br/>
-<img src="http://files.note.sdo.com/xBlh9~kr1EIFM70qk000g8" alt="时序图" /><br/>
-从时序图中可以看出，当QA，QB，QC,QD脉冲为1001（数字9）时，输出位输出一次高电平，此时前面经历了从0000到1001的变化，总共进行了十次计数。因此称其为十进制计数器。并且在计数时，CLR、LOAD、ENP、ENT都一直保持高电平。可以将十进制计数器进行改造，可以将其改成其他进制计数器，例如六进制计数器。原理就是，当计数器要进行第七次计数的时候使其归零，从而从新开始计数。利用74ls00便可以实现此功能<br/>
-<img src="http://course.tju.edu.cn/dzjc/syjx0010.files/image004.jpg" alt="74ls00" /><br/>
-利用此片的1,2,3引脚，计数方式0000&#8212;0001&#8212;0010&#8212;0011&#8212;0100&#8212;0101&#8212;0110&#8212;0111&#8212;1000&#8212;1001，且从左往右依次为Qd，Qc，Qb，Qa。若改位六进制，即进行0000&#8212;0001&#8212;0010&#8212;0011&#8212;0100&#8212;0101这个循环，遇到0110归零即可，此时利用74ls00的1,2引脚连接Qb，Qc即可达到目的。连接1,2引脚后，第三引脚可以接74ls160的清零端，从而开始从新计数</p>
-
-<h5>555定时器</h5>
-
-<p>除了上边的部件外，还需要一个时钟脉冲源，以用来产生稳定的脉冲。这里我们选择了555定时器
-<img src="http://www.lechengdz.com/mcu/UploadFiles_3202/200812/20081201155344726.jpg" alt="555" /><br/>
-555定时器由两个电压比较器，一个RS触发器等构成。我们可以在加入两个电容和两个电阻构成多谐振荡器。如图
-<img src="http://shiti.henanzikao.cn/images/shiti/20110522000451637/20110522000604905.jpg" alt="多谐振荡器" /><br/>
-其中第二个电阻我们使用的是可调电阻为了改变脉冲强度（在6和7之间的电压），左边的电容10uf。3引脚为脉冲输出，利用其产生的脉冲来实现计数。</p>
-
-<h6>一张电路原理图。</h6>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kr70fG4M0KM000J_" alt="" /></p>
-
-<h6>电路实物图两张</h6>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kr0Y6q4M0bs0009y" alt="" />
-<img src="http://files.note.sdo.com/xBlh9~kr0Y7a4M0bs0009C" alt="" /></p>
-
-<h5>附注</h5>
-
-<p>上面的原理图以上的图片多是为了分析原理而从网上找的图片</p>
-
-<h6>总结</h6>
-
-<p>学习硬件动手很重要，有的东西如果明白了原理在动手实验的话，往往会达到事半功倍的效果。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -1548,6 +1650,10 @@ nameserver xxx.xxx.xxx.xxx #根据自己的实际情况制定
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/08/30/huijia/">回家</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/05/22/">stm32</a>
       </li>
     
@@ -1561,10 +1667,6 @@ nameserver xxx.xxx.xxx.xxx #根据自己的实际情况制定
     
       <li class="post">
         <a href="/blog/2014/04/26/shixi/">写在实习后</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/04/01/zhongzhi/">基于灰度最小方差的均值滤波</a>
       </li>
     
   </ul>
