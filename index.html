@@ -9,9 +9,7 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="使用df -h 和 du -sh 查看文件夹大小
-试用命令 sudo apt-get clean 清除缓存
-">
+  <meta name="description" content="电赛结束了有半个月了，我也在宿舍荒废了有半个月了，今天是祖国母亲的生日。 一切都还好，我想我应该出去走走了，这样老是闷着的日子是不好的。 当人没有了目标之后，总是容易荒废，不管是近期的目标还是长远的打算，人都应该有自己的想法，可以幼稚，但不能没有。现在想想心无所求到底是不是一种正常的心理呢， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +66,56 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/10/01/jinqi/">荒废</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-01T10:55:00+08:00" pubdate data-updated="true">Oct 1<span>st</span>, 2014</time>
+        
+         
+                   | <a href="/blog/2014/10/01/jinqi/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>电赛结束了有半个月了，我也在宿舍荒废了有半个月了，今天是祖国母亲的生日。  <br/>
+一切都还好，我想我应该出去走走了，这样老是闷着的日子是不好的。   <br/>
+当人没有了目标之后，总是容易荒废，不管是近期的目标还是长远的打算，人都应该有自己的想法，可以幼稚，但不能没有。现在想想心无所求到底是不是一种正常的心理呢，我也不知道。 <br/>
+有点事情忙活着还是好的，至少它会催你向前，催你不能停下。  <br/>
+比赛的日子是很忙碌的，最后一天还做了个通宵，但因为种种原因，最后的调试并不成功，怪不得别人，绝大部分的责任还是在于自己。  <br/>
+比赛结束了，心想现在终于可以休息休息了，就这样一晃半个多月就过去了。     <br/>
+半个月里，思考了很多，绝大本分还是关于未来的。  <br/>
+走累了，停下来，休息一下，想想，再继续向前走。    <br/>
+未来的路还很长，要经历的事情还会很多。 <br/>
+当人生陷入迷茫的时候，说明我们该读书了，幸好我买的kindle就快要来了。    <br/>
+出去走走吧，认识一些新的人，见识一些新的事物。总是在一个地方呆着，会让自己的视野变窄，去到新的地方，结识新的人，了解新的事物，这就应该是所谓的成长吧。 <br/>
+趁着年轻，多出去看看，到了走万里路的时候了&#8230;&#8230;</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -617,87 +665,6 @@ void main()
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/03/29/new/">二分查找</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-03-29T09:47:00+08:00" pubdate data-updated="true">Mar 29<span>th</span>, 2014</time>
-        
-         
-                   | <a href="/blog/2014/03/29/new/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><pre><code>#include &lt;iostream&gt;
-using namespace std;
-int search(int arr[],int k,int n);
-int main()
-{
-
-int arr[15]={0,1,2,2,2,2,3,3,3,4,5,6,7,8,9};
-int a=search(arr,2,15);
-if(a==-1)
-    cout&lt;&lt;"出错 "&lt;&lt;endl;
-else 
-    cout&lt;&lt;"数组下标："&lt;&lt;a&lt;&lt;endl;
-return 0;
-}
-
-int search(int arr[],int k,int n)
-{
-    int start,end,mid;
-    start=0;
-    end=n-1;
-    while(start&lt;=end)   //判断条件
-    {
-        mid=(start+end)/2;  //取中间值
-        if(k==arr[mid])
-        {
-            while(k==arr[mid])
-            {
-                mid++;
-            }
-    /*
-        加上while可以获取最右边的第一个出现的索引，不加while为最左边第一次出现的索引
-    */
-            return mid-1;
-        }
-        else if(k&lt;arr[mid])  //继续往左查找
-            end=mid-1;
-        else
-            start=mid+1;  //往右查找
-
-    }
-return -1;
-}
-</code></pre>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -713,6 +680,10 @@ return -1;
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/10/01/jinqi/">荒废</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/09/16/genfenqu/">linux根分区不够用</a>
       </li>
     
@@ -726,10 +697,6 @@ return -1;
     
       <li class="post">
         <a href="/blog/2014/05/21/tt/">情怀</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/05/10/erfenfa/">嵌入式比赛总结</a>
       </li>
     
   </ul>
