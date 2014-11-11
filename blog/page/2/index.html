@@ -9,12 +9,8 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="#include &lt;iostream&gt;
-using namespace std;
-int search(int arr[],int k,int n);
-int main()
-{ int arr[15]={0,1,2,2,2,2,3,3,3,4,5,6,7,8,9};
-int a= &hellip;">
+  <meta name="description" content="两周的金工实习结束了，东西校的奔波也随着结束了，实习的日子真是累并快乐着。
+我们平时见到的用到的机械零件基本上在这里都可以做出来，两周之中每天早晨8点集合，中午一个小时的休息时间，下午4点40结束，每天一个工种，理论结合实践，车间进进出出。 实习的日子里每天回来都感觉挺累的，可能是自己太虚了， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -71,6 +67,308 @@ int a= &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/04/26/shixi/">写在实习后</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-26T20:05:00+08:00" pubdate data-updated="true">Apr 26<span>th</span>, 2014</time>
+        
+         
+                   | <a href="/blog/2014/04/26/shixi/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>两周的金工实习结束了，东西校的奔波也随着结束了，实习的日子真是累并快乐着。<br/>
+我们平时见到的用到的机械零件基本上在这里都可以做出来，两周之中每天早晨8点集合，中午一个小时的休息时间，下午4点40结束，每天一个工种，理论结合实践，车间进进出出。  <br/>
+实习的日子里每天回来都感觉挺累的，可能是自己太虚了，因为我们确实没有干什么活，有的工种直接就是看着老师跟我们演示。<br/>
+打铁，热处理，特种加工，铸造&#8230;&#8230;这可能就是工科生不一样的乐趣吧。 <br/>
+舍友造了个大力神杯，送给了文学院的女神。</p>
+
+<p>实习期间，晚上去实验室准备比赛，结果看着看着代码，眼睛已经闭上。<br/>
+劳动节就要到了，没有打算回家，把服务端的例程代码弄懂&#8230;&#8230;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/04/01/zhongzhi/">基于灰度最小方差的均值滤波</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-01T18:48:00+08:00" pubdate data-updated="true">Apr 1<span>st</span>, 2014</time>
+        
+         
+                   | <a href="/blog/2014/04/01/zhongzhi/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><pre><code>function var = variance(a,x,y)
+    %x=i;
+    %y=j;
+    %屋型模板
+    mu = zeros(1,9);
+    muban1=[a(x,y),a(x-1,y-2),a(x-1,y-1),a(x,y-2),a(x,y-1),a(x+1,y-2),a(x+1,y-1)];
+    mu(1)=mean(muban1);
+    muban2=[a(x,y),a(x-2,y-1),a(x-2,y),a(x-2,y+1),a(x-1,y-1),a(x-1,y),a(x-1,y+1)];
+    mu(2)=mean(muban2);
+    muban3=[a(x,y),a(x-1,y+1),a(x-1,y+2),a(x,y+1),a(x,y+2),a(x+1,y+1),a(x+1,y+2)];
+    mu(3)=mean(muban3);
+    muban4=[a(x,y),a(x+1,y-1),a(x+1,y),a(x+1,y+1),a(x+2,y-1),a(x+2,y),a(x+2,y+1)];
+    mu(4)=mean(muban4);
+    %六边形模板
+    muban5=[a(x,y),a(x-2,y-2),a(x-1,y-2),a(x-2,y-1),a(x-1,y-1),a(x-1,y),a(x,y-1)];
+    mu(5)=mean(muban5);
+    muban6=[a(x,y),a(x,y-1),a(x+1,y-1),a(x+1,y-1),a(x+1,y),a(x+2,y-2),a(x+2,y-1)];
+    mu(6)=mean(muban6);
+    muban7=[a(x,y),a(x,y+1),a(x-1,y),a(x-1,y+1),a(x-1,y+2),a(x-2,y+1),a(x-2,y+2)];
+    mu(7)=mean(muban7);
+    muban8=[a(x,y),a(x,y+1),a(x+1,y),a(x+1,y+1),a(x+1,y+2),a(x+2,y+1),a(x+2,y+2)];
+    mu(8)=mean(muban8);
+    %矩形模板
+    muban9=[a(x,y),a(x,y-1),a(x,y+1),a(x-1,y-1),a(x-1,y),a(x-1,y+1),a(x+1,y-1),a(x+1,y),a(x+1,y+1)];
+    mu(9)=mean(muban9);
+
+    var = min(mu);
+    %程序中的问题，运行速度太慢，有待优化
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/03/31/lvbo/">均值滤波</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-31T21:47:00+08:00" pubdate data-updated="true">Mar 31<span>st</span>, 2014</time>
+        
+         
+                   | <a href="/blog/2014/03/31/lvbo/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><pre><code>%滤波函数
+function [s] = aver2(a)
+%s=0;
+x=2;
+y=2;
+s = (a(x-1,y-1)+a(x-1,y)+a(x-1,y+1)+a(x,y-1)+a(x,y)+a(x,y+1)+a(x+1,y-1)+a(x+1,y)+a(x+1,y+1));
+%滤波公式，本次使用的3x3的模板
+s=s/9;
+
+
+%主函数如下
+%均值滤波
+pic=imread('H:\matlab\zuoye.jpg');
+figure;
+imshow(pic);
+i=rgb2gray(pic);  %将图像转换为灰度图，便于处理
+figure;
+imshow(i);
+img3=imnoise(i,'gaussian');  %添加高斯噪声
+figure;
+imshow(img3)
+img2=imnoise(i,'salt &amp; pepper');  %添加椒盐噪声
+figure;
+imshow(img2)
+img1=img3;
+img4=img2;
+
+[len3,len4]=size(img4);  %获得椒盐噪声图像矩阵的行数和列列数
+
+len3=len3-2;
+len4=len4-2;
+
+[len1,len2]=size(img1);  %获得添加了高斯噪声图像的行数和列数
+%leng2=img2-2;
+len1=len1-2;
+len2=len2-2;
+m=zeros(3,3);  %初始化一个矩阵，以备模板使用
+
+
+for i=1:len1
+    for j=1:len2
+        %获得模板
+        m(1,1)=img1(i,j);
+        m(1,2)=img1(i,j+1);
+        m(1,3)=img1(i,j+2);
+        m(2,1)=img1(i+1,j);
+        m(2,2)=img1(i+1,j+1);
+        m(2,3)=img1(i+1,j+2);
+        m(3,1)=img1(i+2,j);
+        m(3,2)=img1(i+2,j+1);
+        m(3,3)=img1(i+2,j+2);
+        s2=aver2(m);
+        img3(i+1,j+1)=s2;
+    end
+end
+figure;
+imshow(img3)
+
+for i=1:len3
+    for j=1:len4
+        %获得模板
+        m(1,1)=img4(i,j);
+        m(1,2)=img4(i,j+1);
+        m(1,3)=img4(i,j+2);
+        m(2,1)=img4(i+1,j);
+        m(2,2)=img4(i+1,j+1);
+        m(2,3)=img4(i+1,j+2);
+        m(3,1)=img4(i+2,j);
+        m(3,2)=img4(i+2,j+1);
+        m(3,3)=img4(i+2,j+2);   
+        s3=aver2(m);  %均值滤波
+        img2(i+1,j+1)=s3;
+    end
+end
+figure;
+imshow(img2);
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/03/30/paixu/">插入排序</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-30T20:19:00+08:00" pubdate data-updated="true">Mar 30<span>th</span>, 2014</time>
+        
+         
+                   | <a href="/blog/2014/03/30/paixu/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><pre><code>#include &lt;iostream&gt;
+using namespace std;
+//参数为数组和其大小
+void insert(int *data,int n)  
+{
+    int target;
+    for(int i=1; i&lt;n; i++) 
+    {
+        int j = i;
+        target = data[i]; //将要排序的元素
+        while(j &gt; 0 &amp;&amp; target &lt; data[j-1])  //排序的条件，j大于0，并且将要排序的元素要找到从左边起第一个大于它的元素，放在这个元素的左边，
+        {
+            data[j] = data[j-1];
+            j--;
+            //后边的元素整体后移一个
+        }
+        data[j] = target;
+    }
+    for(int i = 0;i &lt; n; i++)
+        cout &lt;&lt; data[i] &lt;&lt;",";
+}
+
+void main()
+{
+    int data[]={6,4,2,3,1,7,9};
+    int n=7;
+    cout &lt;&lt; "排序前：";
+    for(int i = 0;i &lt; 7; i++)
+        cout &lt;&lt; data[i] &lt;&lt;  ",";
+
+    cout &lt;&lt; "排序后：";
+    insert(data,n);
+    cout &lt;&lt; endl;
+}
+//平均时间复杂度O(n2)
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -376,507 +674,6 @@ return -1;
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/11/24/arduino/">Arduino开发mpu6050</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-11-24T17:17:00+08:00" pubdate data-updated="true">Nov 24<span>th</span>, 2013</time>
-        
-         
-                   | <a href="/blog/2013/11/24/arduino/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>一直考虑着做个四轴，但都没有时间，只能一点一点的来了，今天下午，先把mpu6050测试好了。还别说，arduino确实是便捷开发，用着很爽。</p>
-
-<h5>start</h5>
-
-<p>开发环境 arduino1.5.2,硬件arduino uno一块，mpu6050一个。
-<a href="http://v.to/0I6h4">库文件</a><br/>
-使用之前要先导入几个库，在文件->参数设置下，设置好自己存放库的位置，在此路径下建立一个libraries的文件夹，将需要的第三方库解压到里面即可，这个文件里我们需要的是arduino下的文件。文件存放形式如下图<br/>
-<img src="http://files.note.sdo.com/xBlh9~kF7u9G4M0Mw000O1" alt="" /></p>
-
-<p> 现在可以写测试程序了<br/>
-测试程序参考如下<br/>
-http://www.geek-workshop.com/forum.php?mod=viewthread&amp;tid=2471<br/>
-http://www.cnblogs.com/hangxin1940/archive/2013/04/07/3003254.html<br/>
-http://tonylabs.com/zh/tutorials/arduino-mpu6050-tutorials<br/>
-打开串口可以看到下图：<br/>
-<img src="http://files.note.sdo.com/xBlh9~kF7vsl6u1dE000ZD" alt="" /><br/>
-arduino开发起来还是挺快的</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/11/24/uip/">Uip移植</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-11-24T17:16:00+08:00" pubdate data-updated="true">Nov 24<span>th</span>, 2013</time>
-        
-         
-                   | <a href="/blog/2013/11/24/uip/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>最近一周直到昨天都一直在折腾uip，昨天，就是昨天终于结束了，其中的酸甜苦辣啊。<br/>
-至于uip是什么，我就不废话了。我主要来记录一下我的移植过程。最主要的目的是先实现一个最简单的功能，即能够ping通，再实现tcp的连接。</p>
-
-<h5>需要的东西</h5>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kF7mvG4M0Mw000Mn" alt="" /></p>
-
-<p>单片机开发板一块如上图<a href="http://note.sdo.com/u/634916397005493321/n/xBlh9~kF7nvq4M0Mw000Mw">单片机选型</a>，rom和ram都最好大一点。我的是stc90c516RD+，至于网络模块，当然是选择比较便宜的enc28j60模块，淘宝上有现成的做好的模块，外接5v电源就可以，因为其接入了一个降压模块ams1117。此网络模块对电压要求比较高，我的开发板输出的电压差不多是4.8，4.9v的样子，但连上网络模块之后始终网口不发亮，一测芯片的电压，就差一点达不到3.3v，没办法，只好找了个5v的电源来给其供电。另外我的单片机rom61k,ram1280字节。空间还是挺大的。开发环境用的是keil。至于uip可以移植到多大空间的地方，我也不是很清楚，反正我这个最后还是成功了。<br/>
-<a href="http://dunkels.com/adam/">uip官方网站</a>  <br/>
-<a href="https://github.com/adamdunkels/uip/tags">uip协议下载地址</a><br/>
-我做的是0.9版本的移植。</p>
-
-<h5>移植过程</h5>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kF7mvG4M0Mw000Mp" alt="" />
-主要有四个文件夹如上图，/app,/doc,/uip,/unix,/app下是开发好的一些例程，有telnet，http，smtp等。/doc下是文档说明，非常有用。/uip下是arp，udp，ip，tcp，icmp等的实现。/unix下是主函数网卡驱动，以及配置文件uipopt.h.</p>
-
-<h6>开始移植</h6>
-
-<p>下图是我添加的所有文件<br/>
-我们需要写网络模块的驱动程序，即enc28j60，不过网上已经有了开发好的，我们可以借鉴一下。对于其中的一些函数我们只要能够看懂就好了。 <br/>
-首先需要对主函数进行设置，直接上代码吧</p>
-
-<pre><code>#include "uip.h"
-#include "uip_arp.h"
-#include "enc28j60.h"
-//#include "uart.h"
-//#include "httpd.h"
-//#include "telnet.h"  //注释掉没有用到的头文件
-#include "uipopt.h"
-#include "app.h"
-
-
-#define BUF ((struct uip_eth_hdr *)&amp;uip_buf[0])
-
-u16_t ipaddr[2];
-#ifndef NULL
-#define NULL (void *)0
-#endif /* NULL */
-
-/*-----------------------------------------------------------------------------------*/
-int
-main(void)
-{
-  u8_t i, arptimer;
-
-//  init_uart();  //初始化串口,方便调试
-  /* Initialize the device driver. */ 
-  dev_init();  //初始化enc28j60，实际调用enc28j60_init（）函数
-
-  uip_arp_init();  //初始化arp
-
-  /* Initialize the uIP TCP/IP stack. */
-  uip_init();   //初始化uip协议栈
-
-
-    /*set host MAC addr*/
-    uip_ethaddr.addr[0] = 0x12;
-    uip_ethaddr.addr[1] = 0x34;
-    uip_ethaddr.addr[2] = 0x56;
-    uip_ethaddr.addr[3] = 0x78;
-    uip_ethaddr.addr[4] = 0x90;
-    uip_ethaddr.addr[5] = 0xAB;  //给enc28j60设置mac地址，要求局域网内不要重复,与uipopt文件中的配置参数配合使用。
-
-
-#if UIP_FIXEDADDR == 0
-    /*host ip addr*/
-    uip_ipaddr(ipaddr, 192,168,0,2);
-    uip_sethostaddr(ipaddr);  //设置enc28j60ip地址
-
-    /*netmask addr*/
-    uip_ipaddr(ipaddr, 255,255,255,0);
-    uip_setnetmask(ipaddr); //设置子网掩码
-
-    /*router ip addr*/
-    uip_ipaddr(ipaddr, 192,168,0,1);
-    uip_setdraddr(ipaddr);  //设置网关
-#endif  //同样与uipopt.h文件配合使用
-    //至此在修改一下uipopt文件就可以实现icmp协议了，即设置好ip地址后就能够ping通，此处必须先要成功才能设置后面。设置uipopt文件在后面。
-    example2_init();
-  /* Initialize the HTTP server. */
- // httpd_init();
-
-  arptimer = 0;  //arp缓存表更新定时器
-
-  while(1) {
-    /* Let the tapdev network device driver read an entire IP packet
-       into the uip_buf. If it must wait for more than 0.5 seconds, it
-       will return with the return value 0. If so, we know that it is
-       time to call upon the uip_periodic(). Otherwise, the tapdev has
-       received an IP packet that is to be processed by uIP. */
-    uip_len = dev_poll(); //查询网卡是否有包收到
-    if(uip_len == 0) {
-      for(i = 0; i &lt; UIP_CONNS; i++) {
-    uip_periodic(i);  //协议栈解析，组包，状态监测
-    /* If the above function invocation resulted in data that
-       should be sent out on the network, the global variable
-       uip_len is set to a value &gt; 0. */
-    if(uip_len &gt; 0) {
-      uip_arp_out();  
-      dev_send();   //有包要发送
-        }
-      }
-
-#if UIP_UDP  //此处在宏定义中UIP_UDP为0不会执行
-      for(i = 0; i &lt; UIP_UDP_CONNS; i++) {
-            uip_udp_periodic(i);
-    /* If the above function invocation resulted in data that
-       should be sent out on the network, the global variable
-       uip_len is set to a value &gt; 0. */
-    if(uip_len &gt; 0) {
-        uip_arp_out();
-        dev_send();
-        }
-      }
-#endif /* UIP_UDP */
-
-      /* Call the ARP timer function every 10 seconds. */
-      if(++arptimer == 20) {    
-        uip_arp_timer();  //更新arp缓存
-        arptimer = 0;
-      }
-
-    } else {  
-      if(BUF-&gt;type == htons(UIP_ETHTYPE_IP)) {
-    uip_arp_ipin();
-    uip_input();
-    /* If the above function invocation resulted in data that
-       should be sent out on the network, the global variable
-       uip_len is set to a value &gt; 0. */
-    if(uip_len &gt; 0) {
-      uip_arp_out();
-      dev_send();
-        }  //处理IP包
-      } else if(BUF-&gt;type == htons(UIP_ETHTYPE_ARP)) {
-    uip_arp_arpin();
-    /* If the above function invocation resulted in data that
-       should be sent out on the network, the global variable
-       uip_len is set to a value &gt; 0. */    
-    if(uip_len &gt; 0) {   
-      dev_send();
-        }//处理arp包
-      }
-    }
-
-  }
-  return 0;
-}
-/*-----------------------------------------------------------------------------------*/
-/*void
-uip_log(char *m)
-{
-  printf("uIP log message: %s\n", m);
-}
-*/
-/*-----------------------------------------------------------------------------------*/
-</code></pre>
-
-<p>配置文件如下：</p>
-
-<pre><code>#define UIP_FIXEDADDR    0  //为0时可以像主函数中那样配置ip地址
-
-/**
- * Ping IP address asignment.
- *
- * uIP uses a "ping" packets for setting its own IP address if this
- * option is set. If so, uIP will start with an empty IP address and
- * the destination IP address of the first incoming "ping" (ICMP echo)
- * packet will be used for setting the hosts IP address.
- *
- * \note This works only if UIP_FIXEDADDR is 0.
- *
- * \hideinitializer
- */
-#define UIP_PINGADDRCONF 0
-
-#define UIP_IPADDR0     192 /**&lt; The first octet of the IP address of
-                   this uIP node, if UIP_FIXEDADDR is
-                   1. \hideinitializer */
-#define UIP_IPADDR1     168 /**&lt; The second octet of the IP address of
-                   this uIP node, if UIP_FIXEDADDR is
-                   1. \hideinitializer */
-#define UIP_IPADDR2     0   /**&lt; The third octet of the IP address of
-                   this uIP node, if UIP_FIXEDADDR is
-                   1. \hideinitializer */
-#define UIP_IPADDR3     2   /**&lt; The fourth octet of the IP address of
-                   this uIP node, if UIP_FIXEDADDR is
-                   1. \hideinitializer */
-
-#define UIP_NETMASK0    255 /**&lt; The first octet of the netmask of
-                   this uIP node, if UIP_FIXEDADDR is
-                   1. \hideinitializer */
-#define UIP_NETMASK1    255 /**&lt; The second octet of the netmask of
-                   this uIP node, if UIP_FIXEDADDR is
-                   1. \hideinitializer */
-#define UIP_NETMASK2    255 /**&lt; The third octet of the netmask of
-                   this uIP node, if UIP_FIXEDADDR is
-                   1. \hideinitializer */
-#define UIP_NETMASK3    0   /**&lt; The fourth octet of the netmask of
-                   this uIP node, if UIP_FIXEDADDR is
-                   1. \hideinitializer */
-
-#define UIP_DRIPADDR0   192 /**&lt; The first octet of the IP address of
-                   the default router, if UIP_FIXEDADDR is
-                   1. \hideinitializer */
-#define UIP_DRIPADDR1   168 /**&lt; The second octet of the IP address of
-                   the default router, if UIP_FIXEDADDR is
-                   1. \hideinitializer */
-#define UIP_DRIPADDR2   0   /**&lt; The third octet of the IP address of
-                   the default router, if UIP_FIXEDADDR is
-                   1. \hideinitializer */
-#define UIP_DRIPADDR3   1   /**&lt; The fourth octet of the IP address of
-                   the default router, if UIP_FIXEDADDR is
-                   1. \hideinitializer */
-
-/**
- * Specifies if the uIP ARP module should be compiled with a fixed
- * Ethernet MAC address or not.
- *
- * If this configuration option is 0, the macro uip_setethaddr() can
- * be used to specify the Ethernet address at run-time.
- *
- * \hideinitializer
- */
-#define UIP_FIXEDETHADDR 1  //设置mac地址，此处必须和主函数中设置的相同，而且此参数不能为0，原因不知道为什么。
-
-#define UIP_ETHADDR0    0x12  /**&lt; The first octet of the Ethernet
-                 address if UIP_FIXEDETHADDR is
-                 1. \hideinitializer */
-#define UIP_ETHADDR1    0x34  /**&lt; The second octet of the Ethernet
-                 address if UIP_FIXEDETHADDR is
-                 1. \hideinitializer */
-#define UIP_ETHADDR2    0x56  /**&lt; The third octet of the Ethernet
-                 address if UIP_FIXEDETHADDR is
-                 1. \hideinitializer */
-#define UIP_ETHADDR3    0x78  /**&lt; The fourth octet of the Ethernet
-                 address if UIP_FIXEDETHADDR is
-                 1. \hideinitializer */
-#define UIP_ETHADDR4    0x90  /**&lt; The fifth octet of the Ethernet
-                 address if UIP_FIXEDETHADDR is
-                 1. \hideinitializer */
-#define UIP_ETHADDR5    0xAB  /**&lt; The sixth octet of the Ethernet
-                 address if UIP_FIXEDETHADDR is
-                 1. \hideinitializer */
-
-
-/**
- * The size of the uIP packet buffer.
- *
- * The uIP packet buffer should not be smaller than 60 bytes, and does
- * not need to be larger than 1500 bytes. Lower size results in lower
- * TCP throughput, larger size results in higher TCP throughput.
- *
- * \hideinitializer
- */
-#define UIP_BUFSIZE     400  //设置包缓存大小，跟ram有关，很重要，错了后网卡初始化陷入死循环。这个值可以多试几次，根据自己的ram大小来确定。
-
-
-
-#ifndef LITTLE_ENDIAN
-#define LITTLE_ENDIAN  3412
-#endif /* LITTLE_ENDIAN */
-#ifndef BIG_ENDIAN
-#define BIG_ENDIAN     1234
-#endif /* BIGE_ENDIAN */
-
-#ifndef BYTE_ORDER
-#define BYTE_ORDER     BIG_ENDIAN
-#endif /* BYTE_ORDER */  //配置大小端，很重要，配置错了，收不到包。
-
-
-#include "app.h"  //调用UIP_APPCALL,其中可以加入自己写的应用，我们开发业主要是实现自己的UIP_APPCALL
-</code></pre>
-
-<p>以上就是配置文件了，对于其他的参数等我们熟练了可以在适当的修改。<br/>
-<a href="">参数配置参考</a><br/>
-对于硬件连接这里就不介绍了。
-文档中的例子</p>
-
-<pre><code>void example2_init(void) {
-    uip_listen(2345);  //监听2345端口
-}
-void example2_app(void) {
-struct  example2_state *s;
-    s = (struct  example2_state *)uip_conn-&gt;appstate;
-    if(uip_connected()) {
-    s-&gt;state = WELCOME_SENT;
-    uip_send("Welcome!\n", 9); //连接成功,发送消息
-return;
-}
-    if(uip_acked() &amp;&amp; s-&gt;state == WELCOME_SENT) {
-        s-&gt;state = WELCOME_ACKED;
-    }
-    if(uip_newdata()) {
-    uip_send("ok1\n", 4);
-    led_on();  //添加自己的应用。可以先取得包中数据的详细信息，在确定自己的应用可以使用uip_appdata指针指向tcp数据的开头。
-//  while(1);
-    led_off();
-    }
-    if(uip_rexmit()) { 
-        switch(s-&gt;state) {
-            case WELCOME_SENT:
-                uip_send("Welcome!\n", 9);
-                break;
-            case WELCOME_ACKED:
-                uip_send("ok2\n", 4);
-                break;
-        }
-    }
-}    
-</code></pre>
-
-<p>现在差不多就搞完了。<br/>
-<a href="http://blog.csdn.net/lxj_com2006/article/details/6928177">参考文章</a><br/>
-<a href="http://v.to/0I6h2">uipopt.h配置文件</a><br/>
-<a href="https://github.com/tuteng/uip">完整代码</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/11/12/lianwang/">网络连不上</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-11-12T23:39:00+08:00" pubdate data-updated="true">Nov 12<span>th</span>, 2013</time>
-        
-         
-                   | <a href="/blog/2013/11/12/lianwang/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>晚上回到宿舍，一直连不上网，之前就遇到过这问题，但是糊里糊涂的解决的，今天说什么也得弄好了。<br/>
-问题：开机即可获得以个169.254.xx开头的ip，使用了固定ip后也是这样，这样很明显是不会连上网的，而且子网掩码还是255.255.0.0，没办法，在网上找了找，大致有下面几种方法，最有效的是第三种。 <br/>
-169.254.X.X是Windows操作系统在DHCP信息租用失败时自动给客户机分配的IP地址。意思就是在你开机之后，网卡自动获取不到合适的ip，所以会自动得到一个微软自带的ip，但是这个会影响下面的正常上网。<br/>
-解决办法：<br/>
-1.分配固定的ip地址，首先你要看一下别人可以正常上网的ip地址，网关，dns等。<br/>
-2.重启下机器或者网卡。 <br/>
-3.使用下面的命令</p>
-
-<pre><code> ipconfig  /renew 清除ip缓存
- ipconfig /flushdns 清除dns缓存
- arp -d* 清除arp缓存
-</code></pre>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/11/01/xinshi/">小记</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-11-01T16:35:00+08:00" pubdate data-updated="true">Nov 1<span>st</span>, 2013</time>
-        
-         
-                   | <a href="/blog/2013/11/01/xinshi/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>秋天了，天气随着淅淅沥沥的小雨也开始变凉了，生活中的一切都还好，希望还在，梦想也还在&#8230;&#8230; <br/>
-最近忙忙乎乎，忙忙乎乎。期间还回了趟家，参加了场婚礼。不知道自己一直在外求学的原因，还是什么，对其中发生的一些事情总是有点点不舒服。昨天在家忙完就赶紧搭上了返回学校的汽车，在车上，晕的一塌糊涂，下车吐了。回到学校，依旧和往常一样。宿舍，教学楼，餐厅，每日往往复复，日子就这样过着。 <br/>
-今天上课老师说下学期要分方向了。本学期开了好多的专业基础课，而我却这样马马虎虎的过着。大家有准备考研的，有准备考公务员的，还有其它&#8230;.都在为自己的未来奔波着，忙碌着。想想自己大学生活，也许是自己的学生生涯就这样快要结束了。 <br/>
-秋天总是会无缘无故的感觉到有那么一丝丝的伤感，算了，一切继续，继续hard working&#8230;..</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -894,23 +691,23 @@ return;
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/11/11/mianshi/">面试</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/11/01/new/">python获取文件路径</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/11/01/onestepone/">一步一步学python</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/11/01/step/">下一步</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/10/01/jinqi/">荒废</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/09/16/genfenqu/">linux根分区不够用</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/08/30/huijia/">回家</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/05/22/">stm32</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/05/21/tt/">情怀</a>
       </li>
     
   </ul>
