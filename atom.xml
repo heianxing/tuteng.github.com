@@ -4,7 +4,7 @@
   <title><![CDATA[TuTeng'blog]]></title>
   <link href="http://tuteng.github.io/atom.xml" rel="self"/>
   <link href="http://tuteng.github.io/"/>
-  <updated>2014-11-11T20:38:31+08:00</updated>
+  <updated>2014-11-11T23:01:20+08:00</updated>
   <id>http://tuteng.github.io/</id>
   <author>
     <name><![CDATA[图腾]]></name>
@@ -12,6 +12,18 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[面试题]]></title>
+    <link href="http://tuteng.github.io/blog/2014/11/11/mianshiti/"/>
+    <updated>2014-11-11T22:58:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2014/11/11/mianshiti</id>
+    <content type="html"><![CDATA[<p>python的gil机制 <br/>
+tornado的异步非阻塞<br/>
+list与set哪个更快<br/>
+linux命令top或uptime的负载如何计算</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[面试]]></title>
@@ -454,33 +466,6 @@ return -1;
     <updated>2014-01-12T11:15:00+08:00</updated>
     <id>http://tuteng.github.io/blog/2014/01/12/start</id>
     <content type="html"><![CDATA[<p>四轴飞行器开始了！！！！！</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[逝去的2013]]></title>
-    <link href="http://tuteng.github.io/blog/2014/01/03/zongjie/"/>
-    <updated>2014-01-03T19:25:00+08:00</updated>
-    <id>http://tuteng.github.io/blog/2014/01/03/zongjie</id>
-    <content type="html"><![CDATA[<p>今天考完了最后一科&#8230;&#8230; <br/>
-看看博客，一个多月都没有更新了，中间也折腾过一点东西，但都断断续续，大部分的时间还是给了课后的复习，不知道这样的考试突击到底能够有多大的作用&#8230;&#8230;<br/>
-2013就这样过去了，新的一年已然来临，我是否要停下来思考一下。  <br/>
-在过去的一年有收获也有失去，总之伴随着快乐，也伴随着难过。  <br/>
-因为喜欢，所以去做&#8230;&#8230;</p>
-
-<h6>关于学习</h6>
-
-<p>计算机方面的知识多多少少也了解了一些，感觉这些东西还是蛮有用的，很多东西不仅要知其然，最好也要知其所以然。好书始终是最好的学习方式，一直都很喜欢在图书管里被阳光洒满的地方读书的感觉。我喜欢将自己的想法变成现实的感觉，可能这中间要经历很多，要学很多的东西，但是我在努力。在学习的路上要找到自己的成就感，这样才能坚持下去，才会有动力。新的一年，展望很多，物联网，嵌入式，找到自己喜欢的工作&#8230;&#8230;</p>
-
-<h6>关于生活</h6>
-
-<p>每天按时吃早饭不在是一种苛求，吃了早饭感觉一天的工作都很有精神。但是还有熬夜的恶习，正在慢慢的戒掉。</p>
-
-<h6>关于运动</h6>
-
-<p>每天晚上只要天气不是很差，就会坚持跑步，在跑步中会萌生很多有意思的想法，调代码时的bug有时也会因为跑步后大脑的清醒而有了新的思路，跑步，我会坚持下去的&#8230;&#8230;</p>
-
-<p>昨天晚上给我哥打电话，我哥建议我考研，但是却没有任何的概念（真的没有考虑过），明天就是研究生考试了，在此祝愿所有考生取得佳绩。</p>
 ]]></content>
   </entry>
   
