@@ -5,12 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>centos安装及配置 - TuTeng'blog</title>
+  <title>pyquery使用 - TuTeng'blog</title>
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="感觉好久都没写东西了，最近终于把可恶的考试弄完了，继续折腾。
-前段时间把openwrt的摄像头挂上了，所以想完善一下它的功能，就在一台没用的电脑上装上了centos，做个远程监控玩玩。 centos安装 从网上下载最新的版本，用ultraiso做好系统盘，启动。安装过程没有什么可以说的， &hellip;">
+  <meta name="description" content="前段时间面试，让现场用pyquery把亚马逊几个键盘页面的商品名称和价格抓下来，分析了一下，不难，但当时没有做出来，卡到了怎么提取div里边的多个class元素一步。 from pyquery import PyQuery as pq
+import requests
+import sys &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tuteng.github.io/blog/2013/07/15/centos">
+  <link rel="canonical" href="http://tuteng.github.io/blog/2014/12/28/pyquery">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
@@ -70,7 +71,7 @@
   
   <header>
     
-      <h1 class="entry-title">Centos安装及配置</h1>
+      <h1 class="entry-title">Pyquery使用</h1>
     
     
       <p class="meta">
@@ -86,7 +87,7 @@
   
 
 
-<time datetime="2013-07-15T17:20:00+08:00" pubdate data-updated="true">Jul 15<span>th</span>, 2013</time>
+<time datetime="2014-12-28T23:16:00+08:00" pubdate data-updated="true">Dec 28<span>th</span>, 2014</time>
         
          
                    | <a href="#comments">Comments</a>
@@ -96,85 +97,49 @@
   </header>
 
 
-<div class="entry-content"><p>感觉好久都没写东西了，最近终于把可恶的考试弄完了，继续折腾。
-前段时间把openwrt的摄像头挂上了，所以想完善一下它的功能，就在一台没用的电脑上装上了centos，做个远程监控玩玩。</p>
+<div class="entry-content"><p>前段时间面试，让现场用pyquery把亚马逊几个键盘页面的商品名称和价格抓下来，分析了一下，不难，但当时没有做出来，卡到了怎么提取div里边的多个class元素一步。</p>
 
-<h5>centos安装</h5>
+<pre><code>from pyquery import PyQuery as pq
+import requests
+import sys
+import urlparse
 
-<p>从网上下载最新的版本，用ultraiso做好系统盘，启动。安装过程没有什么可以说的，与其他发行版有点不同的是需要将安装包放到u盘根目录下（u盘容量最好大点，8~16G最好）。开始没注意这点，重复了几次。至此centos就给装上了。但最后重启了又出了点问题，grub一不注意给装到了u盘上（这点是后来从网上看帖子发现的）。那就修复grub吧，反正有启动盘。</p>
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
-<h5>grub修复</h5>
+url = "http://www.amazon.cn/s/ref=sr_pg_1?rh=i%3Aaps%2Ck%3A%E9%94%AE%E7%9B%98&amp;page=1&amp;keywords=%E9%94%AE%E7%9B%98&amp;ie=UTF8&amp;qid=1419095207"
+#d = pq(filename = "hello.html")
+payload = {'User-Agent':'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:30.0) Gecko/20100101 Firefox/30.0'}
+#print dir(d)
+urlpar = urlparse.urlparse(url)
+a = urlpar.query
+param_dict = urlparse.parse_qs(a)
+a = ""
 
-<p>从u盘启动，centos就是不一般啊，默认连桌面都没有，黑黑的。从u盘启动后需进入grub模式。网上的命令式</p>
-
-<pre><code>sbin /grub
+#头部要加上，否则抓取不完整
+payload = {'User-Agent':'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:30.0) Gecko/20100101 Firefox/30.0'}
+#print dir(d)
+for i in range(0,6):
+    param_dict['page'] = str(i+1)
+    a = ""
+    for (j,k) in param_dict.items():
+#       print i,k[0].decode('utf-8')
+        a = j + "=" + k[0] + "&amp;" + a 
+#   print a
+    a = a[:(len(a)-1)]
+    url_two = urlpar[0] +"://" + urlpar[1] + "/s/ref=sr_pg_%d"%(i+1) + "?" + a
+    m = requests.get(url=url_two,headers = payload)
+#print d("div.J_Layout layout grid-m0")
+    d = pq(m.text)
+    for j in range(24*i,24*(i+1)):
+        m = d("#result_%d"%j)
+        title = m(".a-size-base.s-inline.s-access-          
+        title.a-text-normal")
+        a = m(".a-size-base.a-color-price.s-price.a-text-bold")
+        print "%s  %s "%(title.html(),a.html())
 </code></pre>
 
-<p>我这个命令无效啊我的是</p>
-
-<pre><code>grub
-</code></pre>
-
-<p>反正想办法进入grub模式就好了。
-接下来看看你的是那块磁盘使用如下命令</p>
-
-<pre><code>find /grub/grub/stage1
-</code></pre>
-
-<p>我的显示如下</p>
-
-<pre><code>(hd0,1)
-</code></pre>
-
-<p>hd0是我的第一块硬盘，额就一块硬盘，所以还好辨认，后面的1代表第二个分区，因为第一个分区用0表示，下面开始改了：</p>
-
-<pre><code>root (hd0,1)
-setup (hd0)
-</code></pre>
-
-<p>下面在将grub.conf和menu.lst里面的（hdx，y）修改为（hd0,1)。
-此时重启，即可进入系统。<br/>
-如此系统就算安装完成了。</p>
-
-<h5>配置网络</h5>
-
-<p>系统安装完了就要联网了。因为我要将它与路由器连接，所要配置静态ip，过程如下：<br/>
-centos的网络配置文件在<strong>/etc/sysconfig/</strong>中里面有很多关于网络配置的东西。我的机器就只有一块网卡eth0，所以在<strong>/etc/sysconfig/network-scripts/ifcfg-eth0</strong>下面。配置如下</p>
-
-<pre><code>DEVICE=eth0        #网络设备
-HWADDR=00:E0:4C:08:AC:10  #mac地址
-TYPE=Ethernet   #以太网
-UUID=a53621d2-d290-48ff-96e0-2a0005046b20 
-ONBOOT=yes           
-NM_CONTROLLED=yes
-BOOTPROTO=static       #静态地址，也可选dhcp或bootp
-IPADDR=192.168.0.135  #ip地址
-NETMASK=255.255.255.0  #子网掩码
-NETWORK=192.168.0.0    #网络号
-</code></pre>
-
-<p>修改网关<br/>
-vi /etc/sysconfig/network</p>
-
-<pre><code>NETWORKING=yes   #打开网络
-HOSTNAME=linuxgroup  #本机主机名（必须与/etc/hosts中的一样）
-GATEWAY=192.168.0.1  #网关
-</code></pre>
-
-<p>配置DNS<br/>
-vi /etc/resolv.conf</p>
-
-<pre><code>nameserver xxx.xxx.xxx.xxx
-nameserver xxx.xxx.xxx.xxx #根据自己的实际情况制定
-</code></pre>
-
-<p>弄好了之后可以重启服务了</p>
-
-<pre><code>service network restart 
-/etc/init.d/network restart #两条命令都可以
-</code></pre>
-
-<p>现在基本算弄完了，等待后续的折腾</p>
+<p>pyquery的使用还是很方便的，和jquery提取dom的语法是一样的。</p>
 </div>
 
 
@@ -197,7 +162,7 @@ nameserver xxx.xxx.xxx.xxx #根据自己的实际情况制定
   
 
 
-<time datetime="2013-07-15T17:20:00+08:00" pubdate data-updated="true">Jul 15<span>th</span>, 2013</time>
+<time datetime="2014-12-28T23:16:00+08:00" pubdate data-updated="true">Dec 28<span>th</span>, 2014</time>
       
 
 
@@ -205,7 +170,7 @@ nameserver xxx.xxx.xxx.xxx #根据自己的实际情况制定
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2013/07/15/centos/" data-via="" data-counturl="http://tuteng.github.io/blog/2013/07/15/centos/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2014/12/28/pyquery/" data-via="" data-counturl="http://tuteng.github.io/blog/2014/12/28/pyquery/" >Tweet</a>
   
   
   
@@ -214,10 +179,8 @@ nameserver xxx.xxx.xxx.xxx #根据自己的实际情况制定
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/06/06/yingjian/" title="Previous Post: 纯硬件打造数字秒表">&laquo; 纯硬件打造数字秒表</a>
+        <a class="basic-alignment left" href="/blog/2014/12/28/django/" title="Previous Post: django源码分析 ">&laquo; django源码分析 </a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/07/22/tongxin/" title="Next Post: 通信专业词汇">通信专业词汇 &raquo;</a>
       
     </p>
   </footer>
@@ -228,7 +191,7 @@ nameserver xxx.xxx.xxx.xxx #根据自己的实际情况制定
           <h1>Comments</h1>
               <div id="comments" aria-live="polite"><!-- 多说公共JS代码 end -->
 <!-- Duoshuo Comment BEGIN -->
-<div class="ds-thread" data-title="Centos安装及配置"></div>
+<div class="ds-thread" data-title="Pyquery使用"></div>
 <script type="text/javascript">
       var duoshuoQuery = {short_name:"tuteng"};
 (function() {
