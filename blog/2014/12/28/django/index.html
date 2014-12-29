@@ -129,7 +129,7 @@ if __name__ == "__main__":
 
 <p>其中的key是 DJANGO_SETTINGS_MODULE，这里的self是一个字典，判断key是不是在里面，不在里面就做一个键值绑定。然后返回。</p>
 
-<p>下面进入execute_from_command_line(sys.argv)，sys.argv位一个参数执行的列表，像我们执行python  manage.py runserver时，manage.py位sys.argv[0],runserver为sys.argv[1],以此类推，如果有更多参数加的话。</p>
+<p>下面进入execute_from_command_line(sys.argv)，sys.argv位一个参数执行的列表，像我们执行python  manage.py runserver时，manage.py为sys.argv[0],runserver为sys.argv[1],以此类推，如果有更多参数加的话。</p>
 
 <p>进入django的core模块下，找到management模块。在<strong>init</strong>.py下可以找到该函数</p>
 
@@ -141,7 +141,7 @@ if __name__ == "__main__":
     utility.execute()
 </code></pre>
 
-<p>我们输入的参数便传到了这个函数里，其中ManagementUtility位一个类穿进去的参数列表会进入一个简单的初始化</p>
+<p>我们输入的参数便传到了这个函数里，其中ManagementUtility为一个类传进去的参数列表会进入一个简单的初始化</p>
 
 <pre><code>def __init__(self, argv=None):
     self.argv = argv or sys.argv[:]
@@ -189,7 +189,7 @@ if __name__ == "__main__":
             self.fetch_command(subcommand).run_from_argv(self.argv)
 </code></pre>
 
-<p>第一个语句为词法分析，可是找遍了LaxOptionParser这个类也没有找到入口，里面并没有<strong>init</strong>,只有几个函数，可是python也没有正式的构造函数重载的什么的，后来发现此类继承自OptionParser这个类，它来自于optparse模块，在OptionParser模块里有一个<strong>init</strong>()函数，会接受若干个参数，进行初始化，这里只是传递了3个参数，usage传递了一个字符串，version为版本，BaseCommand.option_list为一个关于命令行的元组，其中调用了make_option这个类<strong>init</strong>进行一些初始化，主要初始化<em>short_opts和</em>long_opts这两个参数，并且进行了一些检查。<em>short_opts为短命令，</em>long_opts为长命令，如-h，&#8211;help分别为短命令和长命令。<br/>
+<p>第一个语句为词法分析，可是找遍了LaxOptionParser这个类也没有找到入口，里面并没有<strong>init</strong>,只有几个函数，可是python也没有正式的构造函数什么的，后来发现此类继承自OptionParser这个类，它来自于optparse模块，在OptionParser模块里有一个<strong>init</strong>()函数，会接受若干个参数，进行初始化，这里只是传递了3个参数，usage传递了一个字符串，version为版本，BaseCommand.option_list为一个关于命令行的元组，其中调用了make_option这个类<strong>init</strong>进行一些初始化，主要初始化<em>short_opts和</em>long_opts这两个参数，并且进行了一些检查。<em>short_opts为短命令，</em>long_opts为长命令，如-h，&#8211;help分别为短命令和长命令。<br/>
 parser为LaxOptionParser的一个实例。 parser.parse_args(self.argv)这个函数会根据上面初始化的内容进行解析命令行参数，之后返回两个值：options，它是一个对象（，保存有命令行参数值。只要知道命令行参数名，如 file，就可以访问其对应的值： options.file 。args，它是一个由 positional arguments 组成的列表。</p>
 
 <pre><code>    def handle_default_options(options):
@@ -208,7 +208,7 @@ parser为LaxOptionParser的一个实例。 parser.parse_args(self.argv)这个函
 <p>handle_default_options将解析出来的options对象当做参数，判断settings和pythonpath是否存在，然后              <br/>
 设置环境变量和python模块的搜索路径。</p>
 
-<p>接下来是获得命令行的命令参数self.argv[1],并判断这个命令，包括错误处理，是否时help，是否是version，根据不同的情况展示不同的信息。</p>
+<p>接下来是获得命令行的命令参数self.argv[1],并判断这个命令，包括错误处理，是否是help，是否是version，根据不同的情况展示不同的信息。</p>
 
 <p>最重要的是最后一句，即前面的情况都不是，就进入self.fetch_command(subcommand).run_from_argv(self.argv)</p>
 
@@ -328,9 +328,8 @@ runserver也是。看看runserver的handle：</p>
 
 <p>runserver里的run方法主要时调用了inner_run(*args, **options）这个方法。</p>
 
-<p>   def inner_run(self, *args, **options):</p>
-
-<pre><code> #省略了部分代码
+<pre><code>def inner_run(self, *args, **options):
+ #省略了部分代码
     #很熟悉吧，这就是我们开始运行时，终端上输出的信息啊。   
     self.stdout.write((
         "%(started_at)s\n"
@@ -413,11 +412,8 @@ class WSGIHandler(base.BaseHandler):
 <p>httpd_cls(server_address, WSGIRequestHandler, ipv6=ipv6)为实例化一个WSGIServer类，最终的实例化方法在父类SocketServer中的TCPServer和BaseServer中。包括初始化线程，初始化网络句柄，像下面的<strong>is_shut_down和</strong>shutdown_request都是在其中初始化的</p>
 
 <pre><code>#处理一个http请求直到关闭
-</code></pre>
-
-<p>   def serve_forever(self, poll_interval=0.5):</p>
-
-<pre><code>    #__is_shut_down为一个初始化的threading.Event()的句柄，用于线程间通信
+def serve_forever(self, poll_interval=0.5):
+    #__is_shut_down为一个初始化的threading.Event()的句柄，用于线程间通信
     #.clear()将标识设置为false
     self.__is_shut_down.clear()
     try:
@@ -434,12 +430,10 @@ class WSGIHandler(base.BaseHandler):
         self.__shutdown_request = False
         #将标识设置为true
         self.__is_shut_down.set()
-</code></pre>
 
-<p>   #对select函数的封装      <br/>
-   def _eintr_retry(func, *args):</p>
-
-<pre><code>"""restart a system call interrupted by EINTR"""
+#对select函数的封装        
+def _eintr_retry(func, *args):
+"""restart a system call interrupted by EINTR"""
   while True:
     try:
         return func(*args)
@@ -466,7 +460,7 @@ class WSGIHandler(base.BaseHandler):
 
    def finish_request(self, request, client_address):
         """Finish one request by instantiating RequestHandlerClass."""
-        此处的RequestHandlerClass为初始化的时候传进来的WSGIRequestHandler，实现了回调。
+        #此处的RequestHandlerClass为初始化的时候传进来的WSGIRequestHandler，实现了回调。
         self.RequestHandlerClass(request, client_address, self)    
 </code></pre>
 
