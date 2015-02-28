@@ -1,0 +1,284 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>概率论与数理统计学习 - TuTeng'blog</title>
+  <meta name="author" content="图腾">
+
+  
+  <meta name="description" content="基本概念： 随机试验和随机事件，事件的运算。全概率公式。
+随机试验：结果至少有两个每次只能得到其中一个。
+基本事件：随机实验中的每一个结果，不可再分。
+抛硬币有8种可能的结果，每种结果都是基本事件。
+随机事件表达方式：大写字母A，B，C等来表示。也可以用{}表示。 样本空间： &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tuteng.github.io/blog/2015/01/21/gailvlun">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">TuTeng'blog</a></h1>
+  
+    <h2>学会了就用，用着不会就学</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:tuteng.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/aboutme">Aboutme</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">概率论与数理统计学习</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-21T23:31:00+08:00" pubdate data-updated="true">Jan 21<span>st</span>, 2015</time>
+        
+         
+                   | <a href="#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h4>基本概念：</h4>
+
+<p>随机试验和随机事件，事件的运算。全概率公式。<br/>
+随机试验：结果至少有两个每次只能得到其中一个。<br/>
+基本事件：随机实验中的每一个结果，不可再分。<br/>
+抛硬币有8种可能的结果，每种结果都是基本事件。<br/>
+随机事件表达方式：大写字母A，B，C等来表示。也可以用{}表示。 <br/>
+样本空间：随机试验中所有基本事件所构成的集合。   <br/>
+必然事件。不可能事件。 <br/>
+事件与集合的对应关系：<br/>
+A包含于B，A是B的子事件。
+事件的和。事件的积。事件AB不相容。对立事件。事件A和事件B的差。A-B。<br/>
+de morgan对偶法则。 <br/>
+概率是随机事件发生可能性大小的数字表征，其值在0和1之间，概率是事件的函数。 <br/>
+P(A)为A发生的概率。</p>
+
+<pre><code>古典概率的两个基本条件：   
+1.有限性。（结果只有有限个）  
+2.等可能性。
+</code></pre>
+
+<p>英文字母的使用频率，去掉空格。e使用的频率最高，其次是t，接着是a。<br/>
+π的前100万位小数，各个数字出现的频率相同。
+主观概率与频率没有关系。如某人有百分之八十的可能性办成某事。
+贝叶斯学派。先验概率。<br/>
+概率的公理化定义。
+两个事件不相容。
+两个事件相容。
+推广到多个事件相容。<br/>
+古典概率的计算。</p>
+
+<pre><code>23个人中至少两个人同一天过生日的概率大于百分之五十。
+50个人中至少两个人同一天过生日的概率为大于百分之九十七。
+4个人中至少两个人同一个月出生的概率大于百分之四十。
+
+
+古典概率的计算要点：
+1.选择合适的样本空间，每个事件等可能性。
+2.运用排列组合的知识。
+</code></pre>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">图腾</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-21T23:31:00+08:00" pubdate data-updated="true">Jan 21<span>st</span>, 2015</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2015/01/21/gailvlun/" data-via="" data-counturl="http://tuteng.github.io/blog/2015/01/21/gailvlun/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/01/06/chengkuaishujuliu/" title="Previous Post: tcp成块数据流">&laquo; tcp成块数据流</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/01/23/jquery/" title="Next Post: jquery动态加载">jquery动态加载 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+  <section>
+          <h1>Comments</h1>
+              <div id="comments" aria-live="polite"><!-- 多说公共JS代码 end -->
+<!-- Duoshuo Comment BEGIN -->
+<div class="ds-thread" data-title="概率论与数理统计学习"></div>
+<script type="text/javascript">
+      var duoshuoQuery = {short_name:"tuteng"};
+(function() {
+     var ds = document.createElement('script');
+         ds.type = 'text/javascript';ds.async = true;
+             ds.src = 'http://static.duoshuo.com/embed.js';
+                 ds.charset = 'UTF-8';
+                     (document.getElementsByTagName('head')[0] 
+                         || document.getElementsByTagName('body')[0]).appendChild(ds);
+                       
+ })();
+</script>
+<!-- Duoshuo Comment END -->
+
+</div>
+  </section>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/02/28/android/">android学习笔记</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/28/tiaojian/">条件概率</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/23/jquery/">jquery动态加载</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/21/gailvlun/">概率论与数理统计学习</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/06/chengkuaishujuliu/">tcp成块数据流</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - 图腾 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

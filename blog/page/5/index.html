@@ -9,16 +9,8 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="gcc常用命令 -E 仅作预处理，不进行编译，汇编和链接
--S 编译到汇编语言，不进行链接
--c 编译，汇编到目标代码，不进行链接
--o 输出到文件。
--g 对代码进行调试，加上此选项
--O1 进行一级优化
--O2 进行二级优化
--static 对代码进行静态链接
--Wall 打印出所有警告
-- &hellip;">
+  <meta name="description" content="真囧，红外接收搞了两天，终于给弄好了。有好多天没有记录了，废话少说吧，start
+在嵌入式领域，结合各种芯片，红外模块可以用来控制各种设备。常用的有我们平时使用的各种遥控器，今天从软件的领域来研究一下红外就收的解码过程。 电路图如下 以这两张图片来说明今天的代码。从图中看，红外接收模块还是很简单的 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -75,6 +67,1199 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/08/26/hongwaijieshou/">红外接收并解码</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-26T19:03:00+08:00" pubdate data-updated="true">Aug 26<span>th</span>, 2013</time>
+        
+         
+                   | <a href="/blog/2013/08/26/hongwaijieshou/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>真囧，红外接收搞了两天，终于给弄好了。有好多天没有记录了，废话少说吧，start<br/>
+在嵌入式领域，结合各种芯片，红外模块可以用来控制各种设备。常用的有我们平时使用的各种遥控器，今天从软件的领域来研究一下红外就收的解码过程。</p>
+
+<h5>电路图如下</h5>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kxIUsFM72zw0005Q" alt="红外一体接收" />
+<img src="http://files.note.sdo.com/xBlh9~kxIVna4M0vU0008Z" alt="实物图" /></p>
+
+<p>以这两张图片来说明今天的代码。从图中看，红外接收模块还是很简单的，就只有三个引脚，但是我们用的是时候只用其中的一个，其他两个都已经给我们固定好了。</p>
+
+<h5>红外遥控系统</h5>
+
+<p>通用红外遥控系统由发射和接收两大部分组成，应用编/解码专用集成电路芯片来进行控制。<br/>
+发射部分包括键盘矩阵、编码调制、LED红外发送器；<br/>
+接收部分包括光、电转换放大器、解调、解码电路。<br/>
+遥控发射器专用芯片很多，根据编码格式可以分成两大类，这里我们以运用比较广泛，解码比较容易的一类来加以说明，现以日本NEC的uPD6121G组成发射电路为例说明编码原理（一般家庭用的DVD、VCD、音响都使用这种编码方式）。当发射器按键按下后，即有遥控码发出，所按的键不同遥控编码也不同。这种遥控码具有以下特征：
+采用脉宽调制的串行码，以脉宽为0.565ms、间隔0.56ms、周期为1.125ms的组合表示二进制的“0”；以脉宽为0.565ms、间隔1.685ms、周期为2.25ms的组合表示二进制的“1”，其波形如图所示。</p>
+
+<p><img src="http://hi.csdn.net/attachment/201107/12/0_1310458705pbeL.gif" alt="" /></p>
+
+<p>如图可见，0与1前端的低电平持续都是0.56ms，那么就是后面的高电平持续时间不同，0为0.56ms，1为1.685ms，找到不同之处，编程时就有识别的依据了！</p>
+
+<p><img src="http://hi.csdn.net/attachment/201107/12/0_1310458680N8mF.gif" alt="" /></p>
+
+<p>UPD6121G产生的遥控编码是连续的32位二进制码组，其中前16位为用户识别码，能区别不同的电器设备，防止不同机种遥控码互相干扰。该芯片的用户识别码固定为十六进制01H；后16位为8位操作码（功能码）及其反码。UPD6121G最多额128种不同组合的编码。<br/>
+当一个键按下超过36ms，振荡器使芯片激活，将发射一组108ms的编码脉冲,这108ms发射代码由一个引导码（9ms）,一个结果码（4.5ms）,低8位地址码（9ms~18ms）,高8位地址码（9ms~18ms）,8位数据码（9ms~18ms）和这8位数据的反码（9ms~18ms）组成。如果键按下超过108ms仍未松开，接下来发射的代码（连发码）将仅由起始码（9ms）和结束码（2.25ms）组成。（实际上人手的动作是很慢的，即使你快速的按下按键，可能对于芯片来说还是超过108ms，所以如何处理连发码是很关键的）<br/>
+遥控器在按键按下后，周期性地发出同一种32位二进制码，周期约为108ms。一组码本身的持续时间随它包含的二进制“0”和“1”的个数不同而不同，大约在45～63ms之间，图为发射波形图。</p>
+
+<p><img src="http://hi.csdn.net/attachment/201107/12/0_13104587170sq6.gif" alt="" /></p>
+
+<p><img src="http://hi.csdn.net/attachment/201107/12/0_13104587243Hms.gif" alt="" /></p>
+
+<h5>代码部分</h5>
+
+<pre><code>void dsjsq0(void) interrupt 1
+{
+    time++;
+}//定时器计数器0中断，全局变量time，用来计数，time每次加1，时间过去255us
+
+void wbzd0(void) interrupt 0
+{
+    static uchar i;
+    static bit flag;
+    if(flag)
+    {
+        if(time&lt;60&amp;&amp;time&gt;=30)  //晶振频率为12MH，当时间经过255*30到255*60之间时，即可进入函数将time存储
+                i=0;
+
+        irdata[i]=time;// 将time存储等待后续将其翻译成二进制，其中irdata[0]存储的是前导码的时间。
+//      write_data(time);//用来测试time是否含有数据 
+        time=0;  //将time归零等待下面的32位数据
+        i++;  
+
+        if(33==i)  //数据存储完毕
+        {
+            irok=1;  //存储完毕标志
+            i=0;
+        }
+    }  
+    else
+    {
+        flag=1;  //进入函数处理的标志
+        time=0;
+    }
+//  write_data(irdata); //测试用
+ } //外部中断0，下降沿触发，利用外部中断的最高优先级来讲time存到全局数组中
+
+void wbzd0_init()
+{
+    IT0=1;   //下降沿触发
+    EA=1;    //打开全局中断
+    EX0=1;   //外部中断0中断允许
+//  PX0=1;   //外部中断0中断优先级控制位
+
+
+} //外部中断0初始化
+
+void dsjsq0_init(void)
+{
+    TMOD=0X02;  //工作方式选择位，方式2，8位初值自动重装的8位定时器计数器
+    TH0=0X00;   //装入初值，高8位
+    TL0=0X00;   //低8位
+    ET0=1;      //定时器计数器0中断允许位
+    TR0=1;      //定时器0运行控制位
+}  //定时器计数器0总段初始化
+
+void irchuli(void)
+{
+    uchar i,j,k,timedata,value;
+    k=1;
+        for(i=0;i&lt;4;i++)  
+        {
+            for(j=0;j&lt;8;j++)
+            {   timedata=irdata[k]; //irdata[0]为引导码的时间，所以从irdata[1]开始处理
+                if(timedata&gt;7)  //判断时间，来决定数组中的数据是0还是1
+                    value|=0x80;  //与0x80取或，将转换后0或1的数据存储到value中
+                if(j&lt;7)    //注意此处是j，不是timedata，在这里纠结了好久才发现这个错误
+                    value&gt;&gt;=1;  //通过右移，获得一个字节的数据
+                k++;
+            }  //处理一个字节
+            tempdata[i]=value;  //将单个字节存到数组中
+    //      write_data(tempdata); //测试用
+            value=0;
+        } //32位，4个字节，每个字节8位，
+    irchuliok=1;    
+}  //红外处理部分
+void irzhuan(void)
+{
+    uchar i;
+    tempdata2[0]=table[tempdata[0]/16];  //处理客户码
+    tempdata2[1]=table[tempdata[0]%16];
+    tempdata2[2]='-';
+    tempdata2[3]=table[tempdata[1]/16];  //处理处理客户码
+    tempdata2[4]=table[tempdata[1]%16];
+    tempdata2[5]='-';
+    tempdata2[6]=table[tempdata[2]/16];  //处理数据码
+    tempdata2[7]=table[tempdata[2]%16];
+    tempdata2[8]='-';
+    tempdata2[9]=table[tempdata[3]/16];   //处理数据反码
+    tempdata2[10]=table[tempdata[3]%16];
+    write_com(0xc0+5);
+    for(i=0;i&lt;11;i++)
+    {   
+        write_data(tempdata2[i]);
+        delay(5);
+    }  //利用for循环将解码显示到lcd上
+/*  write_data(tempdata2[0]);
+    write_data(tempdata2[1]);
+    write_data(tempdata2[2]);
+    write_data(tempdata2[3]);
+//  write_data(tempdata2[4]);
+//  write_data(tempdata2[5]);
+*/
+    irchuliok=0;  //红外部分处理完毕标志
+
+}  //4个字节的红外转换部分
+</code></pre>
+
+<p>完整代码请查看<a href="https://github.com/tuteng/hongwaijiema">这里</a>  <br/>
+参考文章<a href="http://blog.csdn.net/mhjerry/article/details/6600414">红外遥控系统原理及单片机软件解码程序，我的编写经历(C版本)</a><br/>
+<a href="http://my.oschina.net/jayzonex/blog/10649">51单片机红外解码程序</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/31/ad/">AD转换并显示在1602上</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-31T10:31:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2013</time>
+        
+         
+                   | <a href="/blog/2013/07/31/ad/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4>AD转换实现</h4>
+
+<p>pcf8591电路图：
+<img src="http://files.note.sdo.com/xBlh9~kvxTDFM71NI002aE" alt="" /> <br/>
+PCF8591是一个单片集成、单独供电、低功耗、8-bit CMOS数据获取器件。PCF8591具有4个模拟输入、1个模拟输出和1个串行I2C总线接口。PCF8591的3个地址引脚A0, A1和A2可用于硬件地址编程，允许在同个I2C总线上接入8个PCF8591器件，而无需额外的硬件。在PCF8591器件上输入输出的地址、控制和数据信号都是通过双线双向I2C总线以串行的方式进行传输对于iic总线可参考<a href="http://tuteng.github.io/blog/2013/07/31/danpianji/">前一篇文章</a>。这是我的板子上的AD/DA模块，其中j31，j32是通道选择通过跳帽来选择通道，同时只能选择两个通道，w3，w4是两个电位器，这里用来产生模拟量，其中w3来控制第2通道和第3通道，w4用来控制0通道和1通道。对于pcf851的详细描述可参考如下：<a href="http://v.to/0I6RU">pcf8591中文参考手册</a> <br/>
+部分程序代码如下:</p>
+
+<pre><code>void write_data_iic(uchar ch){
+    start();    
+    write_one_data(ADDW);  //首先发送地址，这里ADDW为0x90（10010000），  AD模块的硬件地址，前四位固定不变，  第5位到第七位可编程，但从电路图中可看出，A2，A1，A0全接了地，所以此三位为0，最后一位位读写控制位，写为0，读为1
+    respons();
+    write_one_data(0x40|ch);  //通道选择位，0x40（01000000）只打开了第二位，相当于使能端打开，通过与ch取或来到达选择通道的目的。 
+    respons();
+    end();
+
+}//利用iic总线向通道写入数据
+uchar read_data_iic(uchar ch){
+    uchar num;
+    start();    //iic总线开始
+    write_one_data(ADDW); //读数据前要先进行写操作，目的是写入器件地址以寻找合适的器件，当器件与地址匹配时，器件会发出一个应答信号，这样就可以开始读取数据
+    respons();
+    write_one_data(0x40|ch); //通道选择位，同上
+    respons();
+    start();
+    write_one_data(ADDR); //再次发送设备地址，只是这次最后一位为读命令
+    respons();
+    num=read_one_data();  //读取数据并存入变量num中
+    respons();
+    end();
+    return num;
+}//利用iic总线从总线读取数据
+</code></pre>
+
+<h4>1602液晶模块</h4>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kvxTDpM71NI002aC" alt="" /><br/>
+1602液晶也叫1602字符型液晶，它是一种专门用来显示字母、数字、符号等的点阵型液晶模块,它由若干个5X7或者5X11等点阵字符位组成，每个点阵字符位都可以显示一个字符，每位之间有一个点距的间隔，每行之间也有间隔，起到了字符间距和行间距的作用。管脚功能参看1602数据手册。</p>
+
+<h6>lcd部分程序代码</h6>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kvyY156u0I800042" alt="" /></p>
+
+<pre><code>void write_com(uchar com){
+        lcdrs=0;  //RS引脚，寄存器选择，1：数据寄存器；0：指令寄存器
+        P0=com;
+        lcdrw=0;  //RW引脚，读写操作选择，1：读；0：写
+        delayms(5); //延时函数
+        lcden=1;    //使能信号，高电平有效
+        delayms(5);
+        lcden=0;
+        }    //lcd写命令操作
+void write_data(uchar dat){ //参数同样不可以使用data
+        lcdrs=1;  //数据寄存器
+        P0=dat;     //将数据传到P0口
+        lcdrw=0;  //写操作
+        delayms(5);
+        lcden=1;
+        delayms(5);
+        lcden=0;
+        }  //lcd写数据操作
+</code></pre>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kvy-G9M70Ew000bO" alt="" /></p>
+
+<pre><code>        void init_lcd(){
+            lcden=0;
+            write_com(0x38);
+            write_com(0x0c);
+            write_com(0x06);
+            write_com(0x01);
+            }   //lcd初始化操作
+</code></pre>
+
+<p>将以上各部分代码稍加组合，即可实现所需功能，完整代码在<a href="https://github.com/tuteng/danpianji">这里</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/31/danpianji/">Iic总线</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-31T09:11:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2013</time>
+        
+         
+                   | <a href="/blog/2013/07/31/danpianji/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4>iic总线实现</h4>
+
+<p>iic总线只需要两个接口就可以实现，因此是十分节省资源的。iic总线的实现分为下面几个步骤：开始，结束，应答，接收一个字节，写一个字节，通过这几个调用模块可以实现接收数据，发送数据。在51开发板上，用于串口通信的接口主要是P2.0和P2.1接口，连线可以说是非常的简单。 <br/>
+在iic总线通信期间，只有SCL为高电平时，数据的发送才是有效的，因此若不想使用，可以暂时将其拉低</p>
+
+<pre><code>    //SDA和SCL分别代表iic总线的数据线和时钟线
+void delay(){
+        _nop_();
+        _nop_();
+        _nop_();
+        _nop_();
+        _nop_();
+        _nop_();
+    }       //延时函数，么个_nop_()大约为1us，为了接收稳定信号，当SCL和SDA变化时都要延时至少4.5us            
+
+void init_iic(){
+        SCL=1;
+        delay();
+        SDA=1;
+        delay();
+
+    }   //iic总线初始化，将SCL和SDA线拉高
+</code></pre>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kvy1tFM71NI002fA" alt="" /></p>
+
+<pre><code>    void start(){
+            SDA=1;
+            delay();
+            SCL=1;
+            delay();
+            SDA=0;
+            delay();
+    }     //iic总线启动信号，在时钟信号为高的情况下，SDA由高电平拉为低电平
+    void end(){
+            SDA=0;
+            delay();
+            SCL=1;
+            delay();
+            SDA=1;
+            delay();
+    }       //iic总线结束信号，在时钟信号为低电平时，SDA由低电平拉为高电平  
+</code></pre>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kvy1FW4M2Vw002ej" alt="" /></p>
+
+<pre><code>    void respons(){
+            unsigned char i;
+            SCL=1;
+            delay();
+            while((SDA==1)&amp;&amp;(i&lt;255))  
+                i++; //若SDA一直为高，则在此处循环255次，防止从机始终不应答，陷入死循环
+            SCL=0;
+            delay();
+        }       //应答信号，时钟信号为高时，SDA被从机自动从高电平拉为低电平  
+</code></pre>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kvy1tFM71NI002fy" alt="" /></p>
+
+<pre><code>    void write_one_data(unsigned char dat){  //此处参数不能为data，这个在头文件中已被定义
+            unsigned char i,temp;
+            temp=dat;
+            for(i=0;i&lt;8;i++){ 
+                temp=temp&lt;&lt;1;//数据左移一位，最高位溢出被存在CY中，次高位变为最高位
+                SCL=0;
+                delay();
+                SDA=CY;  //将数据暂存到数据线上，准备发送
+                delay();
+                SCL=1;  //将时钟线拉高，数据开始发送
+                delay();
+            }//发送一个字节（8位）的数据，CY（PSW.7）：即PSW的D7位，进位、借位标志，在头文件reg52.h中有定义
+            SCL=0;
+            delay();
+            SDA=1;
+            delay();
+        }
+    unsigned int read_one_data(){
+
+            unsigned char i,k=0;
+            SCL=0;
+            delay();
+            SDA=1;
+            for(i=0;i&lt;8;i++)
+            {
+                SCL=1;
+                delay();
+                k=(k&lt;&lt;1)|SDA;   //将k左移一位后与数据线取或，即可得到传输的数据，发送数据时从最高位开始，接收时数据在最低位，在经左移和循环恢复原来的数据
+                SCL=0;
+                delay();
+            }   //读一个字节的数据
+            delay();
+            return k; //返回一个字节的数据
+
+        }
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/22/github/">Github博客操作</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-22T16:12:00+08:00" pubdate data-updated="true">Jul 22<span>nd</span>, 2013</time>
+        
+         
+                   | <a href="/blog/2013/07/22/github/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>使用octopress有一段时间了，可是还是不怎么熟练，这不今天又遇到了问题，害的我中午饭都没吃好，不过最终还是把问题给解决了。在此记录一下octopress的使用方法。</p>
+
+<h5>用rake管理</h5>
+
+<pre><code>rake install  安装默认主题
+rake install['主题名字']安装自己喜欢的主题
+rake gennerate 每次做了改变都提交一次
+rake preview  生成本地预览，可以在4000端口查看
+rake new_post['帖子名字'] 生成新的帖子，可以用markdown编辑
+rake new_page['about'] 生成一个新的页面，但生成之后还不能立即使用，需要修改/source/_includes/custom/navigation.html这个文件，按照相同的格式来编辑。
+rake deploy 将你的博客提交到服务器
+</code></pre>
+
+<p>先记录这些，有空在补充</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/22/tongxin/">通信专业词汇</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-22T10:29:00+08:00" pubdate data-updated="true">Jul 22<span>nd</span>, 2013</time>
+        
+         
+                   | <a href="/blog/2013/07/22/tongxin/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><pre><code>A 
+A, Asub A-interface A接口
+AC  Alternating Current 交流
+AC  Access Class (C0 to C15)    接入级别（C0到C15）
+ACCH    Associated Control Channel  随路控制信道
+ACELP   Algebraic code excitation linear prediction 代数码激励线性预测
+ACOM    Antenna Combiner    天线合路器
+AGCH    Access Grant Channel    接入允许信道
+AM/CM   Administration Module/ Communication Module 管理和通信模块
+ANSI    American National Standard Institute    美国国家标准组织
+APC Automatic Power Control 自动功率控制
+API Application Program Interface   应用程序接口
+APL Advanced Phase Locking  高级时钟锁相
+ARFCN   Absolute Radio Frequency Channel Number 绝对射频信道号
+ASIC    Application Specific Integrated Circuit 专用集成电路
+AuC Authentication Center   鉴权中心
+B　 
+BA  BCCH Allocation BCCH分配
+BAM Back Administration Module  后管理模块
+BCC BTS Color Code  基站色码
+BCCH    Broadcast Control CHannel   广播控制信道
+BCF Base Control Function   基本控制功能
+BCH Broadcast channel (transport channel)   广播信道
+BER Bit Error Rate  误码率
+BHCA    Busy Hour Call Attempt  忙时尝试呼叫
+BIE Base station Interface Equipment (board)    基站接口设备（板）
+BIOS    Basic Input Output System   基本输入输出系统
+BITS    Building Integrated Timing Supply   大楼综合定时供给系统
+BM  Basic Module    基本模块
+BP  Burst Pulse 突发脉冲
+BQ  Bad Quality 质量差
+BS  Base Station    基站
+BS1 Abis Interface  Abis接口
+BSC Base Station Controller 基站控制器
+BSIC    Base Station Identity Code  基站识别码
+BSMU    Base Station Interface Unit 基站接口单元
+BSS Base Station Subsystem  基站子系统
+BSSAP   Base Station Subsystem Application Part 基站子系统应用部分
+BSSGP   Base Station Subsystem GPRS Protocol    基站系统GPRS协议
+BSSMAP  Base Station Subsystem Management Application Part  基站子系统管理应用部分
+BSSOMAP Base Station Subsystem Operation and Maintenance Application Part   基站子系统操作与维护应用部分
+BTS Base Transceiver Station    基站收发信台
+BTSM    Base Transceiver Station Management BTS管理
+BVC BSSGP Virtual Connection    BSSGP虚拟连接
+C　 
+CA  Cell Allocation 小区分配
+CAMEL   Customized Applications for Mobile network Enhanced Logic   移动网络增强逻辑的客户化应用
+CBA Cell Bar Access 小区禁止接入
+CBC Cell Broadcast Center   小区广播中心
+CBCH    Cell Broadcast CHannel  小区广播信道
+CBCCH   Cell Broadcast Control Channel  小区广播控制信道
+CBQ Cell Bar Qualify    小区禁止限制
+CBSM    Cell Broadcast Short Message    小区广播短消息
+CC  Country Code    国家码
+CC  Calling Control 呼叫控制
+CC  Connection Confirm  呼叫控制
+CCB Call Control Block  呼叫控制块
+CCBS    Completion of Calls to Busy Subscribers 遇忙回呼
+CCCH    Common Control Channel  公共控制信道
+CCH Control Channel 控制信道
+CCS Common Channel Signaling    共路信令方式
+CD  Call Deflection 呼叫偏移
+CDB Cell Broadcast Database 小区广播数据库
+CDU Combining and Distribution Unit 合分路单元
+CELP    Code Excited Linear Prediction  码激励线性预测
+CGI Cell Global Identity    小区全球识别码
+CI  Cell Identity   小区识别
+CIC Circuit Identify Code   电路识别码
+CIC Carrier Interface Controller board  载频接口控制器
+CIR Carrier to Interference Ratio   载干比
+CKSN    Ciphering Key Sequence Number   密钥序列号
+CKV Clock Drive board   时钟驱动板
+CM  Connection Management   接续管理
+CPU Central Processing Unit 中央处理单元
+CR  Connection Request  连接请求
+CRC Cyclic Redundancy Check 循环冗余校验
+CRO Cell Reselect Offset    小区重选偏移
+CS  Coding Scheme   （信道）编码方式
+CS-1    Code Scheme-1   编码模式－1（9.05kbit/s）
+CS-2    Code Scheme-2   编码模式－2（13.4kbit/s）
+CS-3    Code Scheme-3   编码模式－3（15.6kbit/s）
+CS-4    Code Scheme-4   编码模式－4（21.4kbit/s）
+CTN Central Switching Network Board 中央交换网板
+D   　
+DB  DataBase    数据库
+DBF Database File   数据库文件
+DBMS    Database Management System  数据库管理系统
+DC  Direct Current  直流
+DCCH    Dedicated Control Channel   专用控制信道
+DCL Diagnostic Control Link 诊断控制链路
+DDN Digital Data Network    数字数据网
+DL  Downlink    下行链路
+DLC Data Link Connection    数据链路连接
+DLCEP   Data Link Connection End Point  数据链路连接端点
+DLCEPI  Data Link Connection End Point Identifier   数据链路连接端点标识
+DLCI    Digital Link Connection Identity    数据链路连接标识
+DNS Domain Name Server  域名服务器
+DPC Destination (Signaling) Point Code  目的信令点编码
+DRDBMS  Distributed Relational DBMS 分布式关系数据库管理系统
+DRX Discontinuous Reception (mechanism) 不连续接收
+DSC Downlink Signaling fault Count  下行信令故障计数
+DSP Digital Signal Processor    数字信号处理器
+DTAP    Direct Transfer Application Part    直接传输应用部分
+DTMF    Dual Tone Multi-frequency   双音多频（收号器）
+DTX Discontinuous transmission (mechanism)  不连续发送（机制）
+E　
+E-Abis  Enhanced Abis   增强型Abis
+E3M E3 Sub-Multiplexer  增强型E1子复用设备
+EA  Early Allocation    预分配
+EAC External Alarm Collection   外部告警采集
+EC  Emergency Call  紧急呼叫
+ECSC    Early Classmark Sending Control 早期类标发送控制
+ECT Explicit Call Transfer  显示呼叫转移
+EDU Enhanced Duplexer Unit  增强型双工单元
+EFR Enhanced full rate speech code  增强型全速率语音编解码
+EIR Equipment Identity Register 设备识别寄存器
+EM  Extended Measurement    扩展测量
+EMC Electromagnetic Compatibility   电磁兼容性
+EST Establishment   建立
+ETS European Telecommunication Standard 欧洲电信标准
+ETSI    European Telecommunication Standard Institute   欧洲电信标准组织
+F　
+FACCH   Fast Associated Control CHannel 快速随路控制信道
+FBC Photoelectric Conversion Board  光电转换板
+FBI Optical Fiber Interface Board   光接口板
+FCCH    Frequency Correction CHannel    频率校正信道
+FCS Frame Check Sequence    帧校验序列
+FDMA    Frequency Division Multiple Access  频分多址
+FH  Frequency Hopping   跳频
+FIR Finity Impulsion Response   有限冲击响应
+FN  Frame Number    帧号
+FPU Frame Processing Unit   帧处理单元
+FR  Frame Relay 帧中继
+FTAM    File Transfer Access and manipulation   文件传输、接入及使用
+FTC Full Rate Transcoder    码变换板
+FTP File Transfer Protocol  全速率码变换器
+FUC Frame Unit Controller   帧单元控制器
+FUL Radio Signaling Link    无线信令链路
+G　
+G-Abis  GPRS Abis   GPRS Abis
+GALM    Alarm board 告警板
+GCKS    Clock source    时钟板
+GCTN    Central switching Network board 中心交换网板
+GEMA    Emergency Message Automatic Transmission System 双机倒换板
+GFBI    Fiber Interface board   光纤接口板
+GGSN    Gateway GPRS Support Node   网关GPRS支持节点
+GLAP    LAPD Protocol Process board LAPD协议处理板
+GMC2    Inter-Module Communication board    模块通信板
+GMCC    Module Communication and Control board  模块通信控制板
+GMEM    Memory board    数据库接口板
+GMM GPRS Mobility Management    GPRS移动性管理
+GMPU    Main Processing Unit    主处理单元
+GMSC    Gateway Mobile Switching Center 关口局
+GMSK    Gaussian Minimum Shift-frequency Keying 高斯滤波最小移频键控
+GNET    Intra-module switching network board    交换网板
+GNOD    Node Communication Board    节点通信板
+GOPT    Local Optical Interface Board   光纤通信板
+GPRS    General Packet Radio Service    通用分组无线业务
+GPS Global Position System  全球定位系统
+GPWS    GSM Secondary Power board   二次电源板
+GSM，GSM900， GSM1800 Global System for Mobile communications 全球移动通信系统，900MHz的GSM系统，1800MHz的GSM系统
+GSN GPRS Support Node   GPRS支持节点
+GSNT    GSM Signaling Switching Network Board   信令交换网板
+GT  Global Title    全局码
+GTP GPRS Tunnelling Protocol    GPRS隧道协议
+H   　
+HC/HY COM   Hybrid Combiner 混合桥型合路器
+HCS Hierarchical Cell Structure 小区分层结构
+HDLC    High level Data Link Control    高级数据链路控制
+HDSL    High speed Digital Subscriber Line  高速数字用户线
+HLR Home Location Register  归属位置寄存器
+HO  Handover    切换
+HPA High magnification Power Amplifier board    高增益功放板
+HSC Hot Swap Controller 热倒换控制器
+HSN Hopping Sequence Number 跳频序列号
+HW  Highway 高速通路
+I　
+ID  IDentification/IDentity 识别
+IEC International Electrotechnical Commission   国际电工委员会
+IMEI    International Mobile station Equipment Identity 国际移动终端设备标识
+IMSI    International Mobile Station Identity   国际移动用户识别码
+IND Indication  指示
+IOMU    iSite Operation and Maintenance Unit    操作维护单元板
+IP  Internet Protocol   互联网协议
+ISDN    Integrated Services Digital Network 综合业务数字网
+ISO International Standard Organization 国际标准化组织
+ISR Interrupt Service   中断服务程序
+ISUP    Integrated Services Digital Network User Part/ISDN User Part    （七号信令之）ISDN用户部分
+ITU International Telecommunication Union   国际电信联盟
+ITU-T   International Telecommunication Union - Telecommunication Standardization Sector    国际电信联盟-电信标准部
+IWF Inter-working Function  互连功能
+J　
+-   -   
+K　
+-   -   
+L   　
+L2ML    Layer 2 Management Link 层2管理链路
+L3MM    Layer-3 Mobility Management 层三移动管理
+LA  Location Area   位置区
+LAC Location Area Code  位置区码（LAC）
+LAI Location Area Identity  位置区标识
+LAP Link Access Protocol    协议处理板
+LAPD    Link Access Protocol on the D-channel   D信道上的链路访问协议
+LAPDMAIL    LAPD Mail Box   LAPD邮箱
+LAPDm   Link Access Protocol on the Dm channel  Dm信道上的链路访问协议
+LLC Logical Link Control    逻辑链路控制
+LMT Local Maintenance Terminal  本地维护终端
+LNA Low Noise Amplifier 低噪声放大器
+LPN7    Common Channel Signaling Processing Board   公共信道信令处理板
+M　
+MA  Mobile Allocation   移动台（频率）分配
+MAC Media Access Control    媒质接入控制
+MAIO    Mobile Allocation Index Offset  移动分配索引偏移
+MAP Mobile Application Part 移动应用部分
+MBR Multiband Report    多频报告
+MCC Mobile Country Code 移动国家码
+MCK Main ClocK board    主时钟板
+MCP Multiple Communication-Protocol Processor   多重通信协议处理器
+MDC Message Discrimination  消息鉴别
+MDSL    Medium Bit-rate Digital Subscriber Loop 中速数字用户环线
+MDT Message Distribution    消息分配
+ME  Mobile Equipment    移动设备
+MFU Microcell Frame Unit    微蜂窝帧处理单元
+MM  Mobility Management 移动性管理
+MMU Multiplication and Management Unit  复用管理单元
+MNC Mobile Network Code 移动网号
+MNS Mobile Network Signaling    移动网信令
+MR  Measurement Result  测量结果
+MR  Measurement Report  测量报告
+MRP Multiple Reuse Pattern  多重复用方式
+MRT Message Routing 消息路由
+MS  Mobile Station  测量报告
+MSC Mobile services Switching Centre, Mobile Switching Centre   移动交换中心
+MSISDN  Mobile Station International ISDN Number    移动台国际ISDN号码
+MSM MSC Subrate channel Multiplexer MSC侧子复用板
+MT  Mobile Terminal 移动终端
+MTBF    Mean Time Between Failure   平均无故障时间
+MTP Message Transfer Part   消息传输部分
+N　
+NC   Network Control    网络控制
+NCC Network Color Code  网络色码
+NCH Notification Channel    通知信道
+NE  Network Equipment   网络设备
+NM  Network Management  网络管理
+NS  Network Service 网络服务
+NSE Network Service Entity  网络服务实体
+NSS Network SubSystem   网络子系统
+O　
+O&amp;M, OM Operations &amp; Maintenance    操作与维护
+OACSO   Off Air Call Set up 不占用空中通道的呼叫启动
+OAM Operation Administration and Maintenance    运行管理和维护
+OMAP    Operation and Maintenance Application Part  操作维护应用部分
+OMC Operations &amp; Maintenance Centre 操作维护中心
+OML Operation and Maintenance Link  操作与维护链路
+OMU Operations &amp; Maintenance Unit (board)   操作维护单元（板）
+OOP Object Oriented Programming 面向对象的程序设计
+OPC Originating Point Code  源信令点编码
+OPT Optic Interface board   光纤通信板
+OS  Operation System    操作系统
+OSI Open System Interconnection 开放系统互连模型
+P　
+PA  Power Amplifier 功率放大器
+PAGCH   Packet Access Grant Channel 分组接入允许信道
+PBCCH   Packet Broadcast Control Channel    分组广播控制信道
+PBGT    Power Budget    功率预算
+PBU Power Boost Unit    功率增强单元
+Pb  Pb Interface    Pb接口
+PbSL    PCU-BSC Signaling Link  PCU-BSC间信令链路
+PCCCH   Packet Common Control Channel   分组公共控制信道
+PCH Paging CHannel  寻呼信道
+PCIC    Packet Circuit Identity Code    分组电路标识码
+PCM Pulse-Code Modulation   脉冲编码调制
+PCU Packet Control Unit 分组控制单元
+PD  Protocol Discrimination 协议识别码
+PDCH    Packet Data Channel 分组数据信道
+PDH Plesiochronous Digital Hierarchy    准同步数字系列
+PDN Packet Data Network 分组数据网
+PDP Packet Data Protocol    分组数据协议
+PDTCH   Packet Data Traffic Channel 分组业务数据信道
+PI  Peripheral Interface    外设接口部件
+PIN Personal Identity Number    个人识别码
+PLL Phase Locked Loop   锁相环路
+PLMN    Public Land Mobile Network  公用陆地移动网络
+PMU Power and Environment Monitoring Unit   电源环境监测板
+PNCH    Packet Notification Channel 分组通知信道
+POMU    Packet Operation &amp; Maintenance Unit 分组操作维护单元
+PON Passive Optical Network 无源光网络
+PPCH    Packet Paging Channel   分组寻呼信道
+PRACH   Packet Random Access Channel    分组随机接入信道
+PSDN    Public Switched Data Network    公用数据交换网
+PSI Packet System Information   分组系统消息
+PSK Phase Shift Keying  相移键控
+PSTN    Public Switched Telephone Network   公用电话交换网
+PSU Power Supply Unit   供电单元
+PT  Penalty Time    惩罚时间
+PTCCH   Packet Timing advance Control Channel   分组定时提前控制信道
+PTM Point To Multipoint 点到多点
+PTM-M   Point To Multipoint Multicast   点对多点广播
+PTM-SC  Point to Multipoint Service Center  点到多点数据服务中心
+PTP Point To Point  点对点
+PWC Secondary Power Supply Board    电源控制板
+Q　
+QoS Quality of Service  业务质量
+R　
+RACH    Random Access Channel   随机接入信道
+RE  Reestablishment 呼叫重建
+RF  Radio Frequency 射频
+RLC Radio Link Control  无线链路控制
+RLM Radio Link Management   无线链路管理
+RPE-LTP Regular Pulse Excitation-Long Term Prediction   规则脉冲激励-长期预测
+RPPU    Radio Packet Process Unit   无线分组处理单元
+RR  Radio Resource  无线资源
+RSA Rivest-Shamir-Adleman   通用关键子密码方法
+RSL Radio Signaling Link    无线信令链路
+RTE Radio Test Equipment    天线测试设备
+RX  Receiver/Reception  收信机/接收
+RXLEV   Received signal level   接收信号等级
+RXQUAL  Received Signal Quality 接收信号质量
+S　
+SABM    Set Asynchronous Balanced Mode  置异步平衡模式
+SACCH   Slow Associated Control Channel 慢速随路控制信道
+SACCH/C4    Slow Associated Control Channel/SDCCH/4 慢速随路控制信道/SDCCH/4
+SACCH/C8    Slow Associated Control CHannel/SDCCH/8 慢速随路控制信道/SDCCH/8
+SACCH/T Slow Associated Control CHannel/Traffic channel 慢速随路控制信道/业务信道
+SACCH/TF    Slow Associated Control Channel/Traffic channel Full rate   慢速随路控制信道/全速率业务信道
+SAP Service Access Point    服务接入点
+SAPI    Service Access Point Identifier 业务接入点标识
+SCCP    Signaling Connection Control Part   信令连接控制部分
+SCH Synchronization CHannel 同步信道
+SCMG    SCCP Management SCCP管理
+SCU Simple combining Unit   简单合路单元
+SDCCH   Stand-alone Dedicated Control CHannel   独立专用控制信道
+SDH Synchronous Digital Hierarchy   同步数字系列
+SDU Service Data Unit   业务数据单元
+SGSN    Serving GPRS Support Node   服务GPRS支持节点
+SID Silence Descriptor  静噪指示
+SIG Signaling   信令
+SIM Subscriber Identity Module  用户识别卡
+SITE    Site    站点
+SLM Signaling Link Management   信令链路管理
+SLS Signaling Link Selection    信令链路选择码
+SM  Sub-Multiplexer Interface   子复用板
+SM-SC   Short Message - Service Center  短消息中心
+SMBCB   Short Message Service Cell Broadcast    短消息业务小区广播
+SMC Short Message Center    短消息中心
+SMI Sub-Multiplexer Interface   子复用板
+SMS Short Message Service   短消息业务
+SMS-GMSC    Short Message Service - Gateway MSC 短消息关口MSC
+SMS-IWMSC   Short Message Service Interworking MSC  短消息互联MSC
+SMSCB   Short Message Service Cell Broadcast    短消息小区广播
+SMUX    Sub-Multiplexer 子复用器
+SNDCP   SubNetwork Dependent convergence Protocol   子网相关的收敛协议
+SOR Support Optimization Routing    支持优选路由
+SP  Signaling Point 信令点
+SRM Signaling Route Management  信令路由管理
+SS  Supplementary Service   补充业务
+SS7 Signalling System No.7  七号信令
+SSN SubSystem Number    子系统号
+STM Signaling Traffic Management    信令业务管理
+STP Signaling Transfer Point    信令转接点
+T　
+TA  Timing Advance  定时提前量
+TAI Timing Advance Index    时间提前量索引
+TBF Temporary Block Flow    临时数据块流
+TC  Transcoder  码变换器
+TCH Traffic Channel 业务信道
+TCH/F   A full rate TCH 全速率业务信道
+TCH/F2.4    A full rate data TCH (2.4kbit/s)    全速率数据业务信道（2.4kbit/s）
+TCH/F4.8    A full rate date TCH (4.8kbit/s)    全速率数据业务信道（4.8kbit/s）
+TCH/F9.6    A full rate data TCH (9.6kbit/s)    全速率数据业务信道（9.6kbit/s）
+TCH/FS  A full rate Speech TCH  全速率话音业务信道
+TCI Terminal Interface board    终端接口板
+TCP Transmission Control Protocol   传输控制协议
+TCSM    TransCoder &amp; Sub-Multiplexer    码变换与子复用单元
+TDMA    Time Division Multiple Access   时分多址
+TE  Terminal Equipment  终端设备
+TEI Terminal Equipment Identifier   终端设备识别码
+TES Transmission Extension power Supply unit    传输扩展供电单元
+TEU Transmission Extension Unit 传输扩展单元
+TFI Transport Format Indicator  传输格式指示
+TLLI    Temporary Link Level Identity   临时链路等级标识
+TMSC    Tandem Mobile Switching Centre  汇接移动交换中心
+TMSI    Temporary Mobile Subscriber Identifier  临时移动用户标识符
+TMU Timing/Transmission and Management Unit 定时/传输管理单元
+TN  Timeslot Number 时隙号
+TNI Terminal Network Interface  终端网络接口部件
+TO  Temporary Offset    临时偏移
+TRAU    Transcoder &amp; Rate Adaptation Unit   码变换器/速率适配单元
+TRX Transceiver (board) 收发信机
+TS  Timeslot    时隙
+TSC Training Sequence Code  训练系列号(编码）
+TUP Telephone User Part(SS7)    电话用户部分
+U　
+UA  Unnumbered Acknowledge  无编号证实
+UDP User Datagram Protocol  用户数据报协议
+UDT Unit Data   单位数据
+UI  Unnumbered Information (frame)  无编号信息帧
+Um      空中接口
+USF Uplink State Flag   上行链路状态标识
+USSD    Unstructured Supplementary Service Data 非结构化补充业务数据
+V　
+VAD Voice Activity Detection    话音激活检测
+VBS Voice Broadcast Service 话音广播呼叫业务
+VEA Very Early Allocation   很早分配
+VGCS    Voice Group Call Service    话音组呼业务
+VLR Visitor Location Register   拜访用户位置寄存器
+VM  Voice Mailbox   语音邮箱
+VSAT    Very Small Aperture Terminal    甚小天线卫星地球站
+W　
+WDT Watchdog Timer  看门狗
+WS  Workstation 操作台
+X　 
+xDSL    x Digital Subscriber Line   x数字用户线
+Y　 
+-   -    
+Z　 
+-   -    
+
+
+
+缩写单词表
+A     
+ACC Accept
+ACK Acknowledgement
+ACT Activation
+ACTIV   Activation
+ASS Assignment
+AUT Authentication
+C     
+CHAN    Channel
+CIPH    Ciphering
+CMD Command
+CMP Complete
+CNF Confirm
+CONF    Confirm
+CONN    Connection
+D     
+DEACT   Deactivation
+DET Detection
+DISC    Disconnect
+E     
+ENCR    Encryption
+EST Establishment
+EXT Extended
+H     
+HANDO   Handover
+I     
+IMM Immediate
+IND     Indication
+INFO    Information
+L     
+L3  Layer 3
+LOC Location
+M     
+MOD Mode
+P     
+PAG Paging
+PHY Physical
+R     
+REJ Reject
+REL Release
+RES Resource
+REQ Request
+RLSD    Released
+RPS Response
+RQD Required
+S     
+SERV    Service
+U     
+UPD Updating
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/15/centos/">Centos安装及配置</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-15T17:20:00+08:00" pubdate data-updated="true">Jul 15<span>th</span>, 2013</time>
+        
+         
+                   | <a href="/blog/2013/07/15/centos/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>感觉好久都没写东西了，最近终于把可恶的考试弄完了，继续折腾。
+前段时间把openwrt的摄像头挂上了，所以想完善一下它的功能，就在一台没用的电脑上装上了centos，做个远程监控玩玩。</p>
+
+<h5>centos安装</h5>
+
+<p>从网上下载最新的版本，用ultraiso做好系统盘，启动。安装过程没有什么可以说的，与其他发行版有点不同的是需要将安装包放到u盘根目录下（u盘容量最好大点，8~16G最好）。开始没注意这点，重复了几次。至此centos就给装上了。但最后重启了又出了点问题，grub一不注意给装到了u盘上（这点是后来从网上看帖子发现的）。那就修复grub吧，反正有启动盘。</p>
+
+<h5>grub修复</h5>
+
+<p>从u盘启动，centos就是不一般啊，默认连桌面都没有，黑黑的。从u盘启动后需进入grub模式。网上的命令式</p>
+
+<pre><code>sbin /grub
+</code></pre>
+
+<p>我这个命令无效啊我的是</p>
+
+<pre><code>grub
+</code></pre>
+
+<p>反正想办法进入grub模式就好了。
+接下来看看你的是那块磁盘使用如下命令</p>
+
+<pre><code>find /grub/grub/stage1
+</code></pre>
+
+<p>我的显示如下</p>
+
+<pre><code>(hd0,1)
+</code></pre>
+
+<p>hd0是我的第一块硬盘，额就一块硬盘，所以还好辨认，后面的1代表第二个分区，因为第一个分区用0表示，下面开始改了：</p>
+
+<pre><code>root (hd0,1)
+setup (hd0)
+</code></pre>
+
+<p>下面在将grub.conf和menu.lst里面的（hdx，y）修改为（hd0,1)。
+此时重启，即可进入系统。<br/>
+如此系统就算安装完成了。</p>
+
+<h5>配置网络</h5>
+
+<p>系统安装完了就要联网了。因为我要将它与路由器连接，所要配置静态ip，过程如下：<br/>
+centos的网络配置文件在<strong>/etc/sysconfig/</strong>中里面有很多关于网络配置的东西。我的机器就只有一块网卡eth0，所以在<strong>/etc/sysconfig/network-scripts/ifcfg-eth0</strong>下面。配置如下</p>
+
+<pre><code>DEVICE=eth0        #网络设备
+HWADDR=00:E0:4C:08:AC:10  #mac地址
+TYPE=Ethernet   #以太网
+UUID=a53621d2-d290-48ff-96e0-2a0005046b20 
+ONBOOT=yes           
+NM_CONTROLLED=yes
+BOOTPROTO=static       #静态地址，也可选dhcp或bootp
+IPADDR=192.168.0.135  #ip地址
+NETMASK=255.255.255.0  #子网掩码
+NETWORK=192.168.0.0    #网络号
+</code></pre>
+
+<p>修改网关<br/>
+vi /etc/sysconfig/network</p>
+
+<pre><code>NETWORKING=yes   #打开网络
+HOSTNAME=linuxgroup  #本机主机名（必须与/etc/hosts中的一样）
+GATEWAY=192.168.0.1  #网关
+</code></pre>
+
+<p>配置DNS<br/>
+vi /etc/resolv.conf</p>
+
+<pre><code>nameserver xxx.xxx.xxx.xxx
+nameserver xxx.xxx.xxx.xxx #根据自己的实际情况制定
+</code></pre>
+
+<p>弄好了之后可以重启服务了</p>
+
+<pre><code>service network restart 
+/etc/init.d/network restart #两条命令都可以
+</code></pre>
+
+<p>现在基本算弄完了，等待后续的折腾</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/06/yingjian/">纯硬件打造数字秒表</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-06T15:26:00+08:00" pubdate data-updated="true">Jun 6<span>th</span>, 2013</time>
+        
+         
+                   | <a href="/blog/2013/06/06/yingjian/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>一直以来就很喜欢那种把想法变成现实的感觉，尤其是把想的东西变成可以看得见摸得着的东东，就有一种成就感。在最后一次数字电路的实验中，和同学亲手打造了一个秒表，纯硬件，在此记录一下实验原理。</p>
+
+<h5>材料</h5>
+
+<p>数码管两个，74ls47或74ls247两片，74ls160两片，74ls00两片，10uf电容一个，0.01uf电容一个，上拉电阻14个，555定时器一片。</p>
+
+<h5>工作原理</h5>
+
+<h6>74ls47原理</h6>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kr10A9M70gM000d9" alt="74ls47" /><br/>
+<img src="http://admin22.51dzw.com/uploadfiles/201202/20120215205259686.jpg" alt="功能表" /><br/>
+由功能表可看出，若要显示数字0~9可以将3,4,5管脚置为高电平，且输入端的D，C，B，A（对应6,2,1,7）管脚可以将输入的0~9的二进制数据转换到数码管的显示。</p>
+
+<h6>数码管原理</h6>
+
+<blockquote><blockquote><blockquote><p><img src="http://memberpic.114my.cn/yixianyin/uploadfile/20118/2011813104654.jpg" alt="数码管图片" /></p></blockquote></blockquote></blockquote>
+
+<p>数码管分为共阳极与共阴极，这里我们用的是共阳极，即输入低电平有效。</p>
+
+<h6>74ls160原理</h6>
+
+<p><img src="http://www.hqew.com/File/Images/250000-259999/251555/Promotion/20100228131839671SSAZ1Q.JPG" alt="74ls160" />
+<img src="http://files.note.sdo.com/xBlh9~kr1KTq4M0bs000ig" alt="74ls160" /><br/>
+<img src="http://files.note.sdo.com/xBlh9~kr1EIFM70qk000g8" alt="时序图" /><br/>
+从时序图中可以看出，当QA，QB，QC,QD脉冲为1001（数字9）时，输出位输出一次高电平，此时前面经历了从0000到1001的变化，总共进行了十次计数。因此称其为十进制计数器。并且在计数时，CLR、LOAD、ENP、ENT都一直保持高电平。可以将十进制计数器进行改造，可以将其改成其他进制计数器，例如六进制计数器。原理就是，当计数器要进行第七次计数的时候使其归零，从而从新开始计数。利用74ls00便可以实现此功能<br/>
+<img src="http://course.tju.edu.cn/dzjc/syjx0010.files/image004.jpg" alt="74ls00" /><br/>
+利用此片的1,2,3引脚，计数方式0000&#8212;0001&#8212;0010&#8212;0011&#8212;0100&#8212;0101&#8212;0110&#8212;0111&#8212;1000&#8212;1001，且从左往右依次为Qd，Qc，Qb，Qa。若改位六进制，即进行0000&#8212;0001&#8212;0010&#8212;0011&#8212;0100&#8212;0101这个循环，遇到0110归零即可，此时利用74ls00的1,2引脚连接Qb，Qc即可达到目的。连接1,2引脚后，第三引脚可以接74ls160的清零端，从而开始从新计数</p>
+
+<h5>555定时器</h5>
+
+<p>除了上边的部件外，还需要一个时钟脉冲源，以用来产生稳定的脉冲。这里我们选择了555定时器
+<img src="http://www.lechengdz.com/mcu/UploadFiles_3202/200812/20081201155344726.jpg" alt="555" /><br/>
+555定时器由两个电压比较器，一个RS触发器等构成。我们可以在加入两个电容和两个电阻构成多谐振荡器。如图
+<img src="http://shiti.henanzikao.cn/images/shiti/20110522000451637/20110522000604905.jpg" alt="多谐振荡器" /><br/>
+其中第二个电阻我们使用的是可调电阻为了改变脉冲强度（在6和7之间的电压），左边的电容10uf。3引脚为脉冲输出，利用其产生的脉冲来实现计数。</p>
+
+<h6>一张电路原理图。</h6>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kr70fG4M0KM000J_" alt="" /></p>
+
+<h6>电路实物图两张</h6>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kr0Y6q4M0bs0009y" alt="" />
+<img src="http://files.note.sdo.com/xBlh9~kr0Y7a4M0bs0009C" alt="" /></p>
+
+<h5>附注</h5>
+
+<p>上面的原理图以上的图片多是为了分析原理而从网上找的图片</p>
+
+<h6>总结</h6>
+
+<p>学习硬件动手很重要，有的东西如果明白了原理在动手实验的话，往往会达到事半功倍的效果。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -432,227 +1617,9 @@ Arduino，是一个开源的单片机控制器，它使用了Atmel AVR单片机�
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/05/05/jihua/">Todu</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-05-05T21:18:00+08:00" pubdate data-updated="true">May 5<span>th</span>, 2013</time>
-        
-         
-                   | <a href="/blog/2013/05/05/jihua/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4>专业基础课</h4>
-
-<p>《信号与系统》第四章，傅里叶变换，采样定理很重要，马上就要学完。<br/>
-《通信电子线路》开始了第六章，中间有个第四章还没有学习，其中第五章正弦波振荡器部分必须认真看几遍，学会画交流通路。参考书籍《高频电子线路》张肃文<br/>
-《数字电路基础》掌握触发器（RS型，jk型，D型，T型）学习第六章时序逻辑电路的分析。</p>
-
-<h4>课余学习</h4>
-
-<p>《深入理解计算机系统》努力看完第三章，继续往下看。<br/>
-《tcp/ip详解》卷一，掌握tcp的传输原理。<br/>
-《c primer plus》尽量快的往下看。</p>
-
-<h4>想搞的东西</h4>
-
-<p>基于51单片机的3d水立方，智能小车。</p>
-
-<h4>新发现的好玩意</h4>
-
-<h6>软件无线电</h6>
-
-<p>gnuradio（致力于硬件开源），据说是很强悍的东东，需要有python和c++基础。</p>
-
-<h4>正在做还没弄完的</h4>
-
-<p>clfs，环境已经搭建好，而且前几步编译也很顺利。将x86刷成openwrt的路由器</p>
-
-<h4>应该掌握的软件</h4>
-
-<p>multisim，altium designer，orcad，会画电路图会对电路图进行分析</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/30/grubrescue/">Grub Rescue</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-30T15:45:00+08:00" pubdate data-updated="true">Apr 30<span>th</span>, 2013</time>
-        
-         
-                   | <a href="/blog/2013/04/30/grubrescue/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>今天因为折腾点东西系统出了点故障，重启之后，就进入了rescue模式用别人的电脑查了下，顺利解决问题。<br/>
-grub rescue模式下，只有几个命令可以使用 set，ls，prefix，root，insmod <br/>
-用set查看当前prefix和root的配置。 <br/>
-ls列出所有分区，分区格式为（hdx）或者（hdx，msdosx）我们要做的就是找到我们的当前系统的grub在哪。因为以前装过linux没有删除干净，所以要用ls多看几次。命令如下:</p>
-
-<pre><code>ls (hdx)/  
-ls (hdx,msdosx)/  
-</code></pre>
-
-<p>一般如果你的grub2存在的话，下面会跟着很多的文件。找到之后就好办了。<br/>
-注意：ls命令<strong>最后的 / </strong>必须有。<br/>
-对于boot是单独分区的情况，使用如下命令：</p>
-
-<pre><code>set root=(hdx,msdosx)
-set prefix=(hdx,msdosx)/grub
-insmod /grub/normal.mod 
-normal
-</code></pre>
-
-<p>这样便能进入正常的grub了，进入系统之后在更新一下grub：</p>
-
-<pre><code>sudo update-grub
-sudo grub-install /dev/sda
-</code></pre>
-
-<p>最后一定是/deb/sda.</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/27/multisim/">Multisim</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-27T21:45:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2013</time>
-        
-         
-                   | <a href="/blog/2013/04/27/multisim/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>对于myltisim这个软件，在上学期已经接触过，但是却从来没有使用过，上课的时候也是在看老师给我们演示。前几天确从模电老师那里了解了eda的真正含义，以及这个软件的真正强大之处。于是决定回来折腾一下，当然，对于通信专业的学生来说，电路的分析是必须要掌握的，因此这个软件更得好好的折腾折腾。<br/>
-要使用软件，首先就是得安装。于是先找度娘问了下，真是有些扫兴，上边最先出现的不是它们的官网，而是这破解，那绿色。果断放弃，进了google。google确实不错。进入之后，前三条就是我想要的信息。multisim的<a href="http://www.ni.com/multisim/zhs/">官网</a>，而且我还发现了更令人兴奋的事情，那就是下边的<strong>针对教育</strong>，<strong>针对学生</strong>。感觉这个软件厂家想的还真是周到。点击<strong>获取学生版</strong>随便注册了一下，真是有点小激动，正版软件就要用上了。而且功能看它的介绍也是蛮强悍的，对我这学生来说也是错错有余了。而且人家还为我们想到了语言不通的问题，提供了汉化包。<br/>
-接下来，我就开始下载了，但是事有不顺哪，500多兆的软件每秒那个几十KB，这得下到哪年啊，果断放弃了这种直接下载的方法，那软件还是得装哪。仔细想了想，我要是能够得到下载的地址就好了，直接用叫什么雷的玩意下载不就好了。就是这样吗。本来想用抓包工具直接看看数据包从哪来的呢。但windows下却没有现成的软件。于是就抱着试试看的态度，从下载下来的软件包入手。我一共下载了两个包，一个汉化包，一个下载器（就是从网络安装）。从汉化包的<a href="ftp://ftp.ni.com/pub/branches/china/Multisim_topic.zip">位置</a>可以看出这是一个ftp站点啊，果断后退了几层，发现了大量的资源。<a href="ftp://ftp.ni.com/">ftp站点</a>截图如下：</p>
-
-<p><img src="http://files.note.sdo.com/xBlh9~knOeT9nM2Gw001nj" alt="" /></p>
-
-<p>但是还是没有multisim这个东东。只好从下载器入手了，下面是ni下载器的图片：<br/>
-<img src="http://files.note.sdo.com/xBlh9~knOeVFnM2Gw001nX" alt="" /></p>
-
-<p>软件不是很大，但是速度太慢了，从获取<a href="http://download.ni.com/evaluation/labview/ekit/other/downloader/NI_Circuit_Design_Suite_12_0_Education_downloader.exe">下载器的位置</a>，可看出跟刚才那个汉化包，完全不在一块。从下载器的图片可以看出，我们需要的就在这，而且大小都是594M。但是向上几层就会发现有很多更有用的 <a href="http://download.ni.com/evaluation/labview/ekit/other/downloader/">资源</a> 这儿不仅有我们需要的multisim，还有很多其他有用的东东。这些留着以后用的着的时候在来取，先把用到的取下来。最后上个图，全是资源啊。</p>
-
-<p><img src="http://files.note.sdo.com/xBlh9~knOeVVnM2Gw001n-" alt="" /></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/27/hello-world/">Hello World</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-27T15:45:00+08:00" pubdate data-updated="true">Apr 27<span>th</span>, 2013</time>
-        
-         
-                   | <a href="/blog/2013/04/27/hello-world/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>今天心情很好，体验一下octopress</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="/blog/page/6/">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -667,23 +1634,23 @@ sudo grub-install /dev/sda
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2014/12/28/pyquery/">pyquery使用</a>
+        <a href="/blog/2015/02/28/android/">android学习笔记</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2014/12/28/django/">django源码分析 </a>
+        <a href="/blog/2015/02/28/tiaojian/">条件概率</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2014/11/11/mianshiti/">面试题</a>
+        <a href="/blog/2015/01/23/jquery/">jquery动态加载</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2014/11/11/mianshi/">面试</a>
+        <a href="/blog/2015/01/21/gailvlun/">概率论与数理统计学习</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2014/11/01/new/">python获取文件路径</a>
+        <a href="/blog/2015/01/06/chengkuaishujuliu/">tcp成块数据流</a>
       </li>
     
   </ul>
@@ -699,7 +1666,7 @@ sudo grub-install /dev/sda
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - 图腾 -
+  Copyright &copy; 2015 - 图腾 -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

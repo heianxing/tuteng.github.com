@@ -1,0 +1,267 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>tcp成块数据流 - TuTeng'blog</title>
+  <meta name="author" content="图腾">
+
+  
+  <meta name="description" content="tcp的成块数据流 滑动窗口协议，流量控制。 使用TCP的滑动窗口协议时，接收方不必确认每一个收到的分组。在TCP中，ACK是累积的，它们表示接收方已经正确收到了一直到确认序号减1的所有字节。
+分组顺序依赖于许多无法控制的因素：发送方TCP的实现，接收方TCP的实现，接收进程读取数据（ &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tuteng.github.io/blog/2015/01/06/chengkuaishujuliu">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">TuTeng'blog</a></h1>
+  
+    <h2>学会了就用，用着不会就学</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:tuteng.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/aboutme">Aboutme</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Tcp成块数据流</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-06T21:57:00+08:00" pubdate data-updated="true">Jan 6<span>th</span>, 2015</time>
+        
+         
+                   | <a href="#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h4>tcp的成块数据流 滑动窗口协议，流量控制。</h4>
+
+<p>使用TCP的滑动窗口协议时，接收方不必确认每一个收到的分组。在TCP中，ACK是累积的，它们表示接收方已经正确收到了一直到确认序号减1的所有字节。<br/>
+分组顺序依赖于许多无法控制的因素：发送方TCP的实现，接收方TCP的实现，接收进程读取数据（依赖于操作系统的调度）和网络的动态性（如以太网的冲突和退避等）。堆两个TCP而言，没有一种单一的，正确的方法来交换给定数量的数据。</p>
+
+<pre><code>1.窗口左边沿向右边沿靠近为窗口合拢。这种现象发生在数据被发送和确认时。
+2.当窗口右边沿向右移动时将允许发送更多的数据，我们称之为窗口张开。这种现象发生在另一端的进程读取已经确认的数据并释放了TCP的接收缓存时。
+3.当右边沿向左移动时，我们称为窗口收缩。如果收到一个指示窗口左边沿向左移动的ACK，则它被认为是一个重复的ACK，并被丢弃。
+</code></pre>
+
+<p>如果左边沿到达右边沿，则称其为一个零窗口，此时发送方不能发送任何数据。<br/>
+PUSH标志，发送方使用该标志通知接收方将所收到的数据全部提交给接收进程。这里的数据包括与PUSH一起发送的数据以及接收方TCP已经已经为接收进程收到的其他数据。<br/>
+慢启动算法通过观察到新分组进入网络的速率应该与另一端发回确认的速率相同而进行工作。<br/>
+慢启动为发送方的TCP增加了另一个窗口：拥塞窗口，记为cwnd。当与另一个网络的主机建立TCP连接时，拥塞窗口被初始化为1个报文段（即另一端通告的报文段大小）。每收到一个ACK，拥塞窗口就增加一个报文段（cwnd以字节为单位，但是慢启动以报文段大小为单位进行增加）。发送方取拥塞窗口与通告窗口中的最小值作为发送上限。拥塞窗口是发送方使用的流量控制，而通告窗口则是接收方使用的流量控制。<br/>
+发送方开始时发送一个报文段,然后等待 ACK。当收到该ACK时,拥塞窗口从 1增加为2,即可以发送两个报文段。当收到这两个报文段的ACK时,拥塞窗口就增加为4。这是一种指数增加的关系。</p>
+
+<pre><code>capacity(bit) = bandwidth(b/s) X round-trip time(s)
+</code></pre>
+
+<p>带宽时延乘积。依赖于网络速度和两端的RTT。<br/>
+例如,一条穿越美国(RT T约为60 ms)的T 1的电话线路(1544000b/s)的带宽时延乘积为11580字节。  <br/>
+当数据到达一个大的管道（如一个快速局域网）向一个较小的管道（如一个较慢得广域网）发送数据试会产生拥塞。<br/>
+当多个输入流到达一个路由器,而路由器的输出流小于这些输入流的总和时也会发生拥塞。<br/>
+紧急指针，URG。注意区分其与带外数据不同。<br/>
+紧急方式应用，当交互用户键入中断键时，使用紧急方式来完成这个功能。在FTP中，当交互用户放弃一个文件的传输时。<br/>
+紧急指针指向紧急数据的最后一个字节。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">图腾</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-06T21:57:00+08:00" pubdate data-updated="true">Jan 6<span>th</span>, 2015</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2015/01/06/chengkuaishujuliu/" data-via="" data-counturl="http://tuteng.github.io/blog/2015/01/06/chengkuaishujuliu/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/01/05/scrapy/" title="Previous Post: scrapy源码阅读">&laquo; scrapy源码阅读</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/01/21/gailvlun/" title="Next Post: 概率论与数理统计学习">概率论与数理统计学习 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+  <section>
+          <h1>Comments</h1>
+              <div id="comments" aria-live="polite"><!-- 多说公共JS代码 end -->
+<!-- Duoshuo Comment BEGIN -->
+<div class="ds-thread" data-title="Tcp成块数据流"></div>
+<script type="text/javascript">
+      var duoshuoQuery = {short_name:"tuteng"};
+(function() {
+     var ds = document.createElement('script');
+         ds.type = 'text/javascript';ds.async = true;
+             ds.src = 'http://static.duoshuo.com/embed.js';
+                 ds.charset = 'UTF-8';
+                     (document.getElementsByTagName('head')[0] 
+                         || document.getElementsByTagName('body')[0]).appendChild(ds);
+                       
+ })();
+</script>
+<!-- Duoshuo Comment END -->
+
+</div>
+  </section>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/02/28/android/">android学习笔记</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/28/tiaojian/">条件概率</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/23/jquery/">jquery动态加载</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/21/gailvlun/">概率论与数理统计学习</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/06/chengkuaishujuliu/">tcp成块数据流</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - 图腾 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -9,9 +9,9 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="前段时间面试，让现场用pyquery把亚马逊几个键盘页面的商品名称和价格抓下来，分析了一下，不难，但当时没有做出来，卡到了怎么提取div里边的多个class元素一步。 from pyquery import PyQuery as pq
-import requests
-import sys &hellip;">
+  <meta name="description" content="activity的生命周期 每个activity具有四种基本状态:
+1.Active/Runing一个新 Activity 启动入栈后，它在屏幕最前端，处于栈的最顶端，此时它处于可见并可和用户交互的激活状态。
+2.Paused 当 Activity 被另一个透明或者 Dialog 样式的 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +68,688 @@ import sys &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/02/28/android/">Android学习笔记</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-28T21:17:00+08:00" pubdate data-updated="true">Feb 28<span>th</span>, 2015</time>
+        
+         
+                   | <a href="/blog/2015/02/28/android/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>activity的生命周期 <br/>
+每个activity具有四种基本状态:<br/>
+1.Active/Runing一个新 Activity 启动入栈后，它在屏幕最前端，处于栈的最顶端，此时它处于可见并可和用户交互的激活状态。<br/>
+2.Paused 当 Activity 被另一个透明或者 Dialog 样式的 Activity 覆盖时的状态。此时它依然与窗口管理器保持连接，系统继续维护其内部状态，所以它仍然可见，但它已经失去了焦点故不可与用户交互。<br/>
+3.Stoped 当 Activity 被另外一个 Activity 覆盖、失去焦点并不可见时处于 Stoped状态。<br/>
+4.Killed Activity 被系统杀死回收或者没有被启动时处于 Killed状态。</p>
+
+<pre><code>public class OurActivity extends Activity { 
+    protected void onCreate(Bundle savedInstanceState); 
+    protected void onStart(); 
+    protected void onResume(); 
+    protected void onPause(); 
+    protected void onStop(); 
+    protected void onDestroy(); 
+ }
+根据需要重写不同的方法。经常见到的onCreate方法。
+</code></pre>
+
+<p>不同的activity之间的通信,使用intent，也可以进行不同activity之间的传值。<br/>
+SharedPreferences使用xml格式为android应用提供了一种永久的数据存储方式。对于一个android应用，它存储在文件系统的/data/ data/your_app_package_name/shared_prefs/目录下，可以被处在同一个应用中的所有activity访问。<br/>
+另外对于不同activity之间的数据交换还可以使用sqlite，文件，进程间通信等方式。<br/>
+锁定屏幕的方向可以在activity的oncreate方法中加入特有的参数。</p>
+
+<p>关键字@Override是重写的意思。</p>
+
+<p>android的个性化控件：</p>
+
+<pre><code>ListView 像滑动刷新更多
+actionbar：我感觉应该属于menu的一个分类，因为它的布局在menu里，如微信顶部的一些菜单。
+menu：android的菜单，流行的slidingmenu，从手机的侧边栏划出，很绚丽的效果。
+viewpage：多个页面之间的滑动切换。
+gallery：图片的华东切换。
+gridview：网格多维布局。
+imageview:设置图片的显示样式。
+progressbar：进度条
+textview：文本的显示
+scrollview：滚动条
+timeview：时间控件
+flipview：
+ColorPickView：调色板
+GraphView：android图表绘制工具（终于发现了好玩的东西）
+UI Style：android的UI风格。
+</code></pre>
+
+<p>AndroidMainifest.xml为每个android程序中必须的文件，位于application的根目录。每个activity都必须在里面注册。<br/>
+android的四大组件：activity，serivice，content provider，broadcast receiver。<br/>
+handler的使用方法。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/02/28/tiaojian/">条件概率</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-28T21:12:00+08:00" pubdate data-updated="true">Feb 28<span>th</span>, 2015</time>
+        
+         
+                   | <a href="/blog/2015/02/28/tiaojian/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>条件概率：在知道了一定的信息下所得到的随机事件的概率。 <br/>
+计算条件概率：</p>
+
+<pre><code>设事件A和B是随机实验Ω中的两个事件，P(B)&gt;0,称
+    P(A|B)=P(AB)/P(B)
+为事件B发生条件下事件A发生的条件概率。
+
+乘法定理：
+    P(AB)=(A|B)xP(B)
+
+扩展：n个事件同时发生的概率
+    P(A1A2....An)=P(A1)xP(A2|A1)x...P(An|A1A2...An-1)
+</code></pre>
+
+<p>全概率公式与贝叶斯公式。<br/>
+全概率公式求一个事件的概率。<br/>
+样本空间的分割，各个事件不相容。</p>
+
+<pre><code>推到：
+    P(A)=P(AB1 U AB2)
+        =P(AB1)+P(AB2)
+        =P(B1)xP(A|B1)+P(B2)xP(A|B2)
+
+
+贝叶斯公式建立在全概率公式基础之上。
+    P(AB)=P(A)xP(B|A)=P(B)xP(A|B)
+    P(B|A)=P(A|B)xP(B)/P(A)
+          =P(A|B)xP(B)/(P(A|B1)xP(B1)+P(A|B2)xP(B2))
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/01/23/jquery/">Jquery动态加载</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-23T22:38:00+08:00" pubdate data-updated="true">Jan 23<span>rd</span>, 2015</time>
+        
+         
+                   | <a href="/blog/2015/01/23/jquery/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>js自动加载实现：</p>
+
+<pre><code>    //当前窗口的滚动事件
+    $(window).scroll(function(){ 
+    //获得当前设备的高度，和当前滚动条距离顶端的高度
+        totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop()); 
+        //判断当前html页面的高度与上面总高度的大小，如果前者小于后者说明滚动条到底部了，可以加载
+             if($(document).height() &lt;= totalheight){ 
+             //加入自己的逻辑
+        } 
+    });
+</code></pre>
+
+<p>其他的实现：</p>
+
+<pre><code>         //滚动到页面底部时，自动加载更多
+        window.addEventListener("scroll",function scrollHandler(){
+            var scrollh = $(document).height();
+            var c=document.documentElement.clientHeight || document.body.clientHeight, t=$(document).scrollTop();
+            if( ($(document).scrollTop() + w.height()) &gt;= scrollh){
+               //自己的逻辑实现
+            }
+        },100); 
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/01/21/gailvlun/">概率论与数理统计学习</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-21T23:31:00+08:00" pubdate data-updated="true">Jan 21<span>st</span>, 2015</time>
+        
+         
+                   | <a href="/blog/2015/01/21/gailvlun/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4>基本概念：</h4>
+
+<p>随机试验和随机事件，事件的运算。全概率公式。<br/>
+随机试验：结果至少有两个每次只能得到其中一个。<br/>
+基本事件：随机实验中的每一个结果，不可再分。<br/>
+抛硬币有8种可能的结果，每种结果都是基本事件。<br/>
+随机事件表达方式：大写字母A，B，C等来表示。也可以用{}表示。 <br/>
+样本空间：随机试验中所有基本事件所构成的集合。   <br/>
+必然事件。不可能事件。 <br/>
+事件与集合的对应关系：<br/>
+A包含于B，A是B的子事件。
+事件的和。事件的积。事件AB不相容。对立事件。事件A和事件B的差。A-B。<br/>
+de morgan对偶法则。 <br/>
+概率是随机事件发生可能性大小的数字表征，其值在0和1之间，概率是事件的函数。 <br/>
+P(A)为A发生的概率。</p>
+
+<pre><code>古典概率的两个基本条件：   
+1.有限性。（结果只有有限个）  
+2.等可能性。
+</code></pre>
+
+<p>英文字母的使用频率，去掉空格。e使用的频率最高，其次是t，接着是a。<br/>
+π的前100万位小数，各个数字出现的频率相同。
+主观概率与频率没有关系。如某人有百分之八十的可能性办成某事。
+贝叶斯学派。先验概率。<br/>
+概率的公理化定义。
+两个事件不相容。
+两个事件相容。
+推广到多个事件相容。<br/>
+古典概率的计算。</p>
+
+<pre><code>23个人中至少两个人同一天过生日的概率大于百分之五十。
+50个人中至少两个人同一天过生日的概率为大于百分之九十七。
+4个人中至少两个人同一个月出生的概率大于百分之四十。
+
+
+古典概率的计算要点：
+1.选择合适的样本空间，每个事件等可能性。
+2.运用排列组合的知识。
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/01/06/chengkuaishujuliu/">Tcp成块数据流</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-06T21:57:00+08:00" pubdate data-updated="true">Jan 6<span>th</span>, 2015</time>
+        
+         
+                   | <a href="/blog/2015/01/06/chengkuaishujuliu/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4>tcp的成块数据流 滑动窗口协议，流量控制。</h4>
+
+<p>使用TCP的滑动窗口协议时，接收方不必确认每一个收到的分组。在TCP中，ACK是累积的，它们表示接收方已经正确收到了一直到确认序号减1的所有字节。<br/>
+分组顺序依赖于许多无法控制的因素：发送方TCP的实现，接收方TCP的实现，接收进程读取数据（依赖于操作系统的调度）和网络的动态性（如以太网的冲突和退避等）。堆两个TCP而言，没有一种单一的，正确的方法来交换给定数量的数据。</p>
+
+<pre><code>1.窗口左边沿向右边沿靠近为窗口合拢。这种现象发生在数据被发送和确认时。
+2.当窗口右边沿向右移动时将允许发送更多的数据，我们称之为窗口张开。这种现象发生在另一端的进程读取已经确认的数据并释放了TCP的接收缓存时。
+3.当右边沿向左移动时，我们称为窗口收缩。如果收到一个指示窗口左边沿向左移动的ACK，则它被认为是一个重复的ACK，并被丢弃。
+</code></pre>
+
+<p>如果左边沿到达右边沿，则称其为一个零窗口，此时发送方不能发送任何数据。<br/>
+PUSH标志，发送方使用该标志通知接收方将所收到的数据全部提交给接收进程。这里的数据包括与PUSH一起发送的数据以及接收方TCP已经已经为接收进程收到的其他数据。<br/>
+慢启动算法通过观察到新分组进入网络的速率应该与另一端发回确认的速率相同而进行工作。<br/>
+慢启动为发送方的TCP增加了另一个窗口：拥塞窗口，记为cwnd。当与另一个网络的主机建立TCP连接时，拥塞窗口被初始化为1个报文段（即另一端通告的报文段大小）。每收到一个ACK，拥塞窗口就增加一个报文段（cwnd以字节为单位，但是慢启动以报文段大小为单位进行增加）。发送方取拥塞窗口与通告窗口中的最小值作为发送上限。拥塞窗口是发送方使用的流量控制，而通告窗口则是接收方使用的流量控制。<br/>
+发送方开始时发送一个报文段,然后等待 ACK。当收到该ACK时,拥塞窗口从 1增加为2,即可以发送两个报文段。当收到这两个报文段的ACK时,拥塞窗口就增加为4。这是一种指数增加的关系。</p>
+
+<pre><code>capacity(bit) = bandwidth(b/s) X round-trip time(s)
+</code></pre>
+
+<p>带宽时延乘积。依赖于网络速度和两端的RTT。<br/>
+例如,一条穿越美国(RT T约为60 ms)的T 1的电话线路(1544000b/s)的带宽时延乘积为11580字节。  <br/>
+当数据到达一个大的管道（如一个快速局域网）向一个较小的管道（如一个较慢得广域网）发送数据试会产生拥塞。<br/>
+当多个输入流到达一个路由器,而路由器的输出流小于这些输入流的总和时也会发生拥塞。<br/>
+紧急指针，URG。注意区分其与带外数据不同。<br/>
+紧急方式应用，当交互用户键入中断键时，使用紧急方式来完成这个功能。在FTP中，当交互用户放弃一个文件的传输时。<br/>
+紧急指针指向紧急数据的最后一个字节。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/01/05/scrapy/">Scrapy源码阅读</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-05T21:47:00+08:00" pubdate data-updated="true">Jan 5<span>th</span>, 2015</time>
+        
+         
+                   | <a href="/blog/2015/01/05/scrapy/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>试了一把scrapy，顺道读了一下源码，结果发现了好多的奇技淫巧</p>
+
+<p>从scrapy开始，这是一个py文件放在 /usr/local/bin下打开后</p>
+
+<pre><code>#!/usr/bin/python
+# EASY-INSTALL-ENTRY-SCRIPT: 'Scrapy==0.24.4','console_scripts','scrapy'
+__requires__ = 'Scrapy==0.24.4'
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.exit(
+        load_entry_point('Scrapy==0.24.4', 'console_scripts', 'scrapy')()
+    )
+</code></pre>
+
+<p>代码不多，但是没见过。load_entry_point 是干吗的呢，后来知道这就是一个程序的入口，在安装的时候会在setup里进行注册。拿就得看看scrapy的安装文件了。在https://github.com/scrapy/scrapy/blob/master/setup.py里面可以找到</p>
+
+<pre><code>entry_points={
+    'console_scripts': ['scrapy = scrapy.cmdline:execute']
+},
+</code></pre>
+
+<p>可以看到在scrapy下cmdline里有其实现，调用了execute函数。</p>
+
+<p>进入正题：
+前边的代码大都是一些参数处理，错误检查，和django的多少有些相似。</p>
+
+<pre><code>#加入参数处理列表
+cmd.add_options(parser)
+#解析参数
+opts, args = parser.parse_args(args=argv[1:])
+_run_print_help(parser, cmd.process_options, args, opts)
+#真正进入调用
+cmd.crawler_process = CrawlerProcess(settings)
+_run_print_help(parser, _run_command, cmd, args, opts)
+</code></pre>
+
+<p>在CrawlerProcess类里进行了一些初始化：</p>
+
+<pre><code>def __init__(self, settings):
+    #调用其父类的__init__函数进行settings的初始化，父类中的初始化加载settings['SPIDER_MANAGER_CLASS']选项，进行深复制等
+    super(CrawlerProcess, self).__init__(settings)
+    #_signal_shutdown为CrawerProcess类里的一个方法
+    install_shutdown_handlers(self._signal_shutdown)
+    self.stopping = False
+    self.log_observer = log.start_from_settings(self.settings)
+    log.scrapy_info(settings)
+
+#接收两个参数，一个函数句柄，一个布尔值，信号机制的实现    
+def install_shutdown_handlers(function, override_sigint=True):
+    #进入twisted框架
+    reactor._handleSignals()
+    signal.signal(signal.SIGTERM, function)
+    if signal.getsignal(signal.SIGINT) == signal.default_int_handler or \
+            override_sigint:
+        signal.signal(signal.SIGINT, function)
+    # Catch Ctrl-Break in windows
+    if hasattr(signal, "SIGBREAK"):
+        signal.signal(signal.SIGBREAK, function)
+</code></pre>
+
+<p>reactor到底是如何实例化的 reactor为twisted的核心，也是duck typing的典型实现。具体什么是duck typing，我也是说不大清楚只是大致理解意思。下面的reactor在哪里进行的实例化才是重点。几乎在twisted的每个实例里都调用了from twisted.internet import reactor</p>
+
+<p>进入reactor.py</p>
+
+<pre><code>from __future__ import division, absolute_import
+
+import sys
+del sys.modules['twisted.internet.reactor']
+from twisted.internet import default
+default.install()
+</code></pre>
+
+<p>令人难以置信，里面没有类，方法还是掉用的default里的，再进入default.py</p>
+
+<pre><code>from __future__ import division, absolute_import
+#__all__意味着可以将install导出到外面使用
+__all__ = ["install"]
+
+from twisted.python.runtime import platform
+
+
+def _getInstallFunction(platform):
+
+    try:
+        #判断平台相关性，我的是linux，从epollreactor导入install，并且返回install
+        if platform.isLinux():
+            try:
+                from twisted.internet.epollreactor import install
+            except ImportError:
+                from twisted.internet.pollreactor import install
+        elif platform.getType() == 'posix' and not platform.isMacOSX():
+            from twisted.internet.pollreactor import install
+        else:
+            from twisted.internet.selectreactor import install
+    except ImportError:
+        from twisted.internet.selectreactor import install
+    return install
+
+#install为类的一个实例。
+install = _getInstallFunction(platform)  
+</code></pre>
+
+<p>还是没有找到reactor的实例。</p>
+
+<pre><code>   def install():
+    """
+    Install the epoll() reactor.
+    """
+    #创建一个epoll的实例
+    #class EPollReactor(posixbase.PosixReactorBase, posixbase._PollLikeMixin):
+    #EPollReactor继承了posixbase.PosixReactorBase, posixbase._PollLikeMixin两个类
+    p = EPollReactor()
+    #导入安装函数，进入安装
+    from twisted.internet.main import installReactor
+    installReactor(p)
+
+    #同样是为了可以导出供外面使用
+    __all__ = ["EPollReactor", "install"]     
+
+
+    def installReactor(reactor):
+
+    import twisted.internet
+    import sys
+    #判断reactor是否在模块里，否则安装
+    if 'twisted.internet.reactor' in sys.modules:
+        raise error.ReactorAlreadyInstalledError("reactor already installed")
+    #将上面EPollReactor的实例赋值给twisted.internet.reactor，实现reactor的安装
+    #感到很神奇啊，对于reactor，epoll实现epoll的reactor，poll实现poll的reactor，真正实现了duck typing。
+    twisted.internet.reactor = reactor
+    sys.modules['twisted.internet.reactor'] = reactor
+</code></pre>
+
+<p>这样下面的就好理解了，reactor掉用的方法，就是相应的类及其父类的方法。</p>
+
+<p>再返回到上面的install_shutdown_handlers方法，reactor._handleSignals()在其父类里有实现。</p>
+
+<pre><code>_childWaker = None
+def _handleSignals(self):
+    #在这个类的父类中还有一个_handleSignals的实现，写的比较清楚
+    _SignalReactorMixin._handleSignals(self)
+    #判断平台类型
+    if platformType == 'posix' and processEnabled:
+        if not self._childWaker:
+    #在其父类的父类中用os.pipe()开启一个管道，一个管道包括一个写一个读。并将其设置成非阻塞。
+            self._childWaker = _SIGCHLDWaker(self)
+            self._internalReaders.add(self._childWaker)
+            self.addReader(self._childWaker)
+        #install函数的最终还是将信号和函数绑定
+        self._childWaker.install()
+        # Also reap all processes right now, in case we missed any
+        # signals before we installed the SIGCHLD waker/handler.
+        # This should only happen if someone used spawnProcess
+        # before calling reactor.run (and the process also exited
+        # already).
+    # 调用os.waitpid
+        process.reapAllProcesses()
+
+
+
+#上面类的父类的_handleSignals的实现        
+def _handleSignals(self):
+    """
+    Install the signal handlers for the Twisted event loop.
+    """
+    try:
+        #导入signal模块
+        import signal
+    except ImportError:
+        log.msg("Warning: signal module unavailable -- "
+                "not installing signal handlers.")
+        return
+    #getsignal有4个可能的返回值，SIG_IGN,SIG_DFL,None或者一个可掉用的python对象
+    #这里就是返回的python对象
+    if signal.getsignal(signal.SIGINT) == signal.default_int_handler:
+        # only handle if there isn't already a handler, e.g. for Pdb.
+        #SIGINT是终断进程信号，即control+c,绑定在sigInt函数上
+        signal.signal(signal.SIGINT, self.sigInt)
+     #SIGTERM终止进程，软件终止信号，绑定在sigTerm上
+    signal.signal(signal.SIGTERM, self.sigTerm)
+
+    # Catch Ctrl-Break in windows
+    if hasattr(signal, "SIGBREAK"):
+        #Ctrl-Break 同样是函数与信号绑定
+        signal.signal(signal.SIGBREAK, self.sigBreak)
+</code></pre>
+
+<p>上面的这个类必须与ReactorBase混合使用，因为sigTerm，sigInt，sigBreak等都定义在ReactorBase里面。<br/>
+暂时先读了这么多，看的挺快，但是做起笔记来还是挺慢的</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/01/04/tcp/">Tcp可靠性</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-04T23:18:00+08:00" pubdate data-updated="true">Jan 4<span>th</span>, 2015</time>
+        
+         
+                   | <a href="/blog/2015/01/04/tcp/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4>再读tcp/ip详解卷一</h4>
+
+<h4>tcp通过下列方式提供可靠性</h4>
+
+<p>1.应用数据被分割成tcp认为最适合发送的数据块<br/>
+2.当tcp发出一个段后，它启动一个定时器，等待目的地端确认收到这个报文段，如果不能及时收到一个ie确认，将重发这个报文段。<br/>
+3.当tcp收到发自tcp连接另一端的数据，它将发送一个ie确认。这个确认不是立即发送，通常推迟几分之一秒。<br/>
+4.tcp将保持它首部和数据的校验和。这是一个端到端的检验和，目的是检测数据在传输过程中的任何变化。如果收到段的检验和有差错，tcp将丢弃这个报文段和不确认收到此报文段（希望发端能超时并重发）<br/>
+5.由于tcp报文段作为ip数据报来传输，而ip数据报的到达可能会失序，因此tcp报文段的到达也可能会失序。如果必要，tcp将对收到的数据进行重新排序，将收到的数据以正确的顺序交给应用层。<br/>
+6.ip数据报会发生重复，tcp的接收端必须丢弃重复的数据。<br/>
+7.tcp还提供流量控制。tcp的每一方都有固定大小的缓冲空间。tcp的接收端只允许另一端发送接收端缓冲区所能接纳的数据。这将防止较快主机致使较慢主机的缓冲区溢出。</p>
+
+<pre><code>URG 紧急指针( urgent pointer)有效(见20.8节)。
+ACK 确认序号有效。
+PSH 接收方应该尽快将这个报文段交给应用层。
+RST 重建连接。
+SYN 同步序号用来发起一个连接。这个标志和下一个标志将在第 1 8章介绍。
+FIN 发端完成发送任务。
+</code></pre>
+
+<p>TCP的流量控制由连接的每一端通过声明的窗口大小来提供。<br/>
+窗口大小是一个 16 bit 字段,因而窗口大小最大为 65535字节。</p>
+
+<h4>建立一条tcp协议（三次握手）：</h4>
+
+<p>1.发送端发送一个SYN指明客户打算连接的服务器的端口，以及初始序号（ISN) 。<br/>
+2.服务器发回包含服务器的初始序列好的SYN报文段作为应答。同时，将确认序号设置为客户的ISN加1对客户的SYN报文段进行确认。一个是SYN占用一个序号。<br/>
+3.客户必须将序号设置为服务器的ISN加1以对服务其的SYN报文段进行确认。</p>
+
+<p>ISN可以看作是一个32位的计数器，每4ms加1.</p>
+
+<p>由于tcp是全双工的，每个方向必须单独进行关闭。原则就是当一方完成它的数据发送任务后就能发送一个 F I N来终止这个方向连接。收到FIN 意味着在这一个方向上没有数据流动。一个TCP连接在收到一个FIN后仍能发送数据。<br/>
+mss选项只能出现在SYN报文段中。<br/>
+mss最大报文长度，可以协商。如果一方不接受来自另一方的mss值，则mss定位默认值536字节。（这个默认值允许20字节的TCP首部，和20字节的IP首部以适合576字节IP数据就报）。<br/>
+报文段越大允许每个报文段传送的数据就越多,相对 I P和T C P首部有更高的网络利用率。<br/>
+当TCP发送一个SYN时，或者是因为一个本地应用进程想发起一个连接，或者是因为另一端的主机收到了一个连接请求。它能将mss的值设置为外出接口上的MTU长度减去固定的IP首部和TCP首部长度。对于一个ie以太网，MSS值可达1460字节。</p>
+
+<p>采用MTU发现机制，可以防止分段。</p>
+
+<h4>TCP的半关闭</h4>
+
+<p>连接的一端在结束它的发送后还能接收来自另一端数据的能力。就是所谓的半关闭。</p>
+
+<h4>tcp状态变迁图</h4>
+
+<h4>复位报文段</h4>
+
+<p>无论何时一个报文段发往基准的连接出现错误，tcp都会发出一个复位报文段。<br/>
+还有一种情况是当连接请求到达时，目的端口没有进程在监听。</p>
+
+<h4>并发服务器处理新的连接请求。</h4>
+
+<p>1.正等待连接请求的一端有一个固定长度的连接队列,该队列中的连接已被TCP接受(即三次握手已经完成),但还没有被应用层所接受。注意区分 T C P接受一个连接是将其放入这个队列,而应用层接受连接是将其从该队列中移出  <br/>
+2.应用层将指明该队列的最大长度，这个值通常称为积压值。它的取值范围是0~5之间的整数，包括0和5.<br/>
+3.当一个连接请求（SYN）到达时，TCP使用一个算法，根据当前连接队列中的连接数来确定是否接收这个连接。<br/>
+4.如果对于新的连接请求，该TCP监听的端点的连接队列中还有空间，TCP模块将对SYN进行确认并完成成连接的建立。但应用层只有在三次握手中的第三个报文段收到后才会知道这个新连接。<br/>
+5.如果对于新的连接请求，连接队列中已经没有了空间，TCP将不理会收到的SYN。也不发回任何报文段（即不回RST）。如果应用层不能及时接受已被TCP接受的连接，这些连接可能占满整个连接队列，客户的主动打开最终超时。</p>
+
+<p>如果一方已经关闭或者终止连接而另一方还不知道，我们将这样的连接称为半连接。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -714,333 +1396,6 @@ linux命令top或uptime的中的负载如何计算  （load，系统负载） <b
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/11/11/mianshi/">面试</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-11-11T20:30:00+08:00" pubdate data-updated="true">Nov 11<span>th</span>, 2014</time>
-        
-         
-                   | <a href="/blog/2014/11/11/mianshi/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>上海的天气有些变凉，来的这几天经常下雨。 <br/>
-又过节了，没有上班，但心情不大好，感觉很累。  <br/>
-下午经历了个面试，感觉自己还差得很多，自我介绍都有些紧张，还有自己的职业规划，比别人的优势在哪里，问题都回答的不好，4个技术问题，回答上了两个，还是准备的不够充分，没办法，生活就这样过着。</p>
-
-<p>只能靠自己继续努力了。。。</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/11/01/new/">Python获取文件路径</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-11-01T22:46:00+08:00" pubdate data-updated="true">Nov 1<span>st</span>, 2014</time>
-        
-         
-                   | <a href="/blog/2014/11/01/new/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><pre><code>    #!/usr/bin/env python
-    # coding=utf-8
-    import os
-    #获取当前文件的绝对路径
-    print os.path.dirname(os.path.abspath(__file__))
-    #获取当前文件的上一层路径
-    print os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-    print os.path.abspath(os.path.join(os.path.dirname(__file__),".."))
-</code></pre>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/11/01/onestepone/">一步一步学python</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-11-01T20:47:00+08:00" pubdate data-updated="true">Nov 1<span>st</span>, 2014</time>
-        
-         
-                   | <a href="/blog/2014/11/01/onestepone/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>今后结合github，多学习一些python，结合项目，锻炼数据结构与算法。</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/11/01/step/">下一步</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-11-01T20:42:00+08:00" pubdate data-updated="true">Nov 1<span>st</span>, 2014</time>
-        
-         
-                   | <a href="/blog/2014/11/01/step/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>又过了一个月，诸多不顺，谨记。<br/>
-大抵生活就是这样 ，慢慢的向前走，打算学些其他的，多些前进的道路，不再是如此的茫茫然。经历的越多，认识也就越是清楚。</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/10/01/jinqi/">荒废</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-10-01T10:55:00+08:00" pubdate data-updated="true">Oct 1<span>st</span>, 2014</time>
-        
-         
-                   | <a href="/blog/2014/10/01/jinqi/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>电赛结束了有半个月了，我也在宿舍荒废了有半个月了，今天是祖国母亲的生日。  <br/>
-一切都还好，我想我应该出去走走了，这样老是闷着的日子是不好的。   <br/>
-当人没有了目标之后，总是容易荒废，不管是近期的目标还是长远的打算，人都应该有自己的想法，可以幼稚，但不能没有。现在想想心无所求到底是不是一种正常的心理呢，我也不知道。 <br/>
-有点事情忙活着还是好的，至少它会催你向前，催你不能停下。  <br/>
-比赛的日子是很忙碌的，最后一天还做了个通宵，但因为种种原因，最后的调试并不成功，怪不得别人，绝大部分的责任还是在于自己。  <br/>
-比赛结束了，心想现在终于可以休息休息了，就这样一晃半个多月就过去了。     <br/>
-半个月里，思考了很多，绝大本分还是关于未来的。  <br/>
-走累了，停下来，休息一下，想想，再继续向前走。    <br/>
-未来的路还很长，要经历的事情还会很多。 <br/>
-当人生陷入迷茫的时候，说明我们该读书了，幸好我买的kindle就快要来了。    <br/>
-出去走走吧，认识一些新的人，见识一些新的事物。总是在一个地方呆着，会让自己的视野变窄，去到新的地方，结识新的人，了解新的事物，这就应该是所谓的成长吧。 <br/>
-趁着年轻，多出去看看，到了走万里路的时候了&#8230;&#8230;</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/09/16/genfenqu/">Linux根分区不够用</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-09-16T09:51:00+08:00" pubdate data-updated="true">Sep 16<span>th</span>, 2014</time>
-        
-         
-                   | <a href="/blog/2014/09/16/genfenqu/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>使用df  -h    和  du  -sh   查看文件夹大小
-试用命令  sudo  apt-get clean  清除缓存</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/08/30/huijia/">回家</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-08-30T22:59:00+08:00" pubdate data-updated="true">Aug 30<span>th</span>, 2014</time>
-        
-         
-                   | <a href="/blog/2014/08/30/huijia/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>这篇博客本来应该挺早发的，但这段时间因为一些事情给耽搁了。最近看了看博客，都长草了，还是趁早发了吧，要不就不知道弄哪去了。</p>
-
-<h3>完美的挂科</h3>
-
-<p>大三结束了，但并不是很顺利，中间出了点小故障，一门课挂掉了，这是大学里的第一次挂科，应该也是最后一次，老师平时成绩都已经给到了95最后还是挂掉了，只能是自己的问题了。大三上半年还好些，该上的课都会去，下半年或许是瞎折腾的多了些，翘掉了好多的课。好好的准备补考吧。</p>
-
-<h3>赛后</h3>
-
-<p>地里的杂草总是那么的具有生命力。6月初本来以为参加完比赛已经没事了，结果却阴差阳错的入选了另外的一个比赛，不知道是该庆幸还是进入了另外的坑。于我而言，比赛学到的最多的便是细节。注重细节的人总是能够取得好的成绩。很多时候我们做的东西其实并不需要多么的高大上，更不需要大而全，技术只需要解决最根本的问题就可以了，没有必要为了展示难度加上一些鸡肋。做东西需要观察生活中我们缺什么，只需要一个小点，就是那么一个小点，我们用心把其做好，就已经非常不错了。最近微信看到的一篇文章，这才是真正的设计。</p>
-
-<h3>回家</h3>
-
-<p>大四办了学分置换，可以不用上课去实习了，相当于提前一年结束了大学生涯，步入了社会，感觉有些唐突。
-7月的日子炎热且干燥，月末飞行器做的差不多的时候，背上双肩包，回家。
-赶上了家里的大旱，这半年雨水偏少，家里的水井已经不上水了，每隔几天去外面接几桶水。地里的玉米也要喝水，刚刚完工的灌溉系统也派上了用场，基于rfid的。一个水井一张卡，使用需要排队等号，每张卡内最多充值到999，我家用的时候刚好赶上用光，又跑到镇上充的，政府工作效率还是挺高。既然都已经用上了rfid为何不多做几张卡，为每户村民发放一张，一口井的覆盖范围甚是广泛，每次开泵关泵需要走到现场，将卡贴到上边，甚是不便。水泵这边的数据他们是如何与服务器端进行的同步不得而知。水泵这边没有一些检测，当出水处没有打开时极易将管道憋开。对于这种漫灌，太浪费水资源，还是应该发展喷灌或者滴灌。</p>
-
-<p>在家的日子感觉很是安逸，除了天气有些炎热，其他的都还好，没有网，没有电话，没有短信，没有空调，没有电视，与世隔绝一般，每天的睡眠都相当的充足。家乡也没有人陪你高谈阔论，每人每天都在忙碌自己的事情，一切是那么的祥和与安宁。</p>
-
-<h3>一本十分有用的书</h3>
-
-<p>回家几天，闲来无事，顺便把《程序员的自我修养》一书看了一多半，书中的很多知识另自己耳目一新，一些概念以前听都没有听过，不过内容并不算难，不懂的地方重复读两遍，基本上就可以理解了，书中有很多有意思的介绍，对于做嵌入式开发，理解底层代码，十分的有用，c与c＋＋之间如何结合，c/c＋＋的接口如何封装，共享库的问题，弱符号强符号，弱引用强引用，程序的入口到底在哪里，声明变量如何能够节省空间，全局变量静态变量，函数等分别放在哪个地方，栈的生长方向，函数的参数传递的顺序，堆空间的开辟，等等。</p>
-
-<h3>正在做的事情</h3>
-
-<p>飞行器基本用stm32重写完毕，回去就可以调试。想做一个物联网平台，但对web开发还是很陌生，之前已经搭建好了环境。学习下安卓开发，将来肯定是会用到的，开发自己的app感觉还是挺酷的一件事情。</p>
-
-<h3>生活在继续</h3>
-
-<p>技术在时间的积累下都会慢慢成熟，除了技术我们更应该学会的是与人合作的能力，人与人之间关系处理的能力。
-大学四年，学到的最多最有用的应该是自我学习接受新事物的能力，正确的价值观念，为人处世的哲学方法，秒杀一切的自信。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1056,23 +1411,23 @@ linux命令top或uptime的中的负载如何计算  （load，系统负载） <b
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2014/12/28/pyquery/">pyquery使用</a>
+        <a href="/blog/2015/02/28/android/">android学习笔记</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2014/12/28/django/">django源码分析 </a>
+        <a href="/blog/2015/02/28/tiaojian/">条件概率</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2014/11/11/mianshiti/">面试题</a>
+        <a href="/blog/2015/01/23/jquery/">jquery动态加载</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2014/11/11/mianshi/">面试</a>
+        <a href="/blog/2015/01/21/gailvlun/">概率论与数理统计学习</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2014/11/01/new/">python获取文件路径</a>
+        <a href="/blog/2015/01/06/chengkuaishujuliu/">tcp成块数据流</a>
       </li>
     
   </ul>
@@ -1088,7 +1443,7 @@ linux命令top或uptime的中的负载如何计算  （load，系统负载） <b
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - 图腾 -
+  Copyright &copy; 2015 - 图腾 -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

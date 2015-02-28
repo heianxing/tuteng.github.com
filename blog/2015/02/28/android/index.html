@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>android学习笔记 - TuTeng'blog</title>
+  <meta name="author" content="图腾">
+
+  
+  <meta name="description" content="activity的生命周期 每个activity具有四种基本状态:
+1.Active/Runing一个新 Activity 启动入栈后，它在屏幕最前端，处于栈的最顶端，此时它处于可见并可和用户交互的激活状态。
+2.Paused 当 Activity 被另一个透明或者 Dialog 样式的 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tuteng.github.io/blog/2015/02/28/android">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">TuTeng'blog</a></h1>
+  
+    <h2>学会了就用，用着不会就学</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:tuteng.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/aboutme">Aboutme</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Android学习笔记</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-28T21:17:00+08:00" pubdate data-updated="true">Feb 28<span>th</span>, 2015</time>
+        
+         
+                   | <a href="#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>activity的生命周期 <br/>
+每个activity具有四种基本状态:<br/>
+1.Active/Runing一个新 Activity 启动入栈后，它在屏幕最前端，处于栈的最顶端，此时它处于可见并可和用户交互的激活状态。<br/>
+2.Paused 当 Activity 被另一个透明或者 Dialog 样式的 Activity 覆盖时的状态。此时它依然与窗口管理器保持连接，系统继续维护其内部状态，所以它仍然可见，但它已经失去了焦点故不可与用户交互。<br/>
+3.Stoped 当 Activity 被另外一个 Activity 覆盖、失去焦点并不可见时处于 Stoped状态。<br/>
+4.Killed Activity 被系统杀死回收或者没有被启动时处于 Killed状态。</p>
+
+<pre><code>public class OurActivity extends Activity { 
+    protected void onCreate(Bundle savedInstanceState); 
+    protected void onStart(); 
+    protected void onResume(); 
+    protected void onPause(); 
+    protected void onStop(); 
+    protected void onDestroy(); 
+ }
+根据需要重写不同的方法。经常见到的onCreate方法。
+</code></pre>
+
+<p>不同的activity之间的通信,使用intent，也可以进行不同activity之间的传值。<br/>
+SharedPreferences使用xml格式为android应用提供了一种永久的数据存储方式。对于一个android应用，它存储在文件系统的/data/ data/your_app_package_name/shared_prefs/目录下，可以被处在同一个应用中的所有activity访问。<br/>
+另外对于不同activity之间的数据交换还可以使用sqlite，文件，进程间通信等方式。<br/>
+锁定屏幕的方向可以在activity的oncreate方法中加入特有的参数。</p>
+
+<p>关键字@Override是重写的意思。</p>
+
+<p>android的个性化控件：</p>
+
+<pre><code>ListView 像滑动刷新更多
+actionbar：我感觉应该属于menu的一个分类，因为它的布局在menu里，如微信顶部的一些菜单。
+menu：android的菜单，流行的slidingmenu，从手机的侧边栏划出，很绚丽的效果。
+viewpage：多个页面之间的滑动切换。
+gallery：图片的华东切换。
+gridview：网格多维布局。
+imageview:设置图片的显示样式。
+progressbar：进度条
+textview：文本的显示
+scrollview：滚动条
+timeview：时间控件
+flipview：
+ColorPickView：调色板
+GraphView：android图表绘制工具（终于发现了好玩的东西）
+UI Style：android的UI风格。
+</code></pre>
+
+<p>AndroidMainifest.xml为每个android程序中必须的文件，位于application的根目录。每个activity都必须在里面注册。<br/>
+android的四大组件：activity，serivice，content provider，broadcast receiver。<br/>
+handler的使用方法。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">图腾</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-28T21:17:00+08:00" pubdate data-updated="true">Feb 28<span>th</span>, 2015</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2015/02/28/android/" data-via="" data-counturl="http://tuteng.github.io/blog/2015/02/28/android/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/02/28/tiaojian/" title="Previous Post: 条件概率">&laquo; 条件概率</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+
+  <section>
+          <h1>Comments</h1>
+              <div id="comments" aria-live="polite"><!-- 多说公共JS代码 end -->
+<!-- Duoshuo Comment BEGIN -->
+<div class="ds-thread" data-title="Android学习笔记"></div>
+<script type="text/javascript">
+      var duoshuoQuery = {short_name:"tuteng"};
+(function() {
+     var ds = document.createElement('script');
+         ds.type = 'text/javascript';ds.async = true;
+             ds.src = 'http://static.duoshuo.com/embed.js';
+                 ds.charset = 'UTF-8';
+                     (document.getElementsByTagName('head')[0] 
+                         || document.getElementsByTagName('body')[0]).appendChild(ds);
+                       
+ })();
+</script>
+<!-- Duoshuo Comment END -->
+
+</div>
+  </section>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/02/28/android/">android学习笔记</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/28/tiaojian/">条件概率</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/23/jquery/">jquery动态加载</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/21/gailvlun/">概率论与数理统计学习</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/06/chengkuaishujuliu/">tcp成块数据流</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - 图腾 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

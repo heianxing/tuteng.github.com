@@ -1,0 +1,301 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>tcp可靠性 - TuTeng'blog</title>
+  <meta name="author" content="图腾">
+
+  
+  <meta name="description" content="再读tcp/ip详解卷一 tcp通过下列方式提供可靠性 1.应用数据被分割成tcp认为最适合发送的数据块
+2.当tcp发出一个段后，它启动一个定时器，等待目的地端确认收到这个报文段，如果不能及时收到一个ie确认，将重发这个报文段。
+3.当tcp收到发自tcp连接另一端的数据，它将发送一个ie确认。 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tuteng.github.io/blog/2015/01/04/tcp">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">TuTeng'blog</a></h1>
+  
+    <h2>学会了就用，用着不会就学</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:tuteng.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/aboutme">Aboutme</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Tcp可靠性</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-04T23:18:00+08:00" pubdate data-updated="true">Jan 4<span>th</span>, 2015</time>
+        
+         
+                   | <a href="#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h4>再读tcp/ip详解卷一</h4>
+
+<h4>tcp通过下列方式提供可靠性</h4>
+
+<p>1.应用数据被分割成tcp认为最适合发送的数据块<br/>
+2.当tcp发出一个段后，它启动一个定时器，等待目的地端确认收到这个报文段，如果不能及时收到一个ie确认，将重发这个报文段。<br/>
+3.当tcp收到发自tcp连接另一端的数据，它将发送一个ie确认。这个确认不是立即发送，通常推迟几分之一秒。<br/>
+4.tcp将保持它首部和数据的校验和。这是一个端到端的检验和，目的是检测数据在传输过程中的任何变化。如果收到段的检验和有差错，tcp将丢弃这个报文段和不确认收到此报文段（希望发端能超时并重发）<br/>
+5.由于tcp报文段作为ip数据报来传输，而ip数据报的到达可能会失序，因此tcp报文段的到达也可能会失序。如果必要，tcp将对收到的数据进行重新排序，将收到的数据以正确的顺序交给应用层。<br/>
+6.ip数据报会发生重复，tcp的接收端必须丢弃重复的数据。<br/>
+7.tcp还提供流量控制。tcp的每一方都有固定大小的缓冲空间。tcp的接收端只允许另一端发送接收端缓冲区所能接纳的数据。这将防止较快主机致使较慢主机的缓冲区溢出。</p>
+
+<pre><code>URG 紧急指针( urgent pointer)有效(见20.8节)。
+ACK 确认序号有效。
+PSH 接收方应该尽快将这个报文段交给应用层。
+RST 重建连接。
+SYN 同步序号用来发起一个连接。这个标志和下一个标志将在第 1 8章介绍。
+FIN 发端完成发送任务。
+</code></pre>
+
+<p>TCP的流量控制由连接的每一端通过声明的窗口大小来提供。<br/>
+窗口大小是一个 16 bit 字段,因而窗口大小最大为 65535字节。</p>
+
+<h4>建立一条tcp协议（三次握手）：</h4>
+
+<p>1.发送端发送一个SYN指明客户打算连接的服务器的端口，以及初始序号（ISN) 。<br/>
+2.服务器发回包含服务器的初始序列好的SYN报文段作为应答。同时，将确认序号设置为客户的ISN加1对客户的SYN报文段进行确认。一个是SYN占用一个序号。<br/>
+3.客户必须将序号设置为服务器的ISN加1以对服务其的SYN报文段进行确认。</p>
+
+<p>ISN可以看作是一个32位的计数器，每4ms加1.</p>
+
+<p>由于tcp是全双工的，每个方向必须单独进行关闭。原则就是当一方完成它的数据发送任务后就能发送一个 F I N来终止这个方向连接。收到FIN 意味着在这一个方向上没有数据流动。一个TCP连接在收到一个FIN后仍能发送数据。<br/>
+mss选项只能出现在SYN报文段中。<br/>
+mss最大报文长度，可以协商。如果一方不接受来自另一方的mss值，则mss定位默认值536字节。（这个默认值允许20字节的TCP首部，和20字节的IP首部以适合576字节IP数据就报）。<br/>
+报文段越大允许每个报文段传送的数据就越多,相对 I P和T C P首部有更高的网络利用率。<br/>
+当TCP发送一个SYN时，或者是因为一个本地应用进程想发起一个连接，或者是因为另一端的主机收到了一个连接请求。它能将mss的值设置为外出接口上的MTU长度减去固定的IP首部和TCP首部长度。对于一个ie以太网，MSS值可达1460字节。</p>
+
+<p>采用MTU发现机制，可以防止分段。</p>
+
+<h4>TCP的半关闭</h4>
+
+<p>连接的一端在结束它的发送后还能接收来自另一端数据的能力。就是所谓的半关闭。</p>
+
+<h4>tcp状态变迁图</h4>
+
+<h4>复位报文段</h4>
+
+<p>无论何时一个报文段发往基准的连接出现错误，tcp都会发出一个复位报文段。<br/>
+还有一种情况是当连接请求到达时，目的端口没有进程在监听。</p>
+
+<h4>并发服务器处理新的连接请求。</h4>
+
+<p>1.正等待连接请求的一端有一个固定长度的连接队列,该队列中的连接已被TCP接受(即三次握手已经完成),但还没有被应用层所接受。注意区分 T C P接受一个连接是将其放入这个队列,而应用层接受连接是将其从该队列中移出  <br/>
+2.应用层将指明该队列的最大长度，这个值通常称为积压值。它的取值范围是0~5之间的整数，包括0和5.<br/>
+3.当一个连接请求（SYN）到达时，TCP使用一个算法，根据当前连接队列中的连接数来确定是否接收这个连接。<br/>
+4.如果对于新的连接请求，该TCP监听的端点的连接队列中还有空间，TCP模块将对SYN进行确认并完成成连接的建立。但应用层只有在三次握手中的第三个报文段收到后才会知道这个新连接。<br/>
+5.如果对于新的连接请求，连接队列中已经没有了空间，TCP将不理会收到的SYN。也不发回任何报文段（即不回RST）。如果应用层不能及时接受已被TCP接受的连接，这些连接可能占满整个连接队列，客户的主动打开最终超时。</p>
+
+<p>如果一方已经关闭或者终止连接而另一方还不知道，我们将这样的连接称为半连接。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">图腾</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-04T23:18:00+08:00" pubdate data-updated="true">Jan 4<span>th</span>, 2015</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2015/01/04/tcp/" data-via="" data-counturl="http://tuteng.github.io/blog/2015/01/04/tcp/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/12/28/pyquery/" title="Previous Post: pyquery使用">&laquo; pyquery使用</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/01/05/scrapy/" title="Next Post: scrapy源码阅读">scrapy源码阅读 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+  <section>
+          <h1>Comments</h1>
+              <div id="comments" aria-live="polite"><!-- 多说公共JS代码 end -->
+<!-- Duoshuo Comment BEGIN -->
+<div class="ds-thread" data-title="Tcp可靠性"></div>
+<script type="text/javascript">
+      var duoshuoQuery = {short_name:"tuteng"};
+(function() {
+     var ds = document.createElement('script');
+         ds.type = 'text/javascript';ds.async = true;
+             ds.src = 'http://static.duoshuo.com/embed.js';
+                 ds.charset = 'UTF-8';
+                     (document.getElementsByTagName('head')[0] 
+                         || document.getElementsByTagName('body')[0]).appendChild(ds);
+                       
+ })();
+</script>
+<!-- Duoshuo Comment END -->
+
+</div>
+  </section>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/02/28/android/">android学习笔记</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/28/tiaojian/">条件概率</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/23/jquery/">jquery动态加载</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/21/gailvlun/">概率论与数理统计学习</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/06/chengkuaishujuliu/">tcp成块数据流</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - 图腾 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

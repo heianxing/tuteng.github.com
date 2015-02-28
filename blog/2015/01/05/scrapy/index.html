@@ -1,0 +1,432 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>scrapy源码阅读 - TuTeng'blog</title>
+  <meta name="author" content="图腾">
+
+  
+  <meta name="description" content="试了一把scrapy，顺道读了一下源码，结果发现了好多的奇技淫巧 从scrapy开始，这是一个py文件放在 /usr/local/bin下打开后 #!/usr/bin/python
+# EASY-INSTALL-ENTRY-SCRIPT: 'Scrapy==0.24.4',' &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tuteng.github.io/blog/2015/01/05/scrapy">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">TuTeng'blog</a></h1>
+  
+    <h2>学会了就用，用着不会就学</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:tuteng.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/blog/aboutme">Aboutme</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Scrapy源码阅读</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-05T21:47:00+08:00" pubdate data-updated="true">Jan 5<span>th</span>, 2015</time>
+        
+         
+                   | <a href="#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>试了一把scrapy，顺道读了一下源码，结果发现了好多的奇技淫巧</p>
+
+<p>从scrapy开始，这是一个py文件放在 /usr/local/bin下打开后</p>
+
+<pre><code>#!/usr/bin/python
+# EASY-INSTALL-ENTRY-SCRIPT: 'Scrapy==0.24.4','console_scripts','scrapy'
+__requires__ = 'Scrapy==0.24.4'
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.exit(
+        load_entry_point('Scrapy==0.24.4', 'console_scripts', 'scrapy')()
+    )
+</code></pre>
+
+<p>代码不多，但是没见过。load_entry_point 是干吗的呢，后来知道这就是一个程序的入口，在安装的时候会在setup里进行注册。拿就得看看scrapy的安装文件了。在https://github.com/scrapy/scrapy/blob/master/setup.py里面可以找到</p>
+
+<pre><code>entry_points={
+    'console_scripts': ['scrapy = scrapy.cmdline:execute']
+},
+</code></pre>
+
+<p>可以看到在scrapy下cmdline里有其实现，调用了execute函数。</p>
+
+<p>进入正题：
+前边的代码大都是一些参数处理，错误检查，和django的多少有些相似。</p>
+
+<pre><code>#加入参数处理列表
+cmd.add_options(parser)
+#解析参数
+opts, args = parser.parse_args(args=argv[1:])
+_run_print_help(parser, cmd.process_options, args, opts)
+#真正进入调用
+cmd.crawler_process = CrawlerProcess(settings)
+_run_print_help(parser, _run_command, cmd, args, opts)
+</code></pre>
+
+<p>在CrawlerProcess类里进行了一些初始化：</p>
+
+<pre><code>def __init__(self, settings):
+    #调用其父类的__init__函数进行settings的初始化，父类中的初始化加载settings['SPIDER_MANAGER_CLASS']选项，进行深复制等
+    super(CrawlerProcess, self).__init__(settings)
+    #_signal_shutdown为CrawerProcess类里的一个方法
+    install_shutdown_handlers(self._signal_shutdown)
+    self.stopping = False
+    self.log_observer = log.start_from_settings(self.settings)
+    log.scrapy_info(settings)
+
+#接收两个参数，一个函数句柄，一个布尔值，信号机制的实现    
+def install_shutdown_handlers(function, override_sigint=True):
+    #进入twisted框架
+    reactor._handleSignals()
+    signal.signal(signal.SIGTERM, function)
+    if signal.getsignal(signal.SIGINT) == signal.default_int_handler or \
+            override_sigint:
+        signal.signal(signal.SIGINT, function)
+    # Catch Ctrl-Break in windows
+    if hasattr(signal, "SIGBREAK"):
+        signal.signal(signal.SIGBREAK, function)
+</code></pre>
+
+<p>reactor到底是如何实例化的 reactor为twisted的核心，也是duck typing的典型实现。具体什么是duck typing，我也是说不大清楚只是大致理解意思。下面的reactor在哪里进行的实例化才是重点。几乎在twisted的每个实例里都调用了from twisted.internet import reactor</p>
+
+<p>进入reactor.py</p>
+
+<pre><code>from __future__ import division, absolute_import
+
+import sys
+del sys.modules['twisted.internet.reactor']
+from twisted.internet import default
+default.install()
+</code></pre>
+
+<p>令人难以置信，里面没有类，方法还是掉用的default里的，再进入default.py</p>
+
+<pre><code>from __future__ import division, absolute_import
+#__all__意味着可以将install导出到外面使用
+__all__ = ["install"]
+
+from twisted.python.runtime import platform
+
+
+def _getInstallFunction(platform):
+
+    try:
+        #判断平台相关性，我的是linux，从epollreactor导入install，并且返回install
+        if platform.isLinux():
+            try:
+                from twisted.internet.epollreactor import install
+            except ImportError:
+                from twisted.internet.pollreactor import install
+        elif platform.getType() == 'posix' and not platform.isMacOSX():
+            from twisted.internet.pollreactor import install
+        else:
+            from twisted.internet.selectreactor import install
+    except ImportError:
+        from twisted.internet.selectreactor import install
+    return install
+
+#install为类的一个实例。
+install = _getInstallFunction(platform)  
+</code></pre>
+
+<p>还是没有找到reactor的实例。</p>
+
+<pre><code>   def install():
+    """
+    Install the epoll() reactor.
+    """
+    #创建一个epoll的实例
+    #class EPollReactor(posixbase.PosixReactorBase, posixbase._PollLikeMixin):
+    #EPollReactor继承了posixbase.PosixReactorBase, posixbase._PollLikeMixin两个类
+    p = EPollReactor()
+    #导入安装函数，进入安装
+    from twisted.internet.main import installReactor
+    installReactor(p)
+
+    #同样是为了可以导出供外面使用
+    __all__ = ["EPollReactor", "install"]     
+
+
+    def installReactor(reactor):
+
+    import twisted.internet
+    import sys
+    #判断reactor是否在模块里，否则安装
+    if 'twisted.internet.reactor' in sys.modules:
+        raise error.ReactorAlreadyInstalledError("reactor already installed")
+    #将上面EPollReactor的实例赋值给twisted.internet.reactor，实现reactor的安装
+    #感到很神奇啊，对于reactor，epoll实现epoll的reactor，poll实现poll的reactor，真正实现了duck typing。
+    twisted.internet.reactor = reactor
+    sys.modules['twisted.internet.reactor'] = reactor
+</code></pre>
+
+<p>这样下面的就好理解了，reactor掉用的方法，就是相应的类及其父类的方法。</p>
+
+<p>再返回到上面的install_shutdown_handlers方法，reactor._handleSignals()在其父类里有实现。</p>
+
+<pre><code>_childWaker = None
+def _handleSignals(self):
+    #在这个类的父类中还有一个_handleSignals的实现，写的比较清楚
+    _SignalReactorMixin._handleSignals(self)
+    #判断平台类型
+    if platformType == 'posix' and processEnabled:
+        if not self._childWaker:
+    #在其父类的父类中用os.pipe()开启一个管道，一个管道包括一个写一个读。并将其设置成非阻塞。
+            self._childWaker = _SIGCHLDWaker(self)
+            self._internalReaders.add(self._childWaker)
+            self.addReader(self._childWaker)
+        #install函数的最终还是将信号和函数绑定
+        self._childWaker.install()
+        # Also reap all processes right now, in case we missed any
+        # signals before we installed the SIGCHLD waker/handler.
+        # This should only happen if someone used spawnProcess
+        # before calling reactor.run (and the process also exited
+        # already).
+    # 调用os.waitpid
+        process.reapAllProcesses()
+
+
+
+#上面类的父类的_handleSignals的实现        
+def _handleSignals(self):
+    """
+    Install the signal handlers for the Twisted event loop.
+    """
+    try:
+        #导入signal模块
+        import signal
+    except ImportError:
+        log.msg("Warning: signal module unavailable -- "
+                "not installing signal handlers.")
+        return
+    #getsignal有4个可能的返回值，SIG_IGN,SIG_DFL,None或者一个可掉用的python对象
+    #这里就是返回的python对象
+    if signal.getsignal(signal.SIGINT) == signal.default_int_handler:
+        # only handle if there isn't already a handler, e.g. for Pdb.
+        #SIGINT是终断进程信号，即control+c,绑定在sigInt函数上
+        signal.signal(signal.SIGINT, self.sigInt)
+     #SIGTERM终止进程，软件终止信号，绑定在sigTerm上
+    signal.signal(signal.SIGTERM, self.sigTerm)
+
+    # Catch Ctrl-Break in windows
+    if hasattr(signal, "SIGBREAK"):
+        #Ctrl-Break 同样是函数与信号绑定
+        signal.signal(signal.SIGBREAK, self.sigBreak)
+</code></pre>
+
+<p>上面的这个类必须与ReactorBase混合使用，因为sigTerm，sigInt，sigBreak等都定义在ReactorBase里面。<br/>
+暂时先读了这么多，看的挺快，但是做起笔记来还是挺慢的</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">图腾</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-05T21:47:00+08:00" pubdate data-updated="true">Jan 5<span>th</span>, 2015</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2015/01/05/scrapy/" data-via="" data-counturl="http://tuteng.github.io/blog/2015/01/05/scrapy/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/01/04/tcp/" title="Previous Post: tcp可靠性">&laquo; tcp可靠性</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/01/06/chengkuaishujuliu/" title="Next Post: tcp成块数据流">tcp成块数据流 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+  <section>
+          <h1>Comments</h1>
+              <div id="comments" aria-live="polite"><!-- 多说公共JS代码 end -->
+<!-- Duoshuo Comment BEGIN -->
+<div class="ds-thread" data-title="Scrapy源码阅读"></div>
+<script type="text/javascript">
+      var duoshuoQuery = {short_name:"tuteng"};
+(function() {
+     var ds = document.createElement('script');
+         ds.type = 'text/javascript';ds.async = true;
+             ds.src = 'http://static.duoshuo.com/embed.js';
+                 ds.charset = 'UTF-8';
+                     (document.getElementsByTagName('head')[0] 
+                         || document.getElementsByTagName('body')[0]).appendChild(ds);
+                       
+ })();
+</script>
+<!-- Duoshuo Comment END -->
+
+</div>
+  </section>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/02/28/android/">android学习笔记</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/02/28/tiaojian/">条件概率</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/23/jquery/">jquery动态加载</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/21/gailvlun/">概率论与数理统计学习</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/01/06/chengkuaishujuliu/">tcp成块数据流</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - 图腾 -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -9,7 +9,9 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="自从买了笔记本，一直在折腾，却没怎么注意“保养”，用着越来越难用了，闲着没事，花了几个小时打扫了一下卫生。 我的笔记本是acer4752G，当时买的时候花了4000多大洋。下面进入正题。 工具 一把螺丝刀，一个银行卡片。这都是参考的网上成功的经验准备的工具 拆卸过程 从后面开始，卸完大部分的螺丝 &hellip;">
+  <meta name="description" content="一直考虑着做个四轴，但都没有时间，只能一点一点的来了，今天下午，先把mpu6050测试好了。还别说，arduino确实是便捷开发，用着很爽。 start 开发环境 arduino1.5.2,硬件arduino uno一块，mpu6050一个。
+库文件
+使用之前要先导入几个库，在文件->参数设置下， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +68,1190 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/11/24/arduino/">Arduino开发mpu6050</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-24T17:17:00+08:00" pubdate data-updated="true">Nov 24<span>th</span>, 2013</time>
+        
+         
+                   | <a href="/blog/2013/11/24/arduino/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>一直考虑着做个四轴，但都没有时间，只能一点一点的来了，今天下午，先把mpu6050测试好了。还别说，arduino确实是便捷开发，用着很爽。</p>
+
+<h5>start</h5>
+
+<p>开发环境 arduino1.5.2,硬件arduino uno一块，mpu6050一个。
+<a href="http://v.to/0I6h4">库文件</a><br/>
+使用之前要先导入几个库，在文件->参数设置下，设置好自己存放库的位置，在此路径下建立一个libraries的文件夹，将需要的第三方库解压到里面即可，这个文件里我们需要的是arduino下的文件。文件存放形式如下图<br/>
+<img src="http://files.note.sdo.com/xBlh9~kF7u9G4M0Mw000O1" alt="" /></p>
+
+<p> 现在可以写测试程序了<br/>
+测试程序参考如下<br/>
+http://www.geek-workshop.com/forum.php?mod=viewthread&amp;tid=2471<br/>
+http://www.cnblogs.com/hangxin1940/archive/2013/04/07/3003254.html<br/>
+http://tonylabs.com/zh/tutorials/arduino-mpu6050-tutorials<br/>
+打开串口可以看到下图：<br/>
+<img src="http://files.note.sdo.com/xBlh9~kF7vsl6u1dE000ZD" alt="" /><br/>
+arduino开发起来还是挺快的</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/11/24/uip/">Uip移植</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-24T17:16:00+08:00" pubdate data-updated="true">Nov 24<span>th</span>, 2013</time>
+        
+         
+                   | <a href="/blog/2013/11/24/uip/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近一周直到昨天都一直在折腾uip，昨天，就是昨天终于结束了，其中的酸甜苦辣啊。<br/>
+至于uip是什么，我就不废话了。我主要来记录一下我的移植过程。最主要的目的是先实现一个最简单的功能，即能够ping通，再实现tcp的连接。</p>
+
+<h5>需要的东西</h5>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kF7mvG4M0Mw000Mn" alt="" /></p>
+
+<p>单片机开发板一块如上图<a href="http://note.sdo.com/u/634916397005493321/n/xBlh9~kF7nvq4M0Mw000Mw">单片机选型</a>，rom和ram都最好大一点。我的是stc90c516RD+，至于网络模块，当然是选择比较便宜的enc28j60模块，淘宝上有现成的做好的模块，外接5v电源就可以，因为其接入了一个降压模块ams1117。此网络模块对电压要求比较高，我的开发板输出的电压差不多是4.8，4.9v的样子，但连上网络模块之后始终网口不发亮，一测芯片的电压，就差一点达不到3.3v，没办法，只好找了个5v的电源来给其供电。另外我的单片机rom61k,ram1280字节。空间还是挺大的。开发环境用的是keil。至于uip可以移植到多大空间的地方，我也不是很清楚，反正我这个最后还是成功了。<br/>
+<a href="http://dunkels.com/adam/">uip官方网站</a>  <br/>
+<a href="https://github.com/adamdunkels/uip/tags">uip协议下载地址</a><br/>
+我做的是0.9版本的移植。</p>
+
+<h5>移植过程</h5>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kF7mvG4M0Mw000Mp" alt="" />
+主要有四个文件夹如上图，/app,/doc,/uip,/unix,/app下是开发好的一些例程，有telnet，http，smtp等。/doc下是文档说明，非常有用。/uip下是arp，udp，ip，tcp，icmp等的实现。/unix下是主函数网卡驱动，以及配置文件uipopt.h.</p>
+
+<h6>开始移植</h6>
+
+<p>下图是我添加的所有文件<br/>
+我们需要写网络模块的驱动程序，即enc28j60，不过网上已经有了开发好的，我们可以借鉴一下。对于其中的一些函数我们只要能够看懂就好了。 <br/>
+首先需要对主函数进行设置，直接上代码吧</p>
+
+<pre><code>#include "uip.h"
+#include "uip_arp.h"
+#include "enc28j60.h"
+//#include "uart.h"
+//#include "httpd.h"
+//#include "telnet.h"  //注释掉没有用到的头文件
+#include "uipopt.h"
+#include "app.h"
+
+
+#define BUF ((struct uip_eth_hdr *)&amp;uip_buf[0])
+
+u16_t ipaddr[2];
+#ifndef NULL
+#define NULL (void *)0
+#endif /* NULL */
+
+/*-----------------------------------------------------------------------------------*/
+int
+main(void)
+{
+  u8_t i, arptimer;
+
+//  init_uart();  //初始化串口,方便调试
+  /* Initialize the device driver. */ 
+  dev_init();  //初始化enc28j60，实际调用enc28j60_init（）函数
+
+  uip_arp_init();  //初始化arp
+
+  /* Initialize the uIP TCP/IP stack. */
+  uip_init();   //初始化uip协议栈
+
+
+    /*set host MAC addr*/
+    uip_ethaddr.addr[0] = 0x12;
+    uip_ethaddr.addr[1] = 0x34;
+    uip_ethaddr.addr[2] = 0x56;
+    uip_ethaddr.addr[3] = 0x78;
+    uip_ethaddr.addr[4] = 0x90;
+    uip_ethaddr.addr[5] = 0xAB;  //给enc28j60设置mac地址，要求局域网内不要重复,与uipopt文件中的配置参数配合使用。
+
+
+#if UIP_FIXEDADDR == 0
+    /*host ip addr*/
+    uip_ipaddr(ipaddr, 192,168,0,2);
+    uip_sethostaddr(ipaddr);  //设置enc28j60ip地址
+
+    /*netmask addr*/
+    uip_ipaddr(ipaddr, 255,255,255,0);
+    uip_setnetmask(ipaddr); //设置子网掩码
+
+    /*router ip addr*/
+    uip_ipaddr(ipaddr, 192,168,0,1);
+    uip_setdraddr(ipaddr);  //设置网关
+#endif  //同样与uipopt.h文件配合使用
+    //至此在修改一下uipopt文件就可以实现icmp协议了，即设置好ip地址后就能够ping通，此处必须先要成功才能设置后面。设置uipopt文件在后面。
+    example2_init();
+  /* Initialize the HTTP server. */
+ // httpd_init();
+
+  arptimer = 0;  //arp缓存表更新定时器
+
+  while(1) {
+    /* Let the tapdev network device driver read an entire IP packet
+       into the uip_buf. If it must wait for more than 0.5 seconds, it
+       will return with the return value 0. If so, we know that it is
+       time to call upon the uip_periodic(). Otherwise, the tapdev has
+       received an IP packet that is to be processed by uIP. */
+    uip_len = dev_poll(); //查询网卡是否有包收到
+    if(uip_len == 0) {
+      for(i = 0; i &lt; UIP_CONNS; i++) {
+    uip_periodic(i);  //协议栈解析，组包，状态监测
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value &gt; 0. */
+    if(uip_len &gt; 0) {
+      uip_arp_out();  
+      dev_send();   //有包要发送
+        }
+      }
+
+#if UIP_UDP  //此处在宏定义中UIP_UDP为0不会执行
+      for(i = 0; i &lt; UIP_UDP_CONNS; i++) {
+            uip_udp_periodic(i);
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value &gt; 0. */
+    if(uip_len &gt; 0) {
+        uip_arp_out();
+        dev_send();
+        }
+      }
+#endif /* UIP_UDP */
+
+      /* Call the ARP timer function every 10 seconds. */
+      if(++arptimer == 20) {    
+        uip_arp_timer();  //更新arp缓存
+        arptimer = 0;
+      }
+
+    } else {  
+      if(BUF-&gt;type == htons(UIP_ETHTYPE_IP)) {
+    uip_arp_ipin();
+    uip_input();
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value &gt; 0. */
+    if(uip_len &gt; 0) {
+      uip_arp_out();
+      dev_send();
+        }  //处理IP包
+      } else if(BUF-&gt;type == htons(UIP_ETHTYPE_ARP)) {
+    uip_arp_arpin();
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value &gt; 0. */    
+    if(uip_len &gt; 0) {   
+      dev_send();
+        }//处理arp包
+      }
+    }
+
+  }
+  return 0;
+}
+/*-----------------------------------------------------------------------------------*/
+/*void
+uip_log(char *m)
+{
+  printf("uIP log message: %s\n", m);
+}
+*/
+/*-----------------------------------------------------------------------------------*/
+</code></pre>
+
+<p>配置文件如下：</p>
+
+<pre><code>#define UIP_FIXEDADDR    0  //为0时可以像主函数中那样配置ip地址
+
+/**
+ * Ping IP address asignment.
+ *
+ * uIP uses a "ping" packets for setting its own IP address if this
+ * option is set. If so, uIP will start with an empty IP address and
+ * the destination IP address of the first incoming "ping" (ICMP echo)
+ * packet will be used for setting the hosts IP address.
+ *
+ * \note This works only if UIP_FIXEDADDR is 0.
+ *
+ * \hideinitializer
+ */
+#define UIP_PINGADDRCONF 0
+
+#define UIP_IPADDR0     192 /**&lt; The first octet of the IP address of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_IPADDR1     168 /**&lt; The second octet of the IP address of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_IPADDR2     0   /**&lt; The third octet of the IP address of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_IPADDR3     2   /**&lt; The fourth octet of the IP address of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+
+#define UIP_NETMASK0    255 /**&lt; The first octet of the netmask of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_NETMASK1    255 /**&lt; The second octet of the netmask of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_NETMASK2    255 /**&lt; The third octet of the netmask of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_NETMASK3    0   /**&lt; The fourth octet of the netmask of
+                   this uIP node, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+
+#define UIP_DRIPADDR0   192 /**&lt; The first octet of the IP address of
+                   the default router, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_DRIPADDR1   168 /**&lt; The second octet of the IP address of
+                   the default router, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_DRIPADDR2   0   /**&lt; The third octet of the IP address of
+                   the default router, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+#define UIP_DRIPADDR3   1   /**&lt; The fourth octet of the IP address of
+                   the default router, if UIP_FIXEDADDR is
+                   1. \hideinitializer */
+
+/**
+ * Specifies if the uIP ARP module should be compiled with a fixed
+ * Ethernet MAC address or not.
+ *
+ * If this configuration option is 0, the macro uip_setethaddr() can
+ * be used to specify the Ethernet address at run-time.
+ *
+ * \hideinitializer
+ */
+#define UIP_FIXEDETHADDR 1  //设置mac地址，此处必须和主函数中设置的相同，而且此参数不能为0，原因不知道为什么。
+
+#define UIP_ETHADDR0    0x12  /**&lt; The first octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+#define UIP_ETHADDR1    0x34  /**&lt; The second octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+#define UIP_ETHADDR2    0x56  /**&lt; The third octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+#define UIP_ETHADDR3    0x78  /**&lt; The fourth octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+#define UIP_ETHADDR4    0x90  /**&lt; The fifth octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+#define UIP_ETHADDR5    0xAB  /**&lt; The sixth octet of the Ethernet
+                 address if UIP_FIXEDETHADDR is
+                 1. \hideinitializer */
+
+
+/**
+ * The size of the uIP packet buffer.
+ *
+ * The uIP packet buffer should not be smaller than 60 bytes, and does
+ * not need to be larger than 1500 bytes. Lower size results in lower
+ * TCP throughput, larger size results in higher TCP throughput.
+ *
+ * \hideinitializer
+ */
+#define UIP_BUFSIZE     400  //设置包缓存大小，跟ram有关，很重要，错了后网卡初始化陷入死循环。这个值可以多试几次，根据自己的ram大小来确定。
+
+
+
+#ifndef LITTLE_ENDIAN
+#define LITTLE_ENDIAN  3412
+#endif /* LITTLE_ENDIAN */
+#ifndef BIG_ENDIAN
+#define BIG_ENDIAN     1234
+#endif /* BIGE_ENDIAN */
+
+#ifndef BYTE_ORDER
+#define BYTE_ORDER     BIG_ENDIAN
+#endif /* BYTE_ORDER */  //配置大小端，很重要，配置错了，收不到包。
+
+
+#include "app.h"  //调用UIP_APPCALL,其中可以加入自己写的应用，我们开发业主要是实现自己的UIP_APPCALL
+</code></pre>
+
+<p>以上就是配置文件了，对于其他的参数等我们熟练了可以在适当的修改。<br/>
+<a href="">参数配置参考</a><br/>
+对于硬件连接这里就不介绍了。
+文档中的例子</p>
+
+<pre><code>void example2_init(void) {
+    uip_listen(2345);  //监听2345端口
+}
+void example2_app(void) {
+struct  example2_state *s;
+    s = (struct  example2_state *)uip_conn-&gt;appstate;
+    if(uip_connected()) {
+    s-&gt;state = WELCOME_SENT;
+    uip_send("Welcome!\n", 9); //连接成功,发送消息
+return;
+}
+    if(uip_acked() &amp;&amp; s-&gt;state == WELCOME_SENT) {
+        s-&gt;state = WELCOME_ACKED;
+    }
+    if(uip_newdata()) {
+    uip_send("ok1\n", 4);
+    led_on();  //添加自己的应用。可以先取得包中数据的详细信息，在确定自己的应用可以使用uip_appdata指针指向tcp数据的开头。
+//  while(1);
+    led_off();
+    }
+    if(uip_rexmit()) { 
+        switch(s-&gt;state) {
+            case WELCOME_SENT:
+                uip_send("Welcome!\n", 9);
+                break;
+            case WELCOME_ACKED:
+                uip_send("ok2\n", 4);
+                break;
+        }
+    }
+}    
+</code></pre>
+
+<p>现在差不多就搞完了。<br/>
+<a href="http://blog.csdn.net/lxj_com2006/article/details/6928177">参考文章</a><br/>
+<a href="http://v.to/0I6h2">uipopt.h配置文件</a><br/>
+<a href="https://github.com/tuteng/uip">完整代码</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/11/12/lianwang/">网络连不上</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-12T23:39:00+08:00" pubdate data-updated="true">Nov 12<span>th</span>, 2013</time>
+        
+         
+                   | <a href="/blog/2013/11/12/lianwang/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>晚上回到宿舍，一直连不上网，之前就遇到过这问题，但是糊里糊涂的解决的，今天说什么也得弄好了。<br/>
+问题：开机即可获得以个169.254.xx开头的ip，使用了固定ip后也是这样，这样很明显是不会连上网的，而且子网掩码还是255.255.0.0，没办法，在网上找了找，大致有下面几种方法，最有效的是第三种。 <br/>
+169.254.X.X是Windows操作系统在DHCP信息租用失败时自动给客户机分配的IP地址。意思就是在你开机之后，网卡自动获取不到合适的ip，所以会自动得到一个微软自带的ip，但是这个会影响下面的正常上网。<br/>
+解决办法：<br/>
+1.分配固定的ip地址，首先你要看一下别人可以正常上网的ip地址，网关，dns等。<br/>
+2.重启下机器或者网卡。 <br/>
+3.使用下面的命令</p>
+
+<pre><code> ipconfig  /renew 清除ip缓存
+ ipconfig /flushdns 清除dns缓存
+ arp -d* 清除arp缓存
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/11/01/xinshi/">小记</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-01T16:35:00+08:00" pubdate data-updated="true">Nov 1<span>st</span>, 2013</time>
+        
+         
+                   | <a href="/blog/2013/11/01/xinshi/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>秋天了，天气随着淅淅沥沥的小雨也开始变凉了，生活中的一切都还好，希望还在，梦想也还在&#8230;&#8230; <br/>
+最近忙忙乎乎，忙忙乎乎。期间还回了趟家，参加了场婚礼。不知道自己一直在外求学的原因，还是什么，对其中发生的一些事情总是有点点不舒服。昨天在家忙完就赶紧搭上了返回学校的汽车，在车上，晕的一塌糊涂，下车吐了。回到学校，依旧和往常一样。宿舍，教学楼，餐厅，每日往往复复，日子就这样过着。 <br/>
+今天上课老师说下学期要分方向了。本学期开了好多的专业基础课，而我却这样马马虎虎的过着。大家有准备考研的，有准备考公务员的，还有其它&#8230;.都在为自己的未来奔波着，忙碌着。想想自己大学生活，也许是自己的学生生涯就这样快要结束了。 <br/>
+秋天总是会无缘无故的感觉到有那么一丝丝的伤感，算了，一切继续，继续hard working&#8230;..</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/26/linux-chuankou/">Linux串口通信</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-26T17:00:00+08:00" pubdate data-updated="true">Oct 26<span>th</span>, 2013</time>
+        
+         
+                   | <a href="/blog/2013/10/26/linux-chuankou/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>上一篇弄完了温度采集部分，这一篇来总结一下linux串口通信的知识。<br/>
+先来看张图：<br/>
+<img src="http://files.note.sdo.com/xBlh9~kCK6iFM72Dk00149" alt="" /><br/>
+这是典型的串口模块的电路图。通过此电路图，我们完全可以自己焊出自己的串口。 <br/>
+下面直接上代码吧</p>
+
+<pre><code>#include&lt;stdio.h&gt;  //标准输入输出
+#include&lt;string.h&gt;  //字符串函数库
+#include&lt;unistd.h&gt;  //unix 标准函数
+#include&lt;fcntl.h&gt;  //文件控制定义
+#include&lt;stdlib.h&gt;  //标准函数库
+#include&lt;time.h&gt;   //时间库函数
+#include&lt;errno.h&gt;  //错误符号定义
+#include&lt;termios.h&gt; //终端控制定义
+
+#define FALSE -1
+#define TRUE 0
+
+#define BUFFSIZE 1024
+//char buf[BUFFSIZE];
+
+int speed_arr[] = { B38400, B19200, B9600, B4800, B2400, B1200, B300,
+          B38400, B19200, B9600, B4800, B2400, B1200, B300, };
+int name_arr[] = {38400,  19200,  9600,  4800,  2400,  1200,  300, 38400,  
+          19200,  9600, 4800, 2400, 1200,  300, };
+//将波特率组织成数组的形式，方便调用
+
+int open_port(void)
+{
+    int fd;
+
+
+    fd=open("/dev/ttyS0",O_RDWR|O_NOCTTY);  //像操作文件一样打开串口
+    if(-1==fd)
+    {
+        perror("open port: unable to open /dev/ttys0 ");
+    }
+    else
+    {
+        printf("chuankou succed\n");
+        fcntl(fd,F_SETFL,0);
+        return(fd);
+    }
+
+}  //打开串口，串口在/dev下，符号一般为ttySx的形式，x代表数字
+
+/*void write_port(int fd)  //往串口写数据
+{
+    int n;
+    n=write(fd,"AIZ\r",4);
+    if(n&lt;0)
+    {
+        fputs("write() of 4 bytes failed!\n",stderr);
+    }
+}*/
+/*char read_port(int fd)  //从串口读数据
+{
+    int n;
+
+//  fcntl(fd,F_SETFL,FNDELAY);
+//  fcntl(fd,F_SETFL,0);
+    n=read(fd,buf,BUFFSIZE);
+    if(n==-1)
+    {
+        perror("read port: error");
+        return 
+    }
+    else
+        return buf;
+}*/
+void set_speed(int fd,int speed)  //设置波特率
+{
+    struct termios options;
+    int i,status;
+
+    if((tcgetattr(fd,&amp;options))!=0)
+    {
+        perror("tcgetattr() error");
+        return;
+    }
+    for(i=0;i&lt;sizeof(speed_arr)/sizeof(int);i++)
+    {
+        if(speed==name_arr[i])
+        {
+                tcflush(fd,TCIOFLUSH);
+                cfsetispeed(&amp;options,name_arr[i]);
+                cfsetospeed(&amp;options,name_arr[i]);
+                status=tcsetattr(fd,TCSANOW,&amp;options);
+                if(status !=0)
+                {
+                    perror("tcsetattr fd");
+                    return;
+                }
+                tcflush(fd,TCIOFLUSH);
+        }
+    }
+
+} //设置波特率
+int set_parity(int fd,int databits, int stopbits,int parity)
+{
+    struct termios options;
+    if(tcgetattr(fd,&amp;options)!=0)
+    {
+        perror("setupserial 1");
+        return(FALSE);
+    }
+    options.c_cflag &amp;= ~CSIZE;
+    switch(databits)
+    {
+        case 7:
+            options.c_cflag |= CS7;
+            break;
+        case 8:
+            options.c_cflag |= CS8;
+            break;
+        default:
+            fprintf(stderr,"unsupported data size\n");
+            return(FALSE);
+    }
+    switch(parity)
+    {
+        case 'n':
+        case 'N':
+            options.c_cflag &amp;= ~PARENB;
+            options.c_iflag &amp;= ~INPCK;
+            break;
+        case 'o':
+        case 'O':
+            options.c_cflag |= PARENB;
+            options.c_cflag |= PARODD;
+            options.c_iflag |= INPCK;
+            break;
+        case 's':
+        case 'S':
+            options.c_cflag &amp;= ~PARENB;
+            options.c_cflag &amp;= ~CSTOPB;
+            break;
+        default:
+            fprintf(stderr,"unsupported parity\n");
+            return(FALSE);
+    }
+    switch(stopbits)
+    {
+        case 1:
+            options.c_cflag &amp;= ~CSTOPB;
+            break;
+        case 2:
+            options.c_cflag |= CSTOPB;
+            break;
+        default:
+            fprintf(stderr,"unsupported stop bits\n");
+            return(FALSE);
+    }
+    if(parity != 'n')
+        options.c_iflag |= INPCK;
+    tcflush(fd,TCIFLUSH);
+    options.c_cc[VTIME]=150;
+    options.c_cc[VMIN]=0;
+    if(tcsetattr(fd,TCSANOW,&amp;options)!=0)
+    {
+        perror("setupserial 3");
+        return(FALSE);
+    }
+    return(0);
+}
+
+int main(int argc,char *argv[])
+{
+    int fd,fd2;
+    time_t now;
+    struct tm  *timenow;
+    int nread;
+    char buff[512];
+    fd2=open("/home/linux/temp.txt",O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+
+    fd=open_port();
+    set_speed(fd,19200);
+    if(set_parity(fd,8,1,'N')==FALSE)
+    {
+        printf("set parity error\n");
+        return(0);
+
+    }
+
+
+        while((nread=read(fd,buff,512))&gt;0)
+        {
+    //      printf("\nlen%d\n",nread);
+            buff[nread+1]='\0';
+            time(&amp;now);  //加入时间格式控制
+            timenow=localtime(&amp;now);    
+    //      printf("\n%s",buff);
+            write(fd2,asctime(timenow),24);
+            write(fd2,buff,nread);
+    //      
+    //      printf("write succed");
+        }
+
+
+}
+</code></pre>
+
+<p>参考文章 <a href="http://www.ibm.com/developerworks/cn/linux/l-serials/index.html">Linux 下串口编程入门</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/21/wendu/">基于linux的温度采集系统</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-21T19:58:00+08:00" pubdate data-updated="true">Oct 21<span>st</span>, 2013</time>
+        
+         
+                   | <a href="/blog/2013/10/21/wendu/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>自从上次到现在感觉好长时间都没怎么写博客了，想想真是罪孽深重啊。过了个国庆，心也不知道飞到哪去了。这期间断断续续折腾了点东西，今天总算是有了点眉目。</p>
+
+<h5>想法</h5>
+
+<p>国庆之前，<a href="http://zhangweide.cn/">zhwei</a>同学说机房空调不大管用了，想做个检测温度的东西，我心思着，自己也学了点单片机的东西，就当练练手了。就决定合作一个小项目（呵呵，这好像算不上什么项目,大牛一下午肯定就能搞出来）。说干就干。 <br/>
+首先确定了一下分工，大致流程如下：  <br/>
+<img src="http://files.note.sdo.com/xBlh9~kCksSl6u09Y002dB" alt="" /><br/>
+我们先进行了一下分工。我会点硬件，从温度采集，到数据上传到服务器，都是由我完成，他负责将数据从浏览器中通过网络展示出来。</p>
+
+<h5>实施</h5>
+
+<p>选材原则：价格便宜，方便使用。 <br/>
+做之前，先选选材料，温度传感器就用ds18b20吧，使用方便，价格还算便宜。单片机是用51呢，还是arduino呢（手头上这两个都有），但感觉把arduino放机房里浪费了，以后还得自己搞着玩呢。刚好<a href="http://ma6174.com/">小码哥</a>学长给留了个单片机最小系统，能用起来啦，感谢学长额,哈哈。再者就是单片机和pc之间的通信，使用网络模块（enc28j60），还是用串口呢，后来还是奔着价格便宜，选了串口，毕竟串口模块加上条串口线才10块钱。一个网络模块要20好几。这样做下来共花费30多块钱吧。下边先写程序吧。 <br/>
+开始写单片机方面的程序，犯了个二啊。学单片机时从网上买的开发板，以为上面会带有ds18b20（关键是说明文档里，还好好的带着例子），连线超级简单，花了一个晚自习的时间基本上写出来了，开始测试，tm的死活不出东西，没办法，单步调试，后来发现初始化都么有成功，这是要闹哪样啊。一个晚自习就这样在蛋疼中度过了。第二天依旧折腾，开始以为是代码哪里出了问题，从网上四处找答案，为毛初始化不成功，为毛呢。网友们说的都不靠谱啊，怎么试怎么不行（后来知道了要试出来才奇了怪了）。以为额的温度传感器坏了呢，就去找卖家理论。还是人家卖家经验丰富啊，上来一句，同学您买传感器了吗？真tm的为自己的智商着急啊，没有传感器搞个毛啊。立马下单啊。花了两个晚自习啊！</p>
+
+<h6>ds18b20模块</h6>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kCkHgR6u09Y002gn" alt="" /><br/>
+就是这东东啦，大家在开发的时候，一定得看清，一般卖家卖开发板是不带它的，虽然有测试代码，但最终还是得自己再买。 <br/>
+先确定延时函数，此温度模块对时间要求相对来说是比较高的。</p>
+
+<pre><code>#include&lt;reg52.h&gt;
+#include&lt;intrins.h&gt;
+void main()
+{   
+    int i=10;    //耗时2us
+//  char j=10;  //耗时1us
+//  delay6ius(3);
+//  while(j)
+//      --j;          //延时(2*j)us
+    while(i)
+        i--;          // (i*8)us
+    _nop_();     //延时1us
+}
+</code></pre>
+
+<p>我的晶振是使用的12Mhz的（后经测试，11.0592Mhz的同样适用），开始以为是延时不对，专门针对我的板子，一点点的调出来的时间。对于整型变量，使用while语句，每自增自减一次，大约延时8us。对于字符型的大约是2us。<br/>
+对于ds18b20主要分为复位，写和读。基本上都是由这几个简单的步骤组合起来的。结合时序图来看程序。<br/>
+<img src="http://files.note.sdo.com/xBlh9~kCkHhB6u09Y002gr" alt="复位" /></p>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kCkHhl6u09Y002gp" alt="" /></p>
+
+<pre><code>//此处temp接温度传感器的数据线DQ，延时函数如下
+void delayus(unsigned char i)
+{
+    while(--i);  //延时大约为i的2倍
+}
+bit init_ds18b20(void)
+{   
+    bit zhi=0;     //复位观察标志位，如果成功，返回0，否则为1
+    temp=1;        //先将其拉高
+    delayus(5);    //短暂延时
+    temp=0;         //复位程序开始
+    delayus(200);  
+    delayus(200);   //延时大约800us左右,此处延时至少480us，最大960us
+    temp=1;         //将数据线拉高
+    delayus(50);    //15-60us后，会产生一个存在脉冲，此脉冲可以存在大约240us，为了保证能得到数据，延时100us左右
+    zhi=temp;      //由传感器传回，若果为0复位成功
+    delayus(25);    //稍作延时，返回标志位
+    return zhi;      //返回标志位
+}
+</code></pre>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kCkHi56u09Y002gt" alt="读一个字节" /></p>
+
+<pre><code>uchar readonechar(void)
+{
+    uchar i=0;
+    uchar dat=0;
+    for (i=8;i&gt;0;i--)
+    {
+        temp=0;  //将数据线拉为低电平，
+        dat&gt;&gt;=1;
+        temp=1; //产生起始信号，读间隙必须由主机产生至少1us的低电平，表示读时间的开始
+        if(temp)  //随后在总线被释放后的15us中传感器会发送内部数据位，这时如果总线为高电平表示读出1，如果总线为低电平表示读出数据0.每一位的读取之前都由控制器加一个起始信号。
+            dat|=0x80;
+        delayus(25);
+    }
+    return(dat);
+}//注意，在上图中必须在读间隙开始的15us内读取数据位才可以保证通信的正确。
+</code></pre>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kCkHj56u09Y002gw" alt="" /></p>
+
+<pre><code>void writeonechar(uchar dat)
+{
+    uchar i=0;
+    for(i=8;i&gt;0;i--)
+    {
+        temp=0;
+        temp=dat&amp;0x01;
+        delayus(25);
+        temp=1;
+        dat&gt;&gt;=1; //写数据分为写0和写1，在写数据的前15us总线要是被控制器拉置低电平，而后将是芯片对总线数据的采样时间，采样时间在15-60us，采样时间内如果控制器将总线拉高则表示写1，若果控制器将总线拉低表示写0.每一位的发送都应该有一个至少15us的低电平起始位，随后的数据0或1应该在45us内完成。
+    }
+    delayus(25);
+}
+</code></pre>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kCJNPB6u24Y00052" alt="ram及eeprom图" />
+ds18b20共9个字节的ram，每个字节为8位，第1、2个字节时温度转换后的数据值信息，第3、4个字节时用户eeprom（常用于温度报警值存储）的镜像，在上电复位时其值被刷新。第5个字节则是用户第3个eeprom的镜像。第6、7、8个字节为计数寄存器，是为了让用户得到更高的温度分辨率而设计。同样也是内部温度转换，计算的暂存单元。第9个字节为前8个字节的crc码。
+在这里我们只用到了前两个字节，对于以后的功能我们会适时的添加</p>
+
+<pre><code>uint readtemperature(void)
+{
+    uchar a=0;
+    uint b=0;
+    uint c=0;
+    init_ds18b20();  //传感器第一个周期初始化
+    writeonechar(0xCC); //此指令使芯片不对rom编码做出反应，在单总线（即只有一个温度传感器）的情况下，为了节省时间则可以选用此指令。如果在多芯片挂接时使用此指令将会出现数据冲突，导致出错
+    writeonechar(0x44); // 进行一次温度转换，将转换后的温度值放入ram的第1、2个字节。
+    delayms(10);
+    init_ds18b20();  //执行第二个周期复位。
+    writeonechar(0xCC);  //指令同上
+    writeonechar(0xBE); //此指令将从ram中读数据，读地址从地址0开始，一直可以读到地址9，完成整个ram数据读出。芯片允许在读过程中用复位信号终止读取，既可以不读后面不需要的字节以减少读取时间。
+    a=readonechar();  //读取低8位，即第一个字节
+    b=readonechar(); //读取高8位，即第二个字节
+    b&lt;&lt;=8;    
+    c=a+b;     //获得温度值
+    return(c);
+}
+</code></pre>
+
+<p>根据文档，若要读出当前的温度数据我们要进行两次工作周期，第一个周期为复位，跳过rom指令、执行温度转换存储器操作指令、等待大约500us温度转换时间。紧接着执行第二个周期为复位、跳过rom质量、执行读ram的存储器操作指令、读数据（最多为9个字节，中途可以停止，制度简单温度值则读前两个字节即可）。</p>
+
+<h6>温度处理</h6>
+
+<p>现在温度读出来了，下一步就是对其进行处理了。<br/>
+在得到的两个字节数据共16位中，其中高5位为符号位。如果高5位全为1，说明这是一个负温度，如果全为0，表示这是一个正数。正温度转成10进制乘上默认分辨率0.0625，即为现在的温度，误差大约为1度。负温度要先进行取反在转成10进制乘上分辨率，即是现在的温度。</p>
+
+<pre><code>#include&lt;reg52.h&gt;
+#include "ds18b20.h"
+uchar shi,ge,bai,wan,qian;
+unsigned int code asc[10]={48,49,50,51,52,53,54,55,56,57 };
+//直接通过asc码发送温度值
+unsigned int num;
+void sendbyte(unsigned char dat)
+{
+    SBUF=dat;
+    while(!TI);
+    TI=0;
+}  //通过串口发送数据
+void sendstr(unsigned char *s)
+{
+    while(*s!='\0')
+    {
+        sendbyte(*s);
+        s++;
+    }
+}  //发送字符串
+
+void init_uart(void)
+{
+    SCON=0X50;
+    TMOD |= 0X20; 
+    TMOD |=0X01;  //设置定时器计数器工作方式
+    TH1=0XFD;
+    TL1=0XFD;  //装入初值
+    TH0=(65536-45872)/256;
+    TL0=(65536-45872)%256;  //装入初值
+    ET0=1;  //定时器计数器0，中断允许位
+    TR0=1;  //启动定时器0
+    TR1=1;  //启动定时器1
+    EA=1;  //打开总中断
+//  ES=1;   //串口初始化，在这里并没有将串口中断打开，中断如果打开    数据发送太快，用另一个定时器计数器来控制时间。
+}
+void t0_time() interrupt 1  //定时器计数器0中断
+{
+    TH0=(65536-45872)/256;
+    TL0=(65536-45872)%256;
+    num++;
+    if(num==200)  //通过调整num的值控制发送到服务器端值得频率。现在服务器端大约10秒通过串口得到一次数据。
+    {
+        num=0;   //数据清零，从新计数
+//      sendstr("tempreature:");
+        sendbyte(45); 
+        sendbyte(45);
+        sendbyte(asc[wan]);
+        sendbyte(asc[qian]);
+
+        sendbyte(asc[bai]);
+        sendbyte(asc[shi]);
+        sendbyte(asc[ge]);
+        sendbyte(13);
+//      sendbyte(10);  //通过asc码可以控制发送过去的格式。
+    }
+}
+
+void main()
+{
+    int temp;
+    float temperature;
+    init_uart();      
+    while(1)
+    {     
+        temp=readtemperature();  //获得温度值
+        temperature=(float)temp*0.0625; //将温度值转换成10进制，因此处主要用于机房，温度差在大于0，小于100度，所以只为正值即可。
+        temp=temperature*1000; //扩大倍数，精度为控制在小数点后3位。
+        wan=temp/10000;   //温度的十位
+        qian=temp%10000/1000;  //温度的各位
+        bai=temp%1000/100;  //小数点后一位
+        shi=temp%100/10;    //小数点后第二位
+        ge=temp%10;         //小数点后第第三位
+
+    }
+}
+</code></pre>
+
+<p>最后来张整体的图片。 <br/>
+<img src="http://files.note.sdo.com/xBlh9~kCK2vVM72Dk0011A" alt="" /></p>
+
+<p>至此，从温度采集到串口发送基本完成。对于linux的串口接收部分在下一篇总结一下。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/09/21/arm/">嵌入式开发程序裸奔之led</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-21T19:22:00+08:00" pubdate data-updated="true">Sep 21<span>st</span>, 2013</time>
+        
+         
+                   | <a href="/blog/2013/09/21/arm/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>中秋节到了，今年假期没有和国庆挨上，所以就没有回家。在学里折腾了三天，终于在嵌入式方面迈出了一小步。<br/>
+暑假里熟悉了单片机，就天真的以为嵌入式不过如此。这几天搞arm裸奔，搞的我是心烦气躁啊，就差要放弃了，但最后又坚持了一下，过去了这个坎。下面进入正题吧</p>
+
+<h6>环境搭建</h6>
+
+<p>做开发吗，首先就是要先有环境。<br/>
+硬件：tiny6410（arm11），jlinkv8及转接板，串口线一条，usb线一条<br/>
+usb线如下：<br/>
+<img src="http://files.note.sdo.com/xBlh9~kzS4ZpM719Y001gc" alt="" /> <br/>
+在搭建裸奔环境之前，最好先给开发板刷上uboot，就跟电脑的bios差不多，可以用sdcard启动，也可由将其刷到nandflash上，tiny6410提供的是sdflasher工具，制作一张可以启动的sdcard，然后将串口线和usb线插好，将启动开关拨到sdcard一边，在电脑上打开dnw或其他的终端工具，打开电源， 如出现如下界面<br/>
+<img src="http://files.note.sdo.com/xBlh9~kzSieVM719Y001jj" alt="" />
+说明sdcard制作成功，这时既可以给开发板装系统，也可以刷入其他的裸奔程序，我就给板子装了个ubuntu，利用光盘里的镜像文件，先格式化了nandflash，又刷入uboot，linux内核，最后是文件系统，这就跟刷手机似得，但是这个不用担心变砖。现在，关掉电源将启动方式改为nandflash启动，在打开电源，即可进入ubuntu，若快速的在三秒之内按下回车键，即可进入uboot，做裸奔程序就是要在这里开始。
+软件：rvds2.2，jlink驱动<br/>
+rvds的安装比较繁琐，但仅仅是繁琐，并不难。对于rvds我发现这个东东只能安装，不能卸载，至少至今我还没有找到卸载的办法。希望哪位大牛能指点一下。安装完rvds，我们可以发现有好几个软件，我们一般只用codewarrior for rvds和axd如下图<br/>
+<img src="http://files.note.sdo.com/xBlh9~kzS88pM719Y001gG" alt="" />
+<img src="http://files.note.sdo.com/xBlh9~kzS88pM719Y001gE" alt="" /><br/>
+还有jlink驱动<br/>
+最后可以测试一下jlink是否安装好，首先将jlink连接好，打开gdb server如下：
+<img src="http://files.note.sdo.com/xBlh9~kzSif9M719Y001jr" alt="" />
+如上说明jlink驱动安装好。在安装jlink驱动的时候本人还出了点小叉子，换了台电脑后，jlink说什么也没反应了，灯也不亮了。当时就纳闷不会完蛋了吧。后来从网上的资料看应该是jlink的固件丢失了。重新刷入就好了。刷固件时，按照网上的教程一步步的来，最后就一定会成功，一次不行可以多来几次。关键是胆大心细。<br/>
+注意：最后打开axd的时候，可能会提示你缺少jlinktdi.dll，不要点确定，它在你安装的jlink的驱动的文件夹里可以找到，找到后，将它拷贝到缺少该文件的那个目录里，在点击确定就ok了。
+至此环境就算搭建好了</p>
+
+<h6>led程序的编写</h6>
+
+<p>首先查看技术手册
+<img src="http://files.note.sdo.com/xBlh9~kzSif9M719Y001jv" alt="" />
+从图中可以看出，led灯是低电平有效，且控制led灯的是gpk4，gpk5，gpk6，gpk7四个IO口，到时候我们给它送低电平就可以了。  <br/>
+再来看看芯片手册</p>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kzSif9M719Y001jp" alt="" />
+<img src="http://files.note.sdo.com/xBlh9~kzSif9M719Y001jn" alt="" /></p>
+
+<p>程序如下</p>
+
+<pre><code>    //#include "def.h"
+//#include "GPIO.H"   //因为资料不全，这两个头文件的具体内容至今没有找到
+//下面是tiny6410的视屏中的代码修改的，自己加了点注释
+#define LED1_ON ~(1&lt;&lt;4) 
+#define LED2_ON ~(1&lt;&lt;5)
+#define LED3_ON ~(1&lt;&lt;6) 
+#define LED4_ON ~(1&lt;&lt;7)  //各个灯打开
+#define LEDALL_ON ~(0XF&lt;&lt;4)  //所有灯打开
+
+#define LED1_OFF (1&lt;&lt;4)
+#define LED2_OFF (1&lt;&lt;5)
+#define LED3_OFF (1&lt;&lt;6)
+#define LED4_OFF (1&lt;&lt;7)  //各个灯关闭
+#define LEDALL_OFF (0XF&lt;&lt;4)  //所有灯关闭
+
+//#define GPIO_BASE (0X7F008000)
+//#define GPIO ((volatile oGPIO_REGS *)GPIO_BASE) 
+typedef unsigned long       u32; 
+#define rGPIOKCON0 (*(volatile u32 *)0x7f008800)   //IO口的配置位
+#define rGPIOKDAT (*(volatile u32 *)0x7f008808)   //IO口的数据位
+
+void delay(int times);
+void LedRun(void);
+void LedPortInit(void);
+int main(void)
+{
+
+
+    LedPortInit();
+    LedRun();
+
+
+}
+void delay(int times)
+{
+    int i;
+    for(;times&gt;0;times--)
+        for(i=0;i&lt;3000;i++);
+} //延时函数，可能有问题，但还没有找到，单步执行没有问题
+void LedPortInit(void)
+{
+    u32 uConValue;
+    uConValue=rGPIOKCON0;
+    uConValue&amp;=~(0xffff&lt;&lt;16);   
+    //0xfffff即二进制1111111111111111，左移16位为11111111111111110000000000000000
+    //取反00000000000000001111111111111111，在和配置位相与,目的是将将高16位置0，个人感觉有点麻烦
+    uConValue|=0x1111&lt;&lt;16;
+    //开始配置，0x1111即0001000100010001左移16位后为00010001000100010000000000000000
+    //从上面的图中可以看出，高16位需配置成0001000100010001即保证输出模式
+    rGPIOKCON0=uConValue;
+    //最后将值在赋回去
+} //初始化函数
+void LedRun(void)
+{
+    rGPIOKDAT |= LEDALL_OFF;
+    //所有灯关闭
+    delay(100);
+    rGPIOKDAT &amp;= LEDALL_ON;
+    //所有灯打开
+} //led运行函数  
+</code></pre>
+
+<p>至此，代码写完，该配置了。</p>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kzSifpM719Y001jF" alt="" />
+<img src="http://files.note.sdo.com/xBlh9~kzSifpM719Y001jH" alt="" /></p>
+
+<p>下边搞了好久才通过，主要就是视频中使用的是scattered选项，并加了如下的文件</p>
+
+<pre><code>    DRAM 0x50200000
+{
+  CODE 0x50200000
+  {
+    startup.o(Init,+FIRST)
+
+    * (+RO)
+    * (+RW, +ZI)
+  }
+}
+</code></pre>
+
+<p>但是始终就是通不过，并且报有下面的错误</p>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kzSjma4M2xM001tF" alt="" /></p>
+
+<p>最终只好放弃这种方法，改用下面的引导代码</p>
+
+<pre><code> IMPORT main   
+     AREA |C$$code|,CODE,READONLY 
+     global        start
+start 
+     bl         main 
+     END 
+</code></pre>
+
+<p>第一行的前面有个空格，现在对这段代码的意思还不大明白，以后会慢慢懂得。</p>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kzSif9M719Y001jx" alt="" />
+<img src="http://files.note.sdo.com/xBlh9~kzSifpM719Y001jB" alt="" />
+<img src="http://files.note.sdo.com/xBlh9~kzSif9M719Y001jz" alt="" /></p>
+
+<p>编译器选择</p>
+
+<p><img src="http://files.note.sdo.com/xBlh9~kzSieVM719Y001jf" alt="" />
+<img src="http://files.note.sdo.com/xBlh9~kzSieVM719Y001jh" alt="" /></p>
+
+<p>现在再make就没什么问题了，亦可以将程序下载到ram中运行。</p>
+
+<p>方法如下</p>
+
+<pre><code>先进入uboot
+按q键，执行如下命令
+dnw 0x50000000
+再选择你的bin文件
+再执行
+go 0x50000000
+</code></pre>
+
+<p>ok了，这几天的劳动就先总结到这了。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -338,1199 +1524,6 @@ imshow(I); %打印图片
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/08/26/hongwaijieshou/">红外接收并解码</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-08-26T19:03:00+08:00" pubdate data-updated="true">Aug 26<span>th</span>, 2013</time>
-        
-         
-                   | <a href="/blog/2013/08/26/hongwaijieshou/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>真囧，红外接收搞了两天，终于给弄好了。有好多天没有记录了，废话少说吧，start<br/>
-在嵌入式领域，结合各种芯片，红外模块可以用来控制各种设备。常用的有我们平时使用的各种遥控器，今天从软件的领域来研究一下红外就收的解码过程。</p>
-
-<h5>电路图如下</h5>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kxIUsFM72zw0005Q" alt="红外一体接收" />
-<img src="http://files.note.sdo.com/xBlh9~kxIVna4M0vU0008Z" alt="实物图" /></p>
-
-<p>以这两张图片来说明今天的代码。从图中看，红外接收模块还是很简单的，就只有三个引脚，但是我们用的是时候只用其中的一个，其他两个都已经给我们固定好了。</p>
-
-<h5>红外遥控系统</h5>
-
-<p>通用红外遥控系统由发射和接收两大部分组成，应用编/解码专用集成电路芯片来进行控制。<br/>
-发射部分包括键盘矩阵、编码调制、LED红外发送器；<br/>
-接收部分包括光、电转换放大器、解调、解码电路。<br/>
-遥控发射器专用芯片很多，根据编码格式可以分成两大类，这里我们以运用比较广泛，解码比较容易的一类来加以说明，现以日本NEC的uPD6121G组成发射电路为例说明编码原理（一般家庭用的DVD、VCD、音响都使用这种编码方式）。当发射器按键按下后，即有遥控码发出，所按的键不同遥控编码也不同。这种遥控码具有以下特征：
-采用脉宽调制的串行码，以脉宽为0.565ms、间隔0.56ms、周期为1.125ms的组合表示二进制的“0”；以脉宽为0.565ms、间隔1.685ms、周期为2.25ms的组合表示二进制的“1”，其波形如图所示。</p>
-
-<p><img src="http://hi.csdn.net/attachment/201107/12/0_1310458705pbeL.gif" alt="" /></p>
-
-<p>如图可见，0与1前端的低电平持续都是0.56ms，那么就是后面的高电平持续时间不同，0为0.56ms，1为1.685ms，找到不同之处，编程时就有识别的依据了！</p>
-
-<p><img src="http://hi.csdn.net/attachment/201107/12/0_1310458680N8mF.gif" alt="" /></p>
-
-<p>UPD6121G产生的遥控编码是连续的32位二进制码组，其中前16位为用户识别码，能区别不同的电器设备，防止不同机种遥控码互相干扰。该芯片的用户识别码固定为十六进制01H；后16位为8位操作码（功能码）及其反码。UPD6121G最多额128种不同组合的编码。<br/>
-当一个键按下超过36ms，振荡器使芯片激活，将发射一组108ms的编码脉冲,这108ms发射代码由一个引导码（9ms）,一个结果码（4.5ms）,低8位地址码（9ms~18ms）,高8位地址码（9ms~18ms）,8位数据码（9ms~18ms）和这8位数据的反码（9ms~18ms）组成。如果键按下超过108ms仍未松开，接下来发射的代码（连发码）将仅由起始码（9ms）和结束码（2.25ms）组成。（实际上人手的动作是很慢的，即使你快速的按下按键，可能对于芯片来说还是超过108ms，所以如何处理连发码是很关键的）<br/>
-遥控器在按键按下后，周期性地发出同一种32位二进制码，周期约为108ms。一组码本身的持续时间随它包含的二进制“0”和“1”的个数不同而不同，大约在45～63ms之间，图为发射波形图。</p>
-
-<p><img src="http://hi.csdn.net/attachment/201107/12/0_13104587170sq6.gif" alt="" /></p>
-
-<p><img src="http://hi.csdn.net/attachment/201107/12/0_13104587243Hms.gif" alt="" /></p>
-
-<h5>代码部分</h5>
-
-<pre><code>void dsjsq0(void) interrupt 1
-{
-    time++;
-}//定时器计数器0中断，全局变量time，用来计数，time每次加1，时间过去255us
-
-void wbzd0(void) interrupt 0
-{
-    static uchar i;
-    static bit flag;
-    if(flag)
-    {
-        if(time&lt;60&amp;&amp;time&gt;=30)  //晶振频率为12MH，当时间经过255*30到255*60之间时，即可进入函数将time存储
-                i=0;
-
-        irdata[i]=time;// 将time存储等待后续将其翻译成二进制，其中irdata[0]存储的是前导码的时间。
-//      write_data(time);//用来测试time是否含有数据 
-        time=0;  //将time归零等待下面的32位数据
-        i++;  
-
-        if(33==i)  //数据存储完毕
-        {
-            irok=1;  //存储完毕标志
-            i=0;
-        }
-    }  
-    else
-    {
-        flag=1;  //进入函数处理的标志
-        time=0;
-    }
-//  write_data(irdata); //测试用
- } //外部中断0，下降沿触发，利用外部中断的最高优先级来讲time存到全局数组中
-
-void wbzd0_init()
-{
-    IT0=1;   //下降沿触发
-    EA=1;    //打开全局中断
-    EX0=1;   //外部中断0中断允许
-//  PX0=1;   //外部中断0中断优先级控制位
-
-
-} //外部中断0初始化
-
-void dsjsq0_init(void)
-{
-    TMOD=0X02;  //工作方式选择位，方式2，8位初值自动重装的8位定时器计数器
-    TH0=0X00;   //装入初值，高8位
-    TL0=0X00;   //低8位
-    ET0=1;      //定时器计数器0中断允许位
-    TR0=1;      //定时器0运行控制位
-}  //定时器计数器0总段初始化
-
-void irchuli(void)
-{
-    uchar i,j,k,timedata,value;
-    k=1;
-        for(i=0;i&lt;4;i++)  
-        {
-            for(j=0;j&lt;8;j++)
-            {   timedata=irdata[k]; //irdata[0]为引导码的时间，所以从irdata[1]开始处理
-                if(timedata&gt;7)  //判断时间，来决定数组中的数据是0还是1
-                    value|=0x80;  //与0x80取或，将转换后0或1的数据存储到value中
-                if(j&lt;7)    //注意此处是j，不是timedata，在这里纠结了好久才发现这个错误
-                    value&gt;&gt;=1;  //通过右移，获得一个字节的数据
-                k++;
-            }  //处理一个字节
-            tempdata[i]=value;  //将单个字节存到数组中
-    //      write_data(tempdata); //测试用
-            value=0;
-        } //32位，4个字节，每个字节8位，
-    irchuliok=1;    
-}  //红外处理部分
-void irzhuan(void)
-{
-    uchar i;
-    tempdata2[0]=table[tempdata[0]/16];  //处理客户码
-    tempdata2[1]=table[tempdata[0]%16];
-    tempdata2[2]='-';
-    tempdata2[3]=table[tempdata[1]/16];  //处理处理客户码
-    tempdata2[4]=table[tempdata[1]%16];
-    tempdata2[5]='-';
-    tempdata2[6]=table[tempdata[2]/16];  //处理数据码
-    tempdata2[7]=table[tempdata[2]%16];
-    tempdata2[8]='-';
-    tempdata2[9]=table[tempdata[3]/16];   //处理数据反码
-    tempdata2[10]=table[tempdata[3]%16];
-    write_com(0xc0+5);
-    for(i=0;i&lt;11;i++)
-    {   
-        write_data(tempdata2[i]);
-        delay(5);
-    }  //利用for循环将解码显示到lcd上
-/*  write_data(tempdata2[0]);
-    write_data(tempdata2[1]);
-    write_data(tempdata2[2]);
-    write_data(tempdata2[3]);
-//  write_data(tempdata2[4]);
-//  write_data(tempdata2[5]);
-*/
-    irchuliok=0;  //红外部分处理完毕标志
-
-}  //4个字节的红外转换部分
-</code></pre>
-
-<p>完整代码请查看<a href="https://github.com/tuteng/hongwaijiema">这里</a>  <br/>
-参考文章<a href="http://blog.csdn.net/mhjerry/article/details/6600414">红外遥控系统原理及单片机软件解码程序，我的编写经历(C版本)</a><br/>
-<a href="http://my.oschina.net/jayzonex/blog/10649">51单片机红外解码程序</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/31/ad/">AD转换并显示在1602上</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-31T10:31:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2013</time>
-        
-         
-                   | <a href="/blog/2013/07/31/ad/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4>AD转换实现</h4>
-
-<p>pcf8591电路图：
-<img src="http://files.note.sdo.com/xBlh9~kvxTDFM71NI002aE" alt="" /> <br/>
-PCF8591是一个单片集成、单独供电、低功耗、8-bit CMOS数据获取器件。PCF8591具有4个模拟输入、1个模拟输出和1个串行I2C总线接口。PCF8591的3个地址引脚A0, A1和A2可用于硬件地址编程，允许在同个I2C总线上接入8个PCF8591器件，而无需额外的硬件。在PCF8591器件上输入输出的地址、控制和数据信号都是通过双线双向I2C总线以串行的方式进行传输对于iic总线可参考<a href="http://tuteng.github.io/blog/2013/07/31/danpianji/">前一篇文章</a>。这是我的板子上的AD/DA模块，其中j31，j32是通道选择通过跳帽来选择通道，同时只能选择两个通道，w3，w4是两个电位器，这里用来产生模拟量，其中w3来控制第2通道和第3通道，w4用来控制0通道和1通道。对于pcf851的详细描述可参考如下：<a href="http://v.to/0I6RU">pcf8591中文参考手册</a> <br/>
-部分程序代码如下:</p>
-
-<pre><code>void write_data_iic(uchar ch){
-    start();    
-    write_one_data(ADDW);  //首先发送地址，这里ADDW为0x90（10010000），  AD模块的硬件地址，前四位固定不变，  第5位到第七位可编程，但从电路图中可看出，A2，A1，A0全接了地，所以此三位为0，最后一位位读写控制位，写为0，读为1
-    respons();
-    write_one_data(0x40|ch);  //通道选择位，0x40（01000000）只打开了第二位，相当于使能端打开，通过与ch取或来到达选择通道的目的。 
-    respons();
-    end();
-
-}//利用iic总线向通道写入数据
-uchar read_data_iic(uchar ch){
-    uchar num;
-    start();    //iic总线开始
-    write_one_data(ADDW); //读数据前要先进行写操作，目的是写入器件地址以寻找合适的器件，当器件与地址匹配时，器件会发出一个应答信号，这样就可以开始读取数据
-    respons();
-    write_one_data(0x40|ch); //通道选择位，同上
-    respons();
-    start();
-    write_one_data(ADDR); //再次发送设备地址，只是这次最后一位为读命令
-    respons();
-    num=read_one_data();  //读取数据并存入变量num中
-    respons();
-    end();
-    return num;
-}//利用iic总线从总线读取数据
-</code></pre>
-
-<h4>1602液晶模块</h4>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kvxTDpM71NI002aC" alt="" /><br/>
-1602液晶也叫1602字符型液晶，它是一种专门用来显示字母、数字、符号等的点阵型液晶模块,它由若干个5X7或者5X11等点阵字符位组成，每个点阵字符位都可以显示一个字符，每位之间有一个点距的间隔，每行之间也有间隔，起到了字符间距和行间距的作用。管脚功能参看1602数据手册。</p>
-
-<h6>lcd部分程序代码</h6>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kvyY156u0I800042" alt="" /></p>
-
-<pre><code>void write_com(uchar com){
-        lcdrs=0;  //RS引脚，寄存器选择，1：数据寄存器；0：指令寄存器
-        P0=com;
-        lcdrw=0;  //RW引脚，读写操作选择，1：读；0：写
-        delayms(5); //延时函数
-        lcden=1;    //使能信号，高电平有效
-        delayms(5);
-        lcden=0;
-        }    //lcd写命令操作
-void write_data(uchar dat){ //参数同样不可以使用data
-        lcdrs=1;  //数据寄存器
-        P0=dat;     //将数据传到P0口
-        lcdrw=0;  //写操作
-        delayms(5);
-        lcden=1;
-        delayms(5);
-        lcden=0;
-        }  //lcd写数据操作
-</code></pre>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kvy-G9M70Ew000bO" alt="" /></p>
-
-<pre><code>        void init_lcd(){
-            lcden=0;
-            write_com(0x38);
-            write_com(0x0c);
-            write_com(0x06);
-            write_com(0x01);
-            }   //lcd初始化操作
-</code></pre>
-
-<p>将以上各部分代码稍加组合，即可实现所需功能，完整代码在<a href="https://github.com/tuteng/danpianji">这里</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/31/danpianji/">Iic总线</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-31T09:11:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2013</time>
-        
-         
-                   | <a href="/blog/2013/07/31/danpianji/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4>iic总线实现</h4>
-
-<p>iic总线只需要两个接口就可以实现，因此是十分节省资源的。iic总线的实现分为下面几个步骤：开始，结束，应答，接收一个字节，写一个字节，通过这几个调用模块可以实现接收数据，发送数据。在51开发板上，用于串口通信的接口主要是P2.0和P2.1接口，连线可以说是非常的简单。 <br/>
-在iic总线通信期间，只有SCL为高电平时，数据的发送才是有效的，因此若不想使用，可以暂时将其拉低</p>
-
-<pre><code>    //SDA和SCL分别代表iic总线的数据线和时钟线
-void delay(){
-        _nop_();
-        _nop_();
-        _nop_();
-        _nop_();
-        _nop_();
-        _nop_();
-    }       //延时函数，么个_nop_()大约为1us，为了接收稳定信号，当SCL和SDA变化时都要延时至少4.5us            
-
-void init_iic(){
-        SCL=1;
-        delay();
-        SDA=1;
-        delay();
-
-    }   //iic总线初始化，将SCL和SDA线拉高
-</code></pre>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kvy1tFM71NI002fA" alt="" /></p>
-
-<pre><code>    void start(){
-            SDA=1;
-            delay();
-            SCL=1;
-            delay();
-            SDA=0;
-            delay();
-    }     //iic总线启动信号，在时钟信号为高的情况下，SDA由高电平拉为低电平
-    void end(){
-            SDA=0;
-            delay();
-            SCL=1;
-            delay();
-            SDA=1;
-            delay();
-    }       //iic总线结束信号，在时钟信号为低电平时，SDA由低电平拉为高电平  
-</code></pre>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kvy1FW4M2Vw002ej" alt="" /></p>
-
-<pre><code>    void respons(){
-            unsigned char i;
-            SCL=1;
-            delay();
-            while((SDA==1)&amp;&amp;(i&lt;255))  
-                i++; //若SDA一直为高，则在此处循环255次，防止从机始终不应答，陷入死循环
-            SCL=0;
-            delay();
-        }       //应答信号，时钟信号为高时，SDA被从机自动从高电平拉为低电平  
-</code></pre>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kvy1tFM71NI002fy" alt="" /></p>
-
-<pre><code>    void write_one_data(unsigned char dat){  //此处参数不能为data，这个在头文件中已被定义
-            unsigned char i,temp;
-            temp=dat;
-            for(i=0;i&lt;8;i++){ 
-                temp=temp&lt;&lt;1;//数据左移一位，最高位溢出被存在CY中，次高位变为最高位
-                SCL=0;
-                delay();
-                SDA=CY;  //将数据暂存到数据线上，准备发送
-                delay();
-                SCL=1;  //将时钟线拉高，数据开始发送
-                delay();
-            }//发送一个字节（8位）的数据，CY（PSW.7）：即PSW的D7位，进位、借位标志，在头文件reg52.h中有定义
-            SCL=0;
-            delay();
-            SDA=1;
-            delay();
-        }
-    unsigned int read_one_data(){
-
-            unsigned char i,k=0;
-            SCL=0;
-            delay();
-            SDA=1;
-            for(i=0;i&lt;8;i++)
-            {
-                SCL=1;
-                delay();
-                k=(k&lt;&lt;1)|SDA;   //将k左移一位后与数据线取或，即可得到传输的数据，发送数据时从最高位开始，接收时数据在最低位，在经左移和循环恢复原来的数据
-                SCL=0;
-                delay();
-            }   //读一个字节的数据
-            delay();
-            return k; //返回一个字节的数据
-
-        }
-</code></pre>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/22/github/">Github博客操作</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-22T16:12:00+08:00" pubdate data-updated="true">Jul 22<span>nd</span>, 2013</time>
-        
-         
-                   | <a href="/blog/2013/07/22/github/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>使用octopress有一段时间了，可是还是不怎么熟练，这不今天又遇到了问题，害的我中午饭都没吃好，不过最终还是把问题给解决了。在此记录一下octopress的使用方法。</p>
-
-<h5>用rake管理</h5>
-
-<pre><code>rake install  安装默认主题
-rake install['主题名字']安装自己喜欢的主题
-rake gennerate 每次做了改变都提交一次
-rake preview  生成本地预览，可以在4000端口查看
-rake new_post['帖子名字'] 生成新的帖子，可以用markdown编辑
-rake new_page['about'] 生成一个新的页面，但生成之后还不能立即使用，需要修改/source/_includes/custom/navigation.html这个文件，按照相同的格式来编辑。
-rake deploy 将你的博客提交到服务器
-</code></pre>
-
-<p>先记录这些，有空在补充</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/22/tongxin/">通信专业词汇</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-22T10:29:00+08:00" pubdate data-updated="true">Jul 22<span>nd</span>, 2013</time>
-        
-         
-                   | <a href="/blog/2013/07/22/tongxin/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><pre><code>A 
-A, Asub A-interface A接口
-AC  Alternating Current 交流
-AC  Access Class (C0 to C15)    接入级别（C0到C15）
-ACCH    Associated Control Channel  随路控制信道
-ACELP   Algebraic code excitation linear prediction 代数码激励线性预测
-ACOM    Antenna Combiner    天线合路器
-AGCH    Access Grant Channel    接入允许信道
-AM/CM   Administration Module/ Communication Module 管理和通信模块
-ANSI    American National Standard Institute    美国国家标准组织
-APC Automatic Power Control 自动功率控制
-API Application Program Interface   应用程序接口
-APL Advanced Phase Locking  高级时钟锁相
-ARFCN   Absolute Radio Frequency Channel Number 绝对射频信道号
-ASIC    Application Specific Integrated Circuit 专用集成电路
-AuC Authentication Center   鉴权中心
-B　 
-BA  BCCH Allocation BCCH分配
-BAM Back Administration Module  后管理模块
-BCC BTS Color Code  基站色码
-BCCH    Broadcast Control CHannel   广播控制信道
-BCF Base Control Function   基本控制功能
-BCH Broadcast channel (transport channel)   广播信道
-BER Bit Error Rate  误码率
-BHCA    Busy Hour Call Attempt  忙时尝试呼叫
-BIE Base station Interface Equipment (board)    基站接口设备（板）
-BIOS    Basic Input Output System   基本输入输出系统
-BITS    Building Integrated Timing Supply   大楼综合定时供给系统
-BM  Basic Module    基本模块
-BP  Burst Pulse 突发脉冲
-BQ  Bad Quality 质量差
-BS  Base Station    基站
-BS1 Abis Interface  Abis接口
-BSC Base Station Controller 基站控制器
-BSIC    Base Station Identity Code  基站识别码
-BSMU    Base Station Interface Unit 基站接口单元
-BSS Base Station Subsystem  基站子系统
-BSSAP   Base Station Subsystem Application Part 基站子系统应用部分
-BSSGP   Base Station Subsystem GPRS Protocol    基站系统GPRS协议
-BSSMAP  Base Station Subsystem Management Application Part  基站子系统管理应用部分
-BSSOMAP Base Station Subsystem Operation and Maintenance Application Part   基站子系统操作与维护应用部分
-BTS Base Transceiver Station    基站收发信台
-BTSM    Base Transceiver Station Management BTS管理
-BVC BSSGP Virtual Connection    BSSGP虚拟连接
-C　 
-CA  Cell Allocation 小区分配
-CAMEL   Customized Applications for Mobile network Enhanced Logic   移动网络增强逻辑的客户化应用
-CBA Cell Bar Access 小区禁止接入
-CBC Cell Broadcast Center   小区广播中心
-CBCH    Cell Broadcast CHannel  小区广播信道
-CBCCH   Cell Broadcast Control Channel  小区广播控制信道
-CBQ Cell Bar Qualify    小区禁止限制
-CBSM    Cell Broadcast Short Message    小区广播短消息
-CC  Country Code    国家码
-CC  Calling Control 呼叫控制
-CC  Connection Confirm  呼叫控制
-CCB Call Control Block  呼叫控制块
-CCBS    Completion of Calls to Busy Subscribers 遇忙回呼
-CCCH    Common Control Channel  公共控制信道
-CCH Control Channel 控制信道
-CCS Common Channel Signaling    共路信令方式
-CD  Call Deflection 呼叫偏移
-CDB Cell Broadcast Database 小区广播数据库
-CDU Combining and Distribution Unit 合分路单元
-CELP    Code Excited Linear Prediction  码激励线性预测
-CGI Cell Global Identity    小区全球识别码
-CI  Cell Identity   小区识别
-CIC Circuit Identify Code   电路识别码
-CIC Carrier Interface Controller board  载频接口控制器
-CIR Carrier to Interference Ratio   载干比
-CKSN    Ciphering Key Sequence Number   密钥序列号
-CKV Clock Drive board   时钟驱动板
-CM  Connection Management   接续管理
-CPU Central Processing Unit 中央处理单元
-CR  Connection Request  连接请求
-CRC Cyclic Redundancy Check 循环冗余校验
-CRO Cell Reselect Offset    小区重选偏移
-CS  Coding Scheme   （信道）编码方式
-CS-1    Code Scheme-1   编码模式－1（9.05kbit/s）
-CS-2    Code Scheme-2   编码模式－2（13.4kbit/s）
-CS-3    Code Scheme-3   编码模式－3（15.6kbit/s）
-CS-4    Code Scheme-4   编码模式－4（21.4kbit/s）
-CTN Central Switching Network Board 中央交换网板
-D   　
-DB  DataBase    数据库
-DBF Database File   数据库文件
-DBMS    Database Management System  数据库管理系统
-DC  Direct Current  直流
-DCCH    Dedicated Control Channel   专用控制信道
-DCL Diagnostic Control Link 诊断控制链路
-DDN Digital Data Network    数字数据网
-DL  Downlink    下行链路
-DLC Data Link Connection    数据链路连接
-DLCEP   Data Link Connection End Point  数据链路连接端点
-DLCEPI  Data Link Connection End Point Identifier   数据链路连接端点标识
-DLCI    Digital Link Connection Identity    数据链路连接标识
-DNS Domain Name Server  域名服务器
-DPC Destination (Signaling) Point Code  目的信令点编码
-DRDBMS  Distributed Relational DBMS 分布式关系数据库管理系统
-DRX Discontinuous Reception (mechanism) 不连续接收
-DSC Downlink Signaling fault Count  下行信令故障计数
-DSP Digital Signal Processor    数字信号处理器
-DTAP    Direct Transfer Application Part    直接传输应用部分
-DTMF    Dual Tone Multi-frequency   双音多频（收号器）
-DTX Discontinuous transmission (mechanism)  不连续发送（机制）
-E　
-E-Abis  Enhanced Abis   增强型Abis
-E3M E3 Sub-Multiplexer  增强型E1子复用设备
-EA  Early Allocation    预分配
-EAC External Alarm Collection   外部告警采集
-EC  Emergency Call  紧急呼叫
-ECSC    Early Classmark Sending Control 早期类标发送控制
-ECT Explicit Call Transfer  显示呼叫转移
-EDU Enhanced Duplexer Unit  增强型双工单元
-EFR Enhanced full rate speech code  增强型全速率语音编解码
-EIR Equipment Identity Register 设备识别寄存器
-EM  Extended Measurement    扩展测量
-EMC Electromagnetic Compatibility   电磁兼容性
-EST Establishment   建立
-ETS European Telecommunication Standard 欧洲电信标准
-ETSI    European Telecommunication Standard Institute   欧洲电信标准组织
-F　
-FACCH   Fast Associated Control CHannel 快速随路控制信道
-FBC Photoelectric Conversion Board  光电转换板
-FBI Optical Fiber Interface Board   光接口板
-FCCH    Frequency Correction CHannel    频率校正信道
-FCS Frame Check Sequence    帧校验序列
-FDMA    Frequency Division Multiple Access  频分多址
-FH  Frequency Hopping   跳频
-FIR Finity Impulsion Response   有限冲击响应
-FN  Frame Number    帧号
-FPU Frame Processing Unit   帧处理单元
-FR  Frame Relay 帧中继
-FTAM    File Transfer Access and manipulation   文件传输、接入及使用
-FTC Full Rate Transcoder    码变换板
-FTP File Transfer Protocol  全速率码变换器
-FUC Frame Unit Controller   帧单元控制器
-FUL Radio Signaling Link    无线信令链路
-G　
-G-Abis  GPRS Abis   GPRS Abis
-GALM    Alarm board 告警板
-GCKS    Clock source    时钟板
-GCTN    Central switching Network board 中心交换网板
-GEMA    Emergency Message Automatic Transmission System 双机倒换板
-GFBI    Fiber Interface board   光纤接口板
-GGSN    Gateway GPRS Support Node   网关GPRS支持节点
-GLAP    LAPD Protocol Process board LAPD协议处理板
-GMC2    Inter-Module Communication board    模块通信板
-GMCC    Module Communication and Control board  模块通信控制板
-GMEM    Memory board    数据库接口板
-GMM GPRS Mobility Management    GPRS移动性管理
-GMPU    Main Processing Unit    主处理单元
-GMSC    Gateway Mobile Switching Center 关口局
-GMSK    Gaussian Minimum Shift-frequency Keying 高斯滤波最小移频键控
-GNET    Intra-module switching network board    交换网板
-GNOD    Node Communication Board    节点通信板
-GOPT    Local Optical Interface Board   光纤通信板
-GPRS    General Packet Radio Service    通用分组无线业务
-GPS Global Position System  全球定位系统
-GPWS    GSM Secondary Power board   二次电源板
-GSM，GSM900， GSM1800 Global System for Mobile communications 全球移动通信系统，900MHz的GSM系统，1800MHz的GSM系统
-GSN GPRS Support Node   GPRS支持节点
-GSNT    GSM Signaling Switching Network Board   信令交换网板
-GT  Global Title    全局码
-GTP GPRS Tunnelling Protocol    GPRS隧道协议
-H   　
-HC/HY COM   Hybrid Combiner 混合桥型合路器
-HCS Hierarchical Cell Structure 小区分层结构
-HDLC    High level Data Link Control    高级数据链路控制
-HDSL    High speed Digital Subscriber Line  高速数字用户线
-HLR Home Location Register  归属位置寄存器
-HO  Handover    切换
-HPA High magnification Power Amplifier board    高增益功放板
-HSC Hot Swap Controller 热倒换控制器
-HSN Hopping Sequence Number 跳频序列号
-HW  Highway 高速通路
-I　
-ID  IDentification/IDentity 识别
-IEC International Electrotechnical Commission   国际电工委员会
-IMEI    International Mobile station Equipment Identity 国际移动终端设备标识
-IMSI    International Mobile Station Identity   国际移动用户识别码
-IND Indication  指示
-IOMU    iSite Operation and Maintenance Unit    操作维护单元板
-IP  Internet Protocol   互联网协议
-ISDN    Integrated Services Digital Network 综合业务数字网
-ISO International Standard Organization 国际标准化组织
-ISR Interrupt Service   中断服务程序
-ISUP    Integrated Services Digital Network User Part/ISDN User Part    （七号信令之）ISDN用户部分
-ITU International Telecommunication Union   国际电信联盟
-ITU-T   International Telecommunication Union - Telecommunication Standardization Sector    国际电信联盟-电信标准部
-IWF Inter-working Function  互连功能
-J　
--   -   
-K　
--   -   
-L   　
-L2ML    Layer 2 Management Link 层2管理链路
-L3MM    Layer-3 Mobility Management 层三移动管理
-LA  Location Area   位置区
-LAC Location Area Code  位置区码（LAC）
-LAI Location Area Identity  位置区标识
-LAP Link Access Protocol    协议处理板
-LAPD    Link Access Protocol on the D-channel   D信道上的链路访问协议
-LAPDMAIL    LAPD Mail Box   LAPD邮箱
-LAPDm   Link Access Protocol on the Dm channel  Dm信道上的链路访问协议
-LLC Logical Link Control    逻辑链路控制
-LMT Local Maintenance Terminal  本地维护终端
-LNA Low Noise Amplifier 低噪声放大器
-LPN7    Common Channel Signaling Processing Board   公共信道信令处理板
-M　
-MA  Mobile Allocation   移动台（频率）分配
-MAC Media Access Control    媒质接入控制
-MAIO    Mobile Allocation Index Offset  移动分配索引偏移
-MAP Mobile Application Part 移动应用部分
-MBR Multiband Report    多频报告
-MCC Mobile Country Code 移动国家码
-MCK Main ClocK board    主时钟板
-MCP Multiple Communication-Protocol Processor   多重通信协议处理器
-MDC Message Discrimination  消息鉴别
-MDSL    Medium Bit-rate Digital Subscriber Loop 中速数字用户环线
-MDT Message Distribution    消息分配
-ME  Mobile Equipment    移动设备
-MFU Microcell Frame Unit    微蜂窝帧处理单元
-MM  Mobility Management 移动性管理
-MMU Multiplication and Management Unit  复用管理单元
-MNC Mobile Network Code 移动网号
-MNS Mobile Network Signaling    移动网信令
-MR  Measurement Result  测量结果
-MR  Measurement Report  测量报告
-MRP Multiple Reuse Pattern  多重复用方式
-MRT Message Routing 消息路由
-MS  Mobile Station  测量报告
-MSC Mobile services Switching Centre, Mobile Switching Centre   移动交换中心
-MSISDN  Mobile Station International ISDN Number    移动台国际ISDN号码
-MSM MSC Subrate channel Multiplexer MSC侧子复用板
-MT  Mobile Terminal 移动终端
-MTBF    Mean Time Between Failure   平均无故障时间
-MTP Message Transfer Part   消息传输部分
-N　
-NC   Network Control    网络控制
-NCC Network Color Code  网络色码
-NCH Notification Channel    通知信道
-NE  Network Equipment   网络设备
-NM  Network Management  网络管理
-NS  Network Service 网络服务
-NSE Network Service Entity  网络服务实体
-NSS Network SubSystem   网络子系统
-O　
-O&amp;M, OM Operations &amp; Maintenance    操作与维护
-OACSO   Off Air Call Set up 不占用空中通道的呼叫启动
-OAM Operation Administration and Maintenance    运行管理和维护
-OMAP    Operation and Maintenance Application Part  操作维护应用部分
-OMC Operations &amp; Maintenance Centre 操作维护中心
-OML Operation and Maintenance Link  操作与维护链路
-OMU Operations &amp; Maintenance Unit (board)   操作维护单元（板）
-OOP Object Oriented Programming 面向对象的程序设计
-OPC Originating Point Code  源信令点编码
-OPT Optic Interface board   光纤通信板
-OS  Operation System    操作系统
-OSI Open System Interconnection 开放系统互连模型
-P　
-PA  Power Amplifier 功率放大器
-PAGCH   Packet Access Grant Channel 分组接入允许信道
-PBCCH   Packet Broadcast Control Channel    分组广播控制信道
-PBGT    Power Budget    功率预算
-PBU Power Boost Unit    功率增强单元
-Pb  Pb Interface    Pb接口
-PbSL    PCU-BSC Signaling Link  PCU-BSC间信令链路
-PCCCH   Packet Common Control Channel   分组公共控制信道
-PCH Paging CHannel  寻呼信道
-PCIC    Packet Circuit Identity Code    分组电路标识码
-PCM Pulse-Code Modulation   脉冲编码调制
-PCU Packet Control Unit 分组控制单元
-PD  Protocol Discrimination 协议识别码
-PDCH    Packet Data Channel 分组数据信道
-PDH Plesiochronous Digital Hierarchy    准同步数字系列
-PDN Packet Data Network 分组数据网
-PDP Packet Data Protocol    分组数据协议
-PDTCH   Packet Data Traffic Channel 分组业务数据信道
-PI  Peripheral Interface    外设接口部件
-PIN Personal Identity Number    个人识别码
-PLL Phase Locked Loop   锁相环路
-PLMN    Public Land Mobile Network  公用陆地移动网络
-PMU Power and Environment Monitoring Unit   电源环境监测板
-PNCH    Packet Notification Channel 分组通知信道
-POMU    Packet Operation &amp; Maintenance Unit 分组操作维护单元
-PON Passive Optical Network 无源光网络
-PPCH    Packet Paging Channel   分组寻呼信道
-PRACH   Packet Random Access Channel    分组随机接入信道
-PSDN    Public Switched Data Network    公用数据交换网
-PSI Packet System Information   分组系统消息
-PSK Phase Shift Keying  相移键控
-PSTN    Public Switched Telephone Network   公用电话交换网
-PSU Power Supply Unit   供电单元
-PT  Penalty Time    惩罚时间
-PTCCH   Packet Timing advance Control Channel   分组定时提前控制信道
-PTM Point To Multipoint 点到多点
-PTM-M   Point To Multipoint Multicast   点对多点广播
-PTM-SC  Point to Multipoint Service Center  点到多点数据服务中心
-PTP Point To Point  点对点
-PWC Secondary Power Supply Board    电源控制板
-Q　
-QoS Quality of Service  业务质量
-R　
-RACH    Random Access Channel   随机接入信道
-RE  Reestablishment 呼叫重建
-RF  Radio Frequency 射频
-RLC Radio Link Control  无线链路控制
-RLM Radio Link Management   无线链路管理
-RPE-LTP Regular Pulse Excitation-Long Term Prediction   规则脉冲激励-长期预测
-RPPU    Radio Packet Process Unit   无线分组处理单元
-RR  Radio Resource  无线资源
-RSA Rivest-Shamir-Adleman   通用关键子密码方法
-RSL Radio Signaling Link    无线信令链路
-RTE Radio Test Equipment    天线测试设备
-RX  Receiver/Reception  收信机/接收
-RXLEV   Received signal level   接收信号等级
-RXQUAL  Received Signal Quality 接收信号质量
-S　
-SABM    Set Asynchronous Balanced Mode  置异步平衡模式
-SACCH   Slow Associated Control Channel 慢速随路控制信道
-SACCH/C4    Slow Associated Control Channel/SDCCH/4 慢速随路控制信道/SDCCH/4
-SACCH/C8    Slow Associated Control CHannel/SDCCH/8 慢速随路控制信道/SDCCH/8
-SACCH/T Slow Associated Control CHannel/Traffic channel 慢速随路控制信道/业务信道
-SACCH/TF    Slow Associated Control Channel/Traffic channel Full rate   慢速随路控制信道/全速率业务信道
-SAP Service Access Point    服务接入点
-SAPI    Service Access Point Identifier 业务接入点标识
-SCCP    Signaling Connection Control Part   信令连接控制部分
-SCH Synchronization CHannel 同步信道
-SCMG    SCCP Management SCCP管理
-SCU Simple combining Unit   简单合路单元
-SDCCH   Stand-alone Dedicated Control CHannel   独立专用控制信道
-SDH Synchronous Digital Hierarchy   同步数字系列
-SDU Service Data Unit   业务数据单元
-SGSN    Serving GPRS Support Node   服务GPRS支持节点
-SID Silence Descriptor  静噪指示
-SIG Signaling   信令
-SIM Subscriber Identity Module  用户识别卡
-SITE    Site    站点
-SLM Signaling Link Management   信令链路管理
-SLS Signaling Link Selection    信令链路选择码
-SM  Sub-Multiplexer Interface   子复用板
-SM-SC   Short Message - Service Center  短消息中心
-SMBCB   Short Message Service Cell Broadcast    短消息业务小区广播
-SMC Short Message Center    短消息中心
-SMI Sub-Multiplexer Interface   子复用板
-SMS Short Message Service   短消息业务
-SMS-GMSC    Short Message Service - Gateway MSC 短消息关口MSC
-SMS-IWMSC   Short Message Service Interworking MSC  短消息互联MSC
-SMSCB   Short Message Service Cell Broadcast    短消息小区广播
-SMUX    Sub-Multiplexer 子复用器
-SNDCP   SubNetwork Dependent convergence Protocol   子网相关的收敛协议
-SOR Support Optimization Routing    支持优选路由
-SP  Signaling Point 信令点
-SRM Signaling Route Management  信令路由管理
-SS  Supplementary Service   补充业务
-SS7 Signalling System No.7  七号信令
-SSN SubSystem Number    子系统号
-STM Signaling Traffic Management    信令业务管理
-STP Signaling Transfer Point    信令转接点
-T　
-TA  Timing Advance  定时提前量
-TAI Timing Advance Index    时间提前量索引
-TBF Temporary Block Flow    临时数据块流
-TC  Transcoder  码变换器
-TCH Traffic Channel 业务信道
-TCH/F   A full rate TCH 全速率业务信道
-TCH/F2.4    A full rate data TCH (2.4kbit/s)    全速率数据业务信道（2.4kbit/s）
-TCH/F4.8    A full rate date TCH (4.8kbit/s)    全速率数据业务信道（4.8kbit/s）
-TCH/F9.6    A full rate data TCH (9.6kbit/s)    全速率数据业务信道（9.6kbit/s）
-TCH/FS  A full rate Speech TCH  全速率话音业务信道
-TCI Terminal Interface board    终端接口板
-TCP Transmission Control Protocol   传输控制协议
-TCSM    TransCoder &amp; Sub-Multiplexer    码变换与子复用单元
-TDMA    Time Division Multiple Access   时分多址
-TE  Terminal Equipment  终端设备
-TEI Terminal Equipment Identifier   终端设备识别码
-TES Transmission Extension power Supply unit    传输扩展供电单元
-TEU Transmission Extension Unit 传输扩展单元
-TFI Transport Format Indicator  传输格式指示
-TLLI    Temporary Link Level Identity   临时链路等级标识
-TMSC    Tandem Mobile Switching Centre  汇接移动交换中心
-TMSI    Temporary Mobile Subscriber Identifier  临时移动用户标识符
-TMU Timing/Transmission and Management Unit 定时/传输管理单元
-TN  Timeslot Number 时隙号
-TNI Terminal Network Interface  终端网络接口部件
-TO  Temporary Offset    临时偏移
-TRAU    Transcoder &amp; Rate Adaptation Unit   码变换器/速率适配单元
-TRX Transceiver (board) 收发信机
-TS  Timeslot    时隙
-TSC Training Sequence Code  训练系列号(编码）
-TUP Telephone User Part(SS7)    电话用户部分
-U　
-UA  Unnumbered Acknowledge  无编号证实
-UDP User Datagram Protocol  用户数据报协议
-UDT Unit Data   单位数据
-UI  Unnumbered Information (frame)  无编号信息帧
-Um      空中接口
-USF Uplink State Flag   上行链路状态标识
-USSD    Unstructured Supplementary Service Data 非结构化补充业务数据
-V　
-VAD Voice Activity Detection    话音激活检测
-VBS Voice Broadcast Service 话音广播呼叫业务
-VEA Very Early Allocation   很早分配
-VGCS    Voice Group Call Service    话音组呼业务
-VLR Visitor Location Register   拜访用户位置寄存器
-VM  Voice Mailbox   语音邮箱
-VSAT    Very Small Aperture Terminal    甚小天线卫星地球站
-W　
-WDT Watchdog Timer  看门狗
-WS  Workstation 操作台
-X　 
-xDSL    x Digital Subscriber Line   x数字用户线
-Y　 
--   -    
-Z　 
--   -    
-
-
-
-缩写单词表
-A     
-ACC Accept
-ACK Acknowledgement
-ACT Activation
-ACTIV   Activation
-ASS Assignment
-AUT Authentication
-C     
-CHAN    Channel
-CIPH    Ciphering
-CMD Command
-CMP Complete
-CNF Confirm
-CONF    Confirm
-CONN    Connection
-D     
-DEACT   Deactivation
-DET Detection
-DISC    Disconnect
-E     
-ENCR    Encryption
-EST Establishment
-EXT Extended
-H     
-HANDO   Handover
-I     
-IMM Immediate
-IND     Indication
-INFO    Information
-L     
-L3  Layer 3
-LOC Location
-M     
-MOD Mode
-P     
-PAG Paging
-PHY Physical
-R     
-REJ Reject
-REL Release
-RES Resource
-REQ Request
-RLSD    Released
-RPS Response
-RQD Required
-S     
-SERV    Service
-U     
-UPD Updating
-</code></pre>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/15/centos/">Centos安装及配置</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-15T17:20:00+08:00" pubdate data-updated="true">Jul 15<span>th</span>, 2013</time>
-        
-         
-                   | <a href="/blog/2013/07/15/centos/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>感觉好久都没写东西了，最近终于把可恶的考试弄完了，继续折腾。
-前段时间把openwrt的摄像头挂上了，所以想完善一下它的功能，就在一台没用的电脑上装上了centos，做个远程监控玩玩。</p>
-
-<h5>centos安装</h5>
-
-<p>从网上下载最新的版本，用ultraiso做好系统盘，启动。安装过程没有什么可以说的，与其他发行版有点不同的是需要将安装包放到u盘根目录下（u盘容量最好大点，8~16G最好）。开始没注意这点，重复了几次。至此centos就给装上了。但最后重启了又出了点问题，grub一不注意给装到了u盘上（这点是后来从网上看帖子发现的）。那就修复grub吧，反正有启动盘。</p>
-
-<h5>grub修复</h5>
-
-<p>从u盘启动，centos就是不一般啊，默认连桌面都没有，黑黑的。从u盘启动后需进入grub模式。网上的命令式</p>
-
-<pre><code>sbin /grub
-</code></pre>
-
-<p>我这个命令无效啊我的是</p>
-
-<pre><code>grub
-</code></pre>
-
-<p>反正想办法进入grub模式就好了。
-接下来看看你的是那块磁盘使用如下命令</p>
-
-<pre><code>find /grub/grub/stage1
-</code></pre>
-
-<p>我的显示如下</p>
-
-<pre><code>(hd0,1)
-</code></pre>
-
-<p>hd0是我的第一块硬盘，额就一块硬盘，所以还好辨认，后面的1代表第二个分区，因为第一个分区用0表示，下面开始改了：</p>
-
-<pre><code>root (hd0,1)
-setup (hd0)
-</code></pre>
-
-<p>下面在将grub.conf和menu.lst里面的（hdx，y）修改为（hd0,1)。
-此时重启，即可进入系统。<br/>
-如此系统就算安装完成了。</p>
-
-<h5>配置网络</h5>
-
-<p>系统安装完了就要联网了。因为我要将它与路由器连接，所要配置静态ip，过程如下：<br/>
-centos的网络配置文件在<strong>/etc/sysconfig/</strong>中里面有很多关于网络配置的东西。我的机器就只有一块网卡eth0，所以在<strong>/etc/sysconfig/network-scripts/ifcfg-eth0</strong>下面。配置如下</p>
-
-<pre><code>DEVICE=eth0        #网络设备
-HWADDR=00:E0:4C:08:AC:10  #mac地址
-TYPE=Ethernet   #以太网
-UUID=a53621d2-d290-48ff-96e0-2a0005046b20 
-ONBOOT=yes           
-NM_CONTROLLED=yes
-BOOTPROTO=static       #静态地址，也可选dhcp或bootp
-IPADDR=192.168.0.135  #ip地址
-NETMASK=255.255.255.0  #子网掩码
-NETWORK=192.168.0.0    #网络号
-</code></pre>
-
-<p>修改网关<br/>
-vi /etc/sysconfig/network</p>
-
-<pre><code>NETWORKING=yes   #打开网络
-HOSTNAME=linuxgroup  #本机主机名（必须与/etc/hosts中的一样）
-GATEWAY=192.168.0.1  #网关
-</code></pre>
-
-<p>配置DNS<br/>
-vi /etc/resolv.conf</p>
-
-<pre><code>nameserver xxx.xxx.xxx.xxx
-nameserver xxx.xxx.xxx.xxx #根据自己的实际情况制定
-</code></pre>
-
-<p>弄好了之后可以重启服务了</p>
-
-<pre><code>service network restart 
-/etc/init.d/network restart #两条命令都可以
-</code></pre>
-
-<p>现在基本算弄完了，等待后续的折腾</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/06/06/yingjian/">纯硬件打造数字秒表</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-06-06T15:26:00+08:00" pubdate data-updated="true">Jun 6<span>th</span>, 2013</time>
-        
-         
-                   | <a href="/blog/2013/06/06/yingjian/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>一直以来就很喜欢那种把想法变成现实的感觉，尤其是把想的东西变成可以看得见摸得着的东东，就有一种成就感。在最后一次数字电路的实验中，和同学亲手打造了一个秒表，纯硬件，在此记录一下实验原理。</p>
-
-<h5>材料</h5>
-
-<p>数码管两个，74ls47或74ls247两片，74ls160两片，74ls00两片，10uf电容一个，0.01uf电容一个，上拉电阻14个，555定时器一片。</p>
-
-<h5>工作原理</h5>
-
-<h6>74ls47原理</h6>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kr10A9M70gM000d9" alt="74ls47" /><br/>
-<img src="http://admin22.51dzw.com/uploadfiles/201202/20120215205259686.jpg" alt="功能表" /><br/>
-由功能表可看出，若要显示数字0~9可以将3,4,5管脚置为高电平，且输入端的D，C，B，A（对应6,2,1,7）管脚可以将输入的0~9的二进制数据转换到数码管的显示。</p>
-
-<h6>数码管原理</h6>
-
-<blockquote><blockquote><blockquote><p><img src="http://memberpic.114my.cn/yixianyin/uploadfile/20118/2011813104654.jpg" alt="数码管图片" /></p></blockquote></blockquote></blockquote>
-
-<p>数码管分为共阳极与共阴极，这里我们用的是共阳极，即输入低电平有效。</p>
-
-<h6>74ls160原理</h6>
-
-<p><img src="http://www.hqew.com/File/Images/250000-259999/251555/Promotion/20100228131839671SSAZ1Q.JPG" alt="74ls160" />
-<img src="http://files.note.sdo.com/xBlh9~kr1KTq4M0bs000ig" alt="74ls160" /><br/>
-<img src="http://files.note.sdo.com/xBlh9~kr1EIFM70qk000g8" alt="时序图" /><br/>
-从时序图中可以看出，当QA，QB，QC,QD脉冲为1001（数字9）时，输出位输出一次高电平，此时前面经历了从0000到1001的变化，总共进行了十次计数。因此称其为十进制计数器。并且在计数时，CLR、LOAD、ENP、ENT都一直保持高电平。可以将十进制计数器进行改造，可以将其改成其他进制计数器，例如六进制计数器。原理就是，当计数器要进行第七次计数的时候使其归零，从而从新开始计数。利用74ls00便可以实现此功能<br/>
-<img src="http://course.tju.edu.cn/dzjc/syjx0010.files/image004.jpg" alt="74ls00" /><br/>
-利用此片的1,2,3引脚，计数方式0000&#8212;0001&#8212;0010&#8212;0011&#8212;0100&#8212;0101&#8212;0110&#8212;0111&#8212;1000&#8212;1001，且从左往右依次为Qd，Qc，Qb，Qa。若改位六进制，即进行0000&#8212;0001&#8212;0010&#8212;0011&#8212;0100&#8212;0101这个循环，遇到0110归零即可，此时利用74ls00的1,2引脚连接Qb，Qc即可达到目的。连接1,2引脚后，第三引脚可以接74ls160的清零端，从而开始从新计数</p>
-
-<h5>555定时器</h5>
-
-<p>除了上边的部件外，还需要一个时钟脉冲源，以用来产生稳定的脉冲。这里我们选择了555定时器
-<img src="http://www.lechengdz.com/mcu/UploadFiles_3202/200812/20081201155344726.jpg" alt="555" /><br/>
-555定时器由两个电压比较器，一个RS触发器等构成。我们可以在加入两个电容和两个电阻构成多谐振荡器。如图
-<img src="http://shiti.henanzikao.cn/images/shiti/20110522000451637/20110522000604905.jpg" alt="多谐振荡器" /><br/>
-其中第二个电阻我们使用的是可调电阻为了改变脉冲强度（在6和7之间的电压），左边的电容10uf。3引脚为脉冲输出，利用其产生的脉冲来实现计数。</p>
-
-<h6>一张电路原理图。</h6>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kr70fG4M0KM000J_" alt="" /></p>
-
-<h6>电路实物图两张</h6>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kr0Y6q4M0bs0009y" alt="" />
-<img src="http://files.note.sdo.com/xBlh9~kr0Y7a4M0bs0009C" alt="" /></p>
-
-<h5>附注</h5>
-
-<p>上面的原理图以上的图片多是为了分析原理而从网上找的图片</p>
-
-<h6>总结</h6>
-
-<p>学习硬件动手很重要，有的东西如果明白了原理在动手实验的话，往往会达到事半功倍的效果。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/5/">&larr; Older</a>
@@ -1548,23 +1541,23 @@ nameserver xxx.xxx.xxx.xxx #根据自己的实际情况制定
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2014/12/28/pyquery/">pyquery使用</a>
+        <a href="/blog/2015/02/28/android/">android学习笔记</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2014/12/28/django/">django源码分析 </a>
+        <a href="/blog/2015/02/28/tiaojian/">条件概率</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2014/11/11/mianshiti/">面试题</a>
+        <a href="/blog/2015/01/23/jquery/">jquery动态加载</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2014/11/11/mianshi/">面试</a>
+        <a href="/blog/2015/01/21/gailvlun/">概率论与数理统计学习</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2014/11/01/new/">python获取文件路径</a>
+        <a href="/blog/2015/01/06/chengkuaishujuliu/">tcp成块数据流</a>
       </li>
     
   </ul>
@@ -1580,7 +1573,7 @@ nameserver xxx.xxx.xxx.xxx #根据自己的实际情况制定
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - 图腾 -
+  Copyright &copy; 2015 - 图腾 -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
