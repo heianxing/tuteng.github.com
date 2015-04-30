@@ -5,16 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>二分查找 - TuTeng'blog</title>
+  <title>读restframework源码想到的 - TuTeng'blog</title>
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="#include &lt;iostream&gt;
-using namespace std;
-int search(int arr[],int k,int n);
-int main()
-{ int arr[15]={0,1,2,2,2,2,3,3,3,4,5,6,7,8,9};
-int a= &hellip;">
+  <meta name="description" content="经典类与新式类的区别
+new方法的使用，init方法的使用
+must be type, not classobj此错误出现的原因。 # 此处SchoolMember若不继承object则为经典类 class SchoolMember(object): '''Represents any &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -23,7 +20,7 @@ int a= &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tuteng.github.io/blog/2014/03/29/new">
+  <link rel="canonical" href="http://tuteng.github.io/blog/2015/04/30/jingdianlei">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
@@ -74,7 +71,7 @@ int a= &hellip;">
   
   <header>
     
-      <h1 class="entry-title">二分查找</h1>
+      <h1 class="entry-title">读restframework源码想到的</h1>
     
     
       <p class="meta">
@@ -90,7 +87,7 @@ int a= &hellip;">
   
 
 
-<time datetime="2014-03-29T09:47:00+08:00" pubdate data-updated="true">Mar 29<span>th</span>, 2014</time>
+<time datetime="2015-04-30T16:36:00+08:00" pubdate data-updated="true">Apr 30<span>th</span>, 2015</time>
         
          
                    | <a href="#comments">Comments</a>
@@ -100,49 +97,55 @@ int a= &hellip;">
   </header>
 
 
-<div class="entry-content"><pre><code>#include &lt;iostream&gt;
-using namespace std;
-int search(int arr[],int k,int n);
-int main()
-{
+<div class="entry-content"><ul>
+<li>经典类与新式类的区别</li>
+<li><strong>new</strong>方法的使用，<strong>init</strong>方法的使用</li>
+<li><p>must be type, not classobj此错误出现的原因。</p>
 
-int arr[15]={0,1,2,2,2,2,3,3,3,4,5,6,7,8,9};
-int a=search(arr,2,15);
-if(a==-1)
-    cout&lt;&lt;"出错 "&lt;&lt;endl;
-else 
-    cout&lt;&lt;"数组下标："&lt;&lt;a&lt;&lt;endl;
-return 0;
-}
+<pre><code>  # 此处SchoolMember若不继承object则为经典类
+  class SchoolMember(object):
+      '''Represents any school member.'''
+      def __init__(self, name, age):
+          self.name = name
+          self.age = age
+          print '(Initialized SchoolMember: %s)' % self.name
 
-int search(int arr[],int k,int n)
-{
-    int start,end,mid;
-    start=0;
-    end=n-1;
-    while(start&lt;=end)   //判断条件
-    {
-        mid=(start+end)/2;  //取中间值
-        if(k==arr[mid])
-        {
-            while(k==arr[mid])
-            {
-                mid++;
-            }
-    /*
-        加上while可以获取最右边的第一个出现的索引，不加while为最左边第一次出现的索引
-    */
-            return mid-1;
-        }
-        else if(k&lt;arr[mid])  //继续往左查找
-            end=mid-1;
-        else
-            start=mid+1;  //往右查找
+      def tell(self):
+          '''Tell my details.'''
+          # 这个例子主要是用来想验证此处的self.tell2()会调用哪里的tell2
+          # 事实证明它会调用子类的tell2.
+          # 原因：调用哪个方法取决据self指向谁，我们在下面传进来的self是指向子类的，所以会调用子类的tell2方法
+          self.tell2()
+          print 'Name:"%s" Age:"%s"' % (self.name, self.age),
 
-    }
-return -1;
-}
-</code></pre>
+      def tell2(self):
+          print "base class tell2"
+
+
+  class Student(SchoolMember):
+      '''Represents a student.'''
+      def __init__(self, name, age, marks):
+          SchoolMember.__init__(self, name, age)
+          self.marks = marks
+          print '(Initialized Student: %s)' % self.name
+
+      def tell(self):
+          SchoolMember.tell(self)
+          # 若要调用父类的tell2方法，使用super关键字，但是在经典类里会出现must be type, not classobj错误。
+          super(Student, self).tell2()
+          print 'Marks: "%d"' % self.marks
+
+      def tell2(self):
+          print "subclass basss"
+
+
+  s = Student('Swaroop', 22, 75)
+  s.tell()
+</code></pre></li>
+</ul>
+
+
+<p>关于<strong>new</strong>和<strong>init</strong>方法参考了<a href="http://www.cnblogs.com/ifantastic/p/3175735.html">这篇文章</a></p>
 </div>
 
 
@@ -165,7 +168,7 @@ return -1;
   
 
 
-<time datetime="2014-03-29T09:47:00+08:00" pubdate data-updated="true">Mar 29<span>th</span>, 2014</time>
+<time datetime="2015-04-30T16:36:00+08:00" pubdate data-updated="true">Apr 30<span>th</span>, 2015</time>
       
 
 
@@ -173,7 +176,7 @@ return -1;
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2014/03/29/new/" data-via="" data-counturl="http://tuteng.github.io/blog/2014/03/29/new/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2015/04/30/jingdianlei/" data-via="" data-counturl="http://tuteng.github.io/blog/2015/04/30/jingdianlei/" >Tweet</a>
   
   
   
@@ -182,10 +185,8 @@ return -1;
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2014/03/27/dmp/" title="Previous Post: 数字图像处理">&laquo; 数字图像处理</a>
+        <a class="basic-alignment left" href="/blog/2015/04/30/zuijin/" title="Previous Post: javascript的函数式编程">&laquo; javascript的函数式编程</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2014/03/30/paixu/" title="Next Post: 插入排序">插入排序 &raquo;</a>
       
     </p>
   </footer>
@@ -196,7 +197,7 @@ return -1;
           <h1>Comments</h1>
               <div id="comments" aria-live="polite"><!-- 多说公共JS代码 end -->
 <!-- Duoshuo Comment BEGIN -->
-<div class="ds-thread" data-title="二分查找"></div>
+<div class="ds-thread" data-title="读restframework源码想到的"></div>
 <script type="text/javascript">
       var duoshuoQuery = {short_name:"tuteng"};
 (function() {

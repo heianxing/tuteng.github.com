@@ -9,9 +9,10 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="python的gil机制 (python多线程与多进程，全局解释器锁)
-tornado的异步非阻塞（epoll）
-list与set哪个更快 (set更快，基于字典，哈希) linux命令top或uptime的中的负载如何计算 （load，系统负载） 参考链接 http://www.mike.org &hellip;">
+  <meta name="description" content="最近再看django-bootstrap-toolkit,一直困惑于静态文件的路径问题。所以只能从源码入手了。
+大体的流程。 从manage.py开始。
+manage.py 比较简单就几句话。 #!/usr/bin/env python
+#from django.core.management &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +69,525 @@ list与set哪个更快 (set更快，基于字典，哈希) linux命令top或upti
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/12/28/django/">Django源码分析</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-12-28T23:16:00+08:00" pubdate data-updated="true">Dec 28<span>th</span>, 2014</time>
+        
+         
+                   | <a href="/blog/2014/12/28/django/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近再看django-bootstrap-toolkit,一直困惑于静态文件的路径问题。所以只能从源码入手了。
+大体的流程。</p>
+
+<p>从manage.py开始。
+manage.py 比较简单就几句话。</p>
+
+<pre><code>#!/usr/bin/env python
+#from django.core.management import execute_manager
+import os
+import sys 
+
+
+if __name__ == "__main__":
+    #加载配置文件
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE","settings")
+
+    from django.core.management import execute_from_command_line
+    #执行配置
+    execute_from_command_line(sys.argv)
+</code></pre>
+
+<p>首先看os.environ.setdefault(),environ为类_Environ的一个实例，它继承自IterableUserDict，而IterableUserDict继承自UserDict，包括setdefault()这个方法也是UserDict的一个方法，看一下setdefault实现的功能：</p>
+
+<pre><code>  def setdefault(self, key, failobj=None):
+    if key not in self:
+        self[key] = failobj
+    return self[key]
+</code></pre>
+
+<p>其中的key是 DJANGO_SETTINGS_MODULE，这里的self是一个字典，判断key是不是在里面，不在里面就做一个键值绑定。然后返回。</p>
+
+<p>下面进入execute_from_command_line(sys.argv)，sys.argv位一个参数执行的列表，像我们执行python  manage.py runserver时，manage.py为sys.argv[0],runserver为sys.argv[1],以此类推，如果有更多参数加的话。</p>
+
+<p>进入django的core模块下，找到management模块。在<strong>init</strong>.py下可以找到该函数</p>
+
+<pre><code>def execute_from_command_line(argv=None):
+    """ 
+    A simple method that runs a ManagementUtility.
+    """
+    utility = ManagementUtility(argv)
+    utility.execute()
+</code></pre>
+
+<p>我们输入的参数便传到了这个函数里，其中ManagementUtility为一个类传进去的参数列表会进入一个简单的初始化</p>
+
+<pre><code>def __init__(self, argv=None):
+    self.argv = argv or sys.argv[:]
+    self.prog_name = os.path.basename(self.argv[0])
+</code></pre>
+
+<p>将参数列表赋给argv，然后返回sys.argv[0]的文件名字给prog_name。<br/>
+实例化完了之后，再看utility.execute()即类ManagementUtility的execute（）方法。</p>
+
+<pre><code>        parser = LaxOptionParser(usage="%prog subcommand [options] [args]",
+                                    version=get_version(),
+                                    option_list=BaseCommand.option_list)
+        self.autocomplete()
+        try:
+            options, args = parser.parse_args(self.argv)
+            handle_default_options(options)
+        except:
+            pass # Ignore any option errors at this point.
+
+        try:
+            subcommand = self.argv[1]
+        except IndexError:
+            subcommand = 'help' # Display help if no arguments were given.
+
+        if subcommand == 'help':
+
+                if len(args) &lt;= 2:
+                    parser.print_lax_help()
+                    sys.stdout.write(self.main_help_text() + '\n')
+                elif args[2] == '--commands':
+                    sys.stdout.write(self.main_help_text(commands_only=True) + '\n')
+                else:
+                    self.fetch_command(args[2]).print_help(self.prog_name, args[2])
+        elif subcommand == 'version':
+            sys.stdout.write(parser.get_version() + '\n')
+        # Special-cases: We want 'django-admin.py --version' and
+        # 'django-admin.py --help' to work, for backwards compatibility.
+        elif self.argv[1:] == ['--version']:
+        # LaxOptionParser already takes care of printing the version.
+            pass
+        elif self.argv[1:] in (['--help'], ['-h']):
+            parser.print_lax_help()
+            sys.stdout.write(self.main_help_text() + '\n')
+        else:
+            self.fetch_command(subcommand).run_from_argv(self.argv)
+</code></pre>
+
+<p>第一个语句为词法分析，可是找遍了LaxOptionParser这个类也没有找到入口，里面并没有<strong>init</strong>,只有几个函数，可是python也没有正式的构造函数什么的，后来发现此类继承自OptionParser这个类，它来自于optparse模块，在OptionParser模块里有一个<strong>init</strong>()函数，会接受若干个参数，进行初始化，这里只是传递了3个参数，usage传递了一个字符串，version为版本，BaseCommand.option_list为一个关于命令行的元组，其中调用了make_option这个类<strong>init</strong>进行一些初始化，主要初始化<em>short_opts和</em>long_opts这两个参数，并且进行了一些检查。<em>short_opts为短命令，</em>long_opts为长命令，如-h，&#8211;help分别为短命令和长命令。<br/>
+parser为LaxOptionParser的一个实例。 parser.parse_args(self.argv)这个函数会根据上面初始化的内容进行解析命令行参数，之后返回两个值：options，它是一个对象（，保存有命令行参数值。只要知道命令行参数名，如 file，就可以访问其对应的值： options.file 。args，它是一个由 positional arguments 组成的列表。</p>
+
+<pre><code>    def handle_default_options(options):
+    """ 
+    Include any default options that all commands should accept here
+    so that ManagementUtility can handle them before searching for
+    user commands.
+
+    """
+        if options.settings:
+            os.environ['DJANGO_SETTINGS_MODULE'] = options.settings
+        if options.pythonpath:
+            sys.path.insert(0, options.pythonpath)
+</code></pre>
+
+<p>handle_default_options将解析出来的options对象当做参数，判断settings和pythonpath是否存在，然后              <br/>
+设置环境变量和python模块的搜索路径。</p>
+
+<p>接下来是获得命令行的命令参数self.argv[1],并判断这个命令，包括错误处理，是否是help，是否是version，根据不同的情况展示不同的信息。</p>
+
+<p>最重要的是最后一句，即前面的情况都不是，就进入self.fetch_command(subcommand).run_from_argv(self.argv)</p>
+
+<pre><code>def fetch_command(self, subcommand):
+    """
+    Tries to fetch the given subcommand, printing a message with the
+    appropriate command called from the command line (usually
+    "django-admin.py" or "manage.py") if it can't be found.
+    """
+    # Get commands outside of try block to prevent swallowing exceptions
+    commands = get_commands()
+    try:
+        app_name = commands[subcommand]
+    except KeyError:
+        sys.stderr.write("Unknown command: %r\nType '%s help' for usage.\n" %
+            (subcommand, self.prog_name))
+        sys.exit(1)
+    if isinstance(app_name, BaseCommand):
+        # If the command is already loaded, use it directly.
+        klass = app_name
+    else:
+        klass = load_command_class(app_name, subcommand)
+    return klass
+</code></pre>
+
+<p>获得django/core/management/commands目录下与INSTALLED_APPS/management/commands目录下的子命令对应的模块前缀</p>
+
+<pre><code>def load_command_class(app_name, name):
+    """
+    Given a command name and an application name, returns the Command
+    class instance. All errors raised by the import process
+    (ImportError, AttributeError) are allowed to propagate.
+    """
+    module = import_module('%s.management.commands.%s' % (app_name, name))
+    return module.Command()
+</code></pre>
+
+<p>返回Command类的实例。进入management/commands下进入每个文件会发现，每个都有Command类对应相应的命令。</p>
+
+<p>self.fetch_command(subcommand).run_from_argv(self.argv)找到我们输入的命令参数，并且使用run_from_argv执行。</p>
+
+<p>进入runserver这个命令下看一下，Command这个类继承了BaseCommand这个类，BaseCommand在Base.py中，里面有run_from_arv这个方法，在其他的命令里
+有的重写了这个方法，不过runserver没有。</p>
+
+<pre><code>def run_from_argv(self, argv):
+    """
+    Set up any environment changes requested (e.g., Python path
+    and Django settings), then run this command. If the
+    command raises a ``CommandError``, intercept it and print it sensibly
+    to stderr. If the ``--traceback`` option is present or the raised
+    ``Exception`` is not ``CommandError``, raise it.
+    """
+    #设置环境变量，然后运行这个命令
+    #如python  manage.py  runserver,  manage.py就是argv[0],runserver是argv[1]
+    #create_parser直接调用OptionParser(prog=prog_name,usage=self.usage(subcommand),version=self.get_version(),option_list=self.option_list)
+    #将manage.py 和runserver加入参数列表
+    #接下来用parser.parse_args进行解析，argv[2]之后为默认参数，ip地址还有端口号，我们也可以显示的传进去，默认是127.0.0.1，端口号8000.
+    #下面又到了handle_default_options函数。
+    #接下来是执行execute函数，还有异常捕获。
+    parser = self.create_parser(argv[0], argv[1])
+    options, args = parser.parse_args(argv[2:])
+    handle_default_options(options)
+    try:
+        self.execute(*args, **options.__dict__)
+    except Exception as e:
+        if options.traceback or not isinstance(e, CommandError):
+            raise
+
+        # self.stderr is not guaranteed to be set here
+        stderr = getattr(self, 'stderr', OutputWrapper(sys.stderr, self.style.ERROR))
+        stderr.write('%s: %s' % (e.__class__.__name__, e))
+        sys.exit(1)
+</code></pre>
+
+<p>下面进入execute函数，前边是一些设置和错误检查，最主要的是 output = self.handle(*args, **options），可以发现handle在BaseCommand里是空的，每个命令对其进行了重写。<br/>
+runserver也是。看看runserver的handle：</p>
+
+<pre><code>def handle(self, addrport='', *args, **options):
+    #导入设置模块
+    from django.conf import settings
+    #DEBUG和ALLOWED_HOSTS的设置
+    if not settings.DEBUG and not settings.ALLOWED_HOSTS:
+        raise CommandError('You must set settings.ALLOWED_HOSTS if DEBUG is False.')
+    #ipv6的设置
+    self.use_ipv6 = options.get('use_ipv6')
+    if self.use_ipv6 and not socket.has_ipv6:
+        raise CommandError('Your Python does not support IPv6.')
+    if args:
+        raise CommandError('Usage is runserver %s' % self.args)
+    self._raw_ipv6 = False
+    if not addrport:
+        self.addr = ''
+        self.port = DEFAULT_PORT
+    else:
+        #如果设置了ip地址和端口号，用正则匹配出来
+        m = re.match(naiveip_re, addrport)
+        if m is None:
+            raise CommandError('"%s" is not a valid port number '
+                               'or address:port pair.' % addrport)
+        self.addr, _ipv4, _ipv6, _fqdn, self.port = m.groups()
+        if not self.port.isdigit():
+            raise CommandError("%r is not a valid port number." % self.port)
+        if self.addr:
+            if _ipv6:
+                self.addr = self.addr[1:-1]
+                self.use_ipv6 = True
+                self._raw_ipv6 = True
+            elif self.use_ipv6 and not _fqdn:
+                raise CommandError('"%s" is not a valid IPv6 address.' % self.addr)
+    if not self.addr:
+        #如果没有设置ip地址使用127.0.0.1代替
+        self.addr = '::1' if self.use_ipv6 else '127.0.0.1'
+        self._raw_ipv6 = bool(self.use_ipv6)
+     #运行命令
+    self.run(*args, **options)
+</code></pre>
+
+<p>runserver里的run方法主要时调用了inner_run(*args, **options）这个方法。</p>
+
+<pre><code>def inner_run(self, *args, **options):
+ #省略了部分代码
+    #很熟悉吧，这就是我们开始运行时，终端上输出的信息啊。   
+    self.stdout.write((
+        "%(started_at)s\n"
+        "Django version %(version)s, using settings %(settings)r\n"
+        "Starting development server at http://%(addr)s:%(port)s/\n"
+        "Quit the server with %(quit_command)s.\n"
+    ) % {
+        "started_at": now,
+        "version": self.get_version(),
+        "settings": settings.SETTINGS_MODULE,
+        "addr": '[%s]' % self.addr if self._raw_ipv6 else self.addr,
+        "port": self.port,
+        "quit_command": quit_command,
+    })
+    #加载编码设置
+    translation.activate(settings.LANGUAGE_CODE)
+
+    try:
+        handler = self.get_handler(*args, **options)
+        run(self.addr, int(self.port), handler,
+            ipv6=self.use_ipv6, threading=threading)
+
+      #省略部分代码
+
+
+
+    def get_handler(self, *args, **options):
+        """
+        Returns the default WSGI handler for the runner.
+        """
+        return get_internal_wsgi_application()
+</code></pre>
+
+<p>get_internal__wsgi_application()和run(self.addr, int(self.port), handler,ipv6=self.use_ipv6, threading=threading)都在django.core.servers.basehttp中：</p>
+
+<pre><code>def get_internal_wsgi_application():
+
+    from django.conf import settings
+    #在settings模块中并没有找到WSGI_APPLICATION这个环境变量，因此app_path位空
+    app_path = getattr(settings, 'WSGI_APPLICATION')
+    if app_path is None:
+        return get_wsgi_application()
+</code></pre>
+
+<p>在django/core下wsig.py中的文件如下：就几句话</p>
+
+<pre><code>import django
+from django.core.handlers.wsgi import WSGIHandler
+
+
+def get_wsgi_application():
+
+    #setup是加载log和settings.INSTALLED_APPS
+    django.setup()
+    #返回WSGIHhadler类的一个实例
+    return WSGIHandler()
+
+
+class WSGIHandler(base.BaseHandler):
+    #初始化一个线程锁
+    initLock = Lock()
+    #WSGIRequest为http.HttpRequest的一个子类，
+    #WSGIRequest实现了wsgi规范 
+    request_class = WSGIRequest
+</code></pre>
+
+<p>下面进入run方法：run(self.addr, int(self.port), handler,ipv6=self.use_ipv6, threading=threading)，标准的wsgi实现：</p>
+
+<pre><code>def run(addr, port, wsgi_handler, ipv6=False, threading=False):
+    server_address = (addr, port)
+    if threading:
+        httpd_cls = type(str('WSGIServer'), (socketserver.ThreadingMixIn, WSGIServer), {}) 
+    else:
+        httpd_cls = WSGIServer
+    httpd = httpd_cls(server_address, WSGIRequestHandler, ipv6=ipv6)
+    httpd.set_app(wsgi_handler)
+    httpd.serve_forever()
+</code></pre>
+
+<p>httpd_cls(server_address, WSGIRequestHandler, ipv6=ipv6)为实例化一个WSGIServer类，最终的实例化方法在父类SocketServer中的TCPServer和BaseServer中。包括初始化线程，初始化网络句柄，像下面的<strong>is_shut_down和</strong>shutdown_request都是在其中初始化的</p>
+
+<pre><code>#处理一个http请求直到关闭
+def serve_forever(self, poll_interval=0.5):
+    #__is_shut_down为一个初始化的threading.Event()的句柄，用于线程间通信
+    #.clear()将标识设置为false
+    self.__is_shut_down.clear()
+    try:
+        while not self.__shutdown_request:
+            #下面的函数就是一个封装好了的select函数，后面的四个为传递给select函数的参数，分别表示输入对象列表，输出对象列表，错误对象列表以及超时时间。
+            #返回值为三个列表，代表可写，可读，错误的事件的对象列表。
+            r, w, e = _eintr_retry(select.select, [self], [], [], 
+                                   poll_interval)
+            #判断self事件是否在可读对象列表中，在就进入进行处理
+            if self in r:
+                #处理连接请求
+                self._handle_request_noblock()
+    finally:
+        self.__shutdown_request = False
+        #将标识设置为true
+        self.__is_shut_down.set()
+
+#对select函数的封装        
+def _eintr_retry(func, *args):
+"""restart a system call interrupted by EINTR"""
+  while True:
+    try:
+        return func(*args)
+    except (OSError, select.error) as e:
+        if e.args[0] != errno.EINTR:
+            raise
+
+
+    def _handle_request_noblock(self):
+
+        try:
+            #返回请求句柄，客户端地址，get_request()中调用了self.socket.accept()来实现客户端的连接
+            request, client_address = self.get_request()
+        except socket.error:
+            return
+        if self.verify_request(request, client_address):
+            try:
+                #真正的处理连接请求的地方，调用了self.finish_request(request, client_address)
+                self.process_request(request, client_address)
+            except:
+                self.handle_error(request, client_address)
+                self.shutdown_request(request)
+
+
+   def finish_request(self, request, client_address):
+        """Finish one request by instantiating RequestHandlerClass."""
+        #此处的RequestHandlerClass为初始化的时候传进来的WSGIRequestHandler，实现了回调。
+        self.RequestHandlerClass(request, client_address, self)    
+</code></pre>
+
+<p>在WSGIRequestHandler中实现下面的初始化函数：</p>
+
+<pre><code> def __init__(self, *args, **kwargs):
+    from django.conf import settings
+    self.admin_static_prefix = urljoin(settings.STATIC_URL, 'admin/')
+    # We set self.path to avoid crashes in log_message() on unsupported
+    # requests (like "OPTIONS").
+    self.path = ''
+    self.style = color_style()
+    #调用父类的WSGIRequestHandler进行初始化，它的父类是simple_server.py里的WSGIRequestHandler,它里面没有__init__,继续找它的父类
+    #如此重复，在最终的基类中可以找到__init__方法，位于SocketServer.py中的 BaseRequestHandler类。
+    super(WSGIRequestHandler, self).__init__(*args, **kwargs)
+
+
+    def __init__(self, request, client_address, server):
+        self.request = request
+        self.client_address = client_address
+        self.server = server
+        #setup函数
+        self.setup()
+        try:
+            self.handle()
+        finally:
+            self.finish()
+
+        def setup(self):
+            pass
+
+        def handle(self):
+            pass
+
+        def finish(self):
+            pass
+</code></pre>
+
+<p>可以看到里面的方法并没有实现，只是给出了定义，实现都在子类的方法里。</p>
+
+<p>再回到WSGIRequestHandler类中，在simple_server.py中实现了handle函数，实现对请求的处理</p>
+
+<pre><code>    def handle(self):
+        """Handle a single HTTP request"""
+
+        self.raw_requestline = self.rfile.readline()
+        if not self.parse_request(): # An error code has been sent, just exit
+            return
+        #传入的参数，读，写，错误，环境变量。在其父类SimpleHandler中进行了初始化，并且打开了多线程和多进程选项
+        handler = ServerHandler(
+            self.rfile, self.wfile, self.get_stderr(), self.get_environ()
+        )
+        handler.request_handler = self      # backpointer for logging
+        在SimpleHandler的父类BaseHandler中含实现了run方法。此处get_app()是上面的run方法中我们传进去的wsgi_handler,httpd.set_app(wsgi_handler)
+        handler.run(self.server.get_app())      
+
+
+    def run(self, application):
+
+        try:
+            #设置环境变量
+            self.setup_environ()
+            #执行WSGIHandler(self.environ,self.start_response)
+            #因为类中实现了__call__方法，调用类的实例就相当于调用了__call__方法
+            self.result = application(self.environ, self.start_response)
+            self.finish_response()
+        except:
+            try:
+                self.handle_error()
+            except:
+                # If we get an error handling an error, just give up already!
+                self.close()
+                raise   # ...and let the actual server figure it out.
+
+
+
+
+ def __call__(self, environ, start_response):
+    # Set up middleware if needed. We couldn't do this earlier, because
+    # settings weren't available.
+    if self._request_middleware is None:
+        with self.initLock:
+            try:
+                # Check that middleware is still uninitialised.
+                if self._request_middleware is None:
+                #尝试加载中间件
+                    self.load_middleware()
+            except:
+                # Unload whatever middleware we got
+                self._request_middleware = None
+                raise
+    #设置脚本路径
+    set_script_prefix(base.get_script_name(environ))
+    signals.request_started.send(sender=self.__class__)
+    try:
+        request = self.request_class(environ)
+    except UnicodeDecodeError:
+        logger.warning('Bad Request (UnicodeDecodeError)',
+            exc_info=sys.exc_info(),
+            extra={
+                'status_code': 400,
+            }
+        )
+        response = http.HttpResponseBadRequest()
+    else:
+        response = self.get_response(request)
+
+    response._handler_class = self.__class__
+
+    status = '%s %s' % (response.status_code, response.reason_phrase)
+    response_headers = [(str(k), str(v)) for k, v in response.items()]
+    for c in response.cookies.values():
+        response_headers.append((str('Set-Cookie'), str(c.output(header=''))))
+    start_response(force_str(status), response_headers)
+    return response
+</code></pre>
+
+<p>以上为我阅读django源码的一些心得，大体了解了django的一点原理</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -484,53 +1004,6 @@ linux命令top或uptime的中的负载如何计算  （load，系统负载） <b
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/05/21/tt/">情怀</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-05-21T23:33:00+08:00" pubdate data-updated="true">May 21<span>st</span>, 2014</time>
-        
-         
-                   | <a href="/blog/2014/05/21/tt/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>过了五一，感觉就要毕业的样子。同学都在努力的为未来准备，考研，考公，培训，就业，明显感觉到了与以往的不同。</p>
-
-<p>各大培训机构的宣讲会犹如强奸一般，根本没有给你反应思考的时间，或许大学生活真的就要结束，今年又是最难就业年，应届毕业生比去年还要多，不知道还应不应该感谢高等教育的普及，像我这种人也搞了个二本的院校接受高等教育。我想我还是应该感谢的，大学应该是我人生最美好的时候了，每天都有很多时间做自己喜欢的事情，认识许多不一样的人，我感觉这就挺好的，但是美好的日子总是会过的很快，看见别人的匆忙，自己心里也不免有些着急，幸好在宿舍的日子不是很多&#8230;&#8230;</p>
-
-<p>从前两个星期开始，感觉异常的忙碌，给老师做东西，帮同学忙，上课，自己在学一些喜欢的东西，就这样一直不停的折腾，折腾，直到前两天总算是大部分都弄完了，终于可以安心做自己的事情了。说实话，这种集体开弓的日子真是不大好过，就嵌入式比赛还学了点东西，其他的感觉没有做什么，日子就这样空洞洞的过了，还好一切都差不多快要结束了，可以专心折腾自己没有完活的飞行器了</p>
-
-<p>昨天晚上学校艺术大坑举办了十佳歌手比赛，说心里话，在实验室里听着感觉都挺好的（我五音不全），乱哄哄的。而昨天也是一个特殊的日子，520嘛，老罗的锤子发布会。老罗是一个幽默的人，一直不看好他去做手机，开始看直播还有点困，但后来发现老罗是个靠谱的人，对于锤子的工业设计，外观，内部系统的优化都是下了功夫的，最看好的是对于大屏幕的手机，如何实现单手对全屏的操作，一直认为一个手能够把握住全屏的手机才是好手机，老罗做到了。下面还将100万门票费捐给了openssl，就这点给老罗必须赞一个。“我不关心输赢，我就是认真”，真是有些感动，我是不是也要成为脑残的罗粉了呢。做一个理想主义青年也挺好的&#8230;.. 其实不管怎样，用心做东西真的不错。</p>
-
-<p>老罗做了两年，做的还不错，至少从视频上看，可以秒杀大部分国产机，“彪悍的人生不需要解释”。慢慢的来吧，先把手头上自己喜欢的东西做好，顺便找一下有没有合适的实习，尽量让时光过的慢些吧。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -548,6 +1021,10 @@ linux命令top或uptime的中的负载如何计算  （load，系统负载） <b
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/04/30/jingdianlei/">读restframework源码想到的</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/04/30/zuijin/">javascript的函数式编程</a>
       </li>
     
@@ -561,10 +1038,6 @@ linux命令top或uptime的中的负载如何计算  （load，系统负载） <b
     
       <li class="post">
         <a href="/blog/2015/01/23/jquery/">jquery动态加载</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/01/21/gailvlun/">概率论与数理统计学习</a>
       </li>
     
   </ul>

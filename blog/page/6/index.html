@@ -9,8 +9,7 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="最近准备入手一个arduino的板子，据说这东东很好玩，趁今天下午没事，先收了一下关于它的资料。下面是维基对于其的介绍：
-Arduino，是一个开源的单片机控制器，它使用了Atmel AVR单片机，采用了基于开放源代码的软硬件平台，构建于开放源代码 simple I/O 接口版， &hellip;">
+  <meta name="description" content="最近在学习arm，需要搭建一些服务，在此记录一下。 tftp服务搭建 首先检查一下，有没有安装： netstat -a | grep tftp 没有安装什么都不会显示，若是安装了就会显示一些关于该服务的信息。没有安装可以从网上下载tftp的rpm包，或者从安装光盘里找到。 执行安装 rpm - &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -67,6 +66,203 @@ Arduino，是一个开源的单片机控制器，它使用了Atmel AVR单片机�
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/19/rhel/">Rhel服务搭建</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-19T19:05:00+08:00" pubdate data-updated="true">May 19<span>th</span>, 2013</time>
+        
+         
+                   | <a href="/blog/2013/05/19/rhel/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近在学习arm，需要搭建一些服务，在此记录一下。</p>
+
+<h2>tftp服务搭建</h2>
+
+<p>首先检查一下，有没有安装：</p>
+
+<pre><code>netstat -a | grep tftp
+</code></pre>
+
+<p>没有安装什么都不会显示，若是安装了就会显示一些关于该服务的信息。没有安装可以从网上下载tftp的rpm包，或者从安装光盘里找到。</p>
+
+<h6>执行安装</h6>
+
+<pre><code>rpm -ivh xxxxx.rpm
+</code></pre>
+
+<p>安装完毕会在根目录下产生一个tftpboot的工作目录，没有的话自己建立。</p>
+
+<h6>配置</h6>
+
+<p>tftp的配置文件在/etc/xinetd.d/tftp,将disable修改成yes，server args中-s指定tftp的工作目录。其他的可以选择默认。</p>
+
+<h6>启动与停止</h6>
+
+<pre><code>/etc/init.d/xinetd start  启动
+/etc/init.d/xinetd stop   停止
+/etc/init.d/xinetd resart 重启
+</code></pre>
+
+<h6>查看服务状态</h6>
+
+<pre><code>service tftp status
+</code></pre>
+
+<h2>nfs服务搭建</h2>
+
+<p>跟上面顺序差不多，在此直接上代码。</p>
+
+<pre><code>netstat -a | grep nfs
+</code></pre>
+
+<p>或者</p>
+
+<pre><code>rpm -qa | grep nfs
+</code></pre>
+
+<p>都可以用来查看nfs是否已经安装</p>
+
+<h6>安装</h6>
+
+<pre><code>rpm -ivh xxxxx.rpm
+</code></pre>
+
+<h6>配置</h6>
+
+<p>配置文件位于/etc/exports文件中，配置规则如下：</p>
+
+<pre><code>共享的目录 主机名称1或IP1（参数1，参数2） 主机名称2或IP2（参数3，参数4）  
+</code></pre>
+
+<blockquote><p>exports中的主要参数：<br/>
+rw:可读写权限<br/>
+ro:只读权限   <br/>
+no_root_squash:对于登陆NFS主机的共享目录用户如果是root的话则对该目录具有root权限。这样做极不安全，建议不用为好！<br/>
+root_squash:对于登陆NFS主机的共享目录用户使用者如果是root则它的权限将被压缩成匿名使用者，同时它的UID和GID都会变成nobody那个系统账号的身份。<br/>
+all_squash:不管登陆NFS主机用户身份如何，它的身份都会被压缩成匿名使用者，通常就是nobody<br/>
+anonuid:anonuid=xxx,制定NFS服务器/etc/passwd中匿名用户的UID<br/>
+anongid:anonuid=xxx,制定NFS服务器/etc/passwd中匿名用户的GID<br/>
+sync:数据在请求时写入共享(使硬盘与内存保持同步）<br/>
+async:NFS在写入数据前可响应请求（数据先暂存于内存中，而不是立即存入硬盘）<br/>
+secure:NFS通过1024以下的安全端口发送<br/>
+insecure:NFS通过1024以上端口发送<br/>
+hide:不共享NFS目录的子目录<br/>
+no_hide:共享NFS目录的子目录</p></blockquote>
+
+<p>我的配置如下：/home 192.168.1.*(rw,sync,no_root_squash)</p>
+
+<h6>启动与停止</h6>
+
+<pre><code>/etc/init.d/nfs start
+/etc/init.d/nfs stop
+/etc/init.d/nfs restart
+</code></pre>
+
+<h6>使用</h6>
+
+<pre><code>mount -t NFS servername：shared_dir /localdir
+</code></pre>
+
+<h2>samba服务搭建</h2>
+
+<p>查看是否安装</p>
+
+<pre><code>rpm -qa | grep samba
+</code></pre>
+
+<h6>安装</h6>
+
+<pre><code>rpm -ivh xxxx.rpm
+</code></pre>
+
+<h6>配置</h6>
+
+<p>配置文件位于/etc/samba/smb.conf修改配置文件，我的配置文件如下</p>
+
+<pre><code>[root]
+        comment = root Directories      #共享说明
+        browseable = yes                #浏览权限
+        writable = yes                  #写权限
+        path = /                        #共享目录
+;       valid users = smb               #共享用户
+[homes]
+        comment = Home Directories
+        browseable = no
+        writable = yes
+;       valid users = %S
+;       valid users = MYDOMAIN\%S
+
+[printers]
+        comment = All Printers
+        path = /var/spool/samba
+        browseable = no
+        guest ok = no
+        writable = no
+        printable = yes
+</code></pre>
+
+<h6>使用</h6>
+
+<p> 增加smb用户</p>
+
+<pre><code>useradd smb
+</code></pre>
+
+<p>设置密码</p>
+
+<pre><code>passwd smb
+</code></pre>
+
+<p>在windows中使用</p>
+
+<pre><code>\\ip地址
+</code></pre>
+
+<h6>启动与停止</h6>
+
+<pre><code>/etc/init.d/smb start
+/etc/init.d/smb stop
+/etc/init.d/smb restart
+</code></pre>
+
+<h2>总</h2>
+
+<p>对于上面的服务，都可以使用下面的方法来启动，停止或者重启</p>
+
+<pre><code>service 服务 start
+service 服务 stop
+service 服务 restart
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -355,6 +551,10 @@ sudo grub-install /dev/sda
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/04/30/jingdianlei/">读restframework源码想到的</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/04/30/zuijin/">javascript的函数式编程</a>
       </li>
     
@@ -368,10 +568,6 @@ sudo grub-install /dev/sda
     
       <li class="post">
         <a href="/blog/2015/01/23/jquery/">jquery动态加载</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/01/21/gailvlun/">概率论与数理统计学习</a>
       </li>
     
   </ul>

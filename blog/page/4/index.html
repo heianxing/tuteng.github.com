@@ -9,8 +9,8 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="今天考完了最后一科&#8230;&#8230; 看看博客，一个多月都没有更新了，中间也折腾过一点东西，但都断断续续，大部分的时间还是给了课后的复习，不知道这样的考试突击到底能够有多大的作用&#8230;&#8230;
-2013就这样过去了，新的一年已然来临，我是否要停下来思考一下。 &hellip;">
+  <meta name="description" content="四轴飞行器开始了！！！！！
+">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -67,6 +67,45 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/01/12/start/">小四轴</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-01-12T11:15:00+08:00" pubdate data-updated="true">Jan 12<span>th</span>, 2014</time>
+        
+         
+                   | <a href="/blog/2014/01/12/start/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>四轴飞行器开始了！！！！！</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1404,129 +1443,6 @@ ok了，一次还算完美的拆机，最后装上之后，出了点小叉子，
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/09/15/matlab/">Matlab初学</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-09-15T20:51:00+08:00" pubdate data-updated="true">Sep 15<span>th</span>, 2013</time>
-        
-         
-                   | <a href="/blog/2013/09/15/matlab/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>据说matlab是个很神奇的工具，这学期又要学数字信号处理，老师也是一再要求要装上软件，熟悉工具。因此，回来之后就先把工具给装上了，可这几天却没怎么用，直到昨天，一同学参加数学建模大赛，问我会不会用matlab给做个题，真是囧啊，亏得同学这么相信咱。今天是星期天，没什么事情，就先用用吧。顺便做点笔记。</p>
-
-<h5>matlab安装</h5>
-
-<p>和常规win下的软件一样，将软件下载下来，找到setup，双击，一路next，安装完毕。只不过这个东东有点大啊，都快5G了，花了我两个多小时才给搞定。如果下载的是iso的文件还要加载到虚拟光驱。反正不管怎样只要找到setup基本就算成功了，这里我也就不多废话了，网上的教程也是一摞一摞的。</p>
-
-<h5>matlab使用</h5>
-
-<p>同学把题发给了我，具体要求是这样</p>
-
-<blockquote><blockquote><blockquote><pre><code>          B题  碎纸片的拼接复原
-   破碎文件的拼接在司法物证复原、历史文献修复以及军事情报获取等领域都有着重要的应用。传统上，拼接复原工作需由人工完成，准确率较高，但效率很低。特别是当碎片数量巨大，人工拼接很难在短时间内完成任务。随着计算机技术的发展，人们试图开发碎纸片的自动拼接技术，以提高拼接复原效率。请讨论以下问题：
-1. 对于给定的来自同一页印刷文字文件的碎纸机破碎纸片（仅纵切），建立碎纸片拼接复原模型和算法，并针对附件1、附件2给出的中、英文各一页文件的碎片数据进行拼接复原。如果复原过程需要人工干预，请写出干预方式及干预的时间节点。复原结果以图片形式及表格形式表达（见【结果表达格式说明】）。
-2. 对于碎纸机既纵切又横切的情形，请设计碎纸片拼接复原模型和算法，并针对附件3、附件4给出的中、英文各一页文件的碎片数据进行拼接复原。如果复原过程需要人工干预，请写出干预方式及干预的时间节点。复原结果表达要求同上。
-3. 上述所给碎片数据均为单面打印文件，从现实情形出发，还可能有双面打印文件的碎纸片拼接复原问题需要解决。附件5给出的是一页英文印刷文字双面打印文件的碎片数据。请尝试设计相应的碎纸片拼接复原模型与算法，并就附件5的碎片数据给出拼接复原结果，结果表达要求同上。  
-</code></pre></blockquote></blockquote></blockquote>
-
-<p>像咱这种人，这要求当时一看就蒙了。幸亏同学比较耐心，给咱大致说了一下原理。原理基本上是这样的。对于每张图片，基本上都是一个矩阵，这个矩阵大小是1980x72，第一题比较简单都是竖着切的，要求还说是碎纸片，一看就是切好的，那个规整。咱不管了，咱就做题。根据图片的灰度，我们可以得到矩阵的最左边和最右边的灰度值，然后将其累加求和，再用第一张的最右边的值与剩下的18张的最左边的和值作差，一共19张图片，做18次减法在求出其中的最小值，这是即可求出第二张图片，依次循环，最终将所有图片拼接起来。题目关键的是找到第一张图片并人工将其改为001，而且图片不能出现000，因为matlab不好处理。怎么将找到的第一张图片改为001，本人没有找到好的用程序修改的方法，最后只能用人工干预了，囧。</p>
-
-<p>今天慢慢的搞了一天，到下午才基本上把第一问给整出来。下面就贴代码了。</p>
-
-<pre><code>clear;clc;
-Files=dir(fullfile('I:\matlab33\matlab\','*.bmp')); %打开所有图片，注意最后的反斜杠
-LengthFiles=length(Files);
-for i=1:LengthFiles;
- Img{i}=imread(strcat('I:\matlab33\matlab\',Files(i).name));
-end
-a=(1:19);
-b=(1:19); %定义数组并将其初始化为1到19
-for a1=1:19
-    a2=Img{a1}(:,1);
-    a3(a1)=sum(a2);
-end
-[a4 a5]=max(a3);  %首先找到第一个
-a(1)=a5;         %并将第一份赋值给数组a中的一个元素
-if exist('I:\matlab33\matlab\019.bmp','file')==0  %判断019文件是否存在
-    old_path='I:\matlab33\matlab2\000.bmp';
-    new_path='I:\matlab33\matlab2\019.bmp';
-    movefile(old_path,new_path);   %将000改为019
-end
-
-for i=1:18
-    for j=1:19
-        c=Img{a(i)}(:,end)-Img{j}(:,1);  %计算差值
-         b(j)=sum(c);  %求和 
-    end
-          [l m]=min(b(2:end)); %从第二个开始，到最后一个
-          a(i+1)=m+1;   %将剩余的元素排序     
-end
- %将图片打印在屏幕上
- I1=imread(strcat('I:\matlab33\matlab\',Files(a(1)).name));
- I2=imread(strcat('I:\matlab33\matlab\',Files(a(2)).name));
- I3=imread(strcat('I:\matlab33\matlab\',Files(a(3)).name));
- I4=imread(strcat('I:\matlab33\matlab\',Files(a(4)).name));
- I5=imread(strcat('I:\matlab33\matlab\',Files(a(5)).name));
- I6=imread(strcat('I:\matlab33\matlab\',Files(a(6)).name));
- I7=imread(strcat('I:\matlab33\matlab\',Files(a(7)).name));
- I8=imread(strcat('I:\matlab33\matlab\',Files(a(8)).name));
- I9=imread(strcat('I:\matlab33\matlab\',Files(a(9)).name));
- I10=imread(strcat('I:\matlab33\matlab\',Files(a(10)).name));
- I11=imread(strcat('I:\matlab33\matlab\',Files(a(11)).name));
- I12=imread(strcat('I:\matlab33\matlab\',Files(a(12)).name));
- I13=imread(strcat('I:\matlab33\matlab\',Files(a(13)).name));
- I14=imread(strcat('I:\matlab33\matlab\',Files(a(14)).name));
- I15=imread(strcat('I:\matlab33\matlab\',Files(a(15)).name));
- I16=imread(strcat('I:\matlab33\matlab\',Files(a(16)).name));
- I17=imread(strcat('I:\matlab33\matlab\',Files(a(17)).name));
- I18=imread(strcat('I:\matlab33\matlab\',Files(a(18)).name));
- I19=imread(strcat('I:\matlab33\matlab\',Files(a(19)).name));
-
-
-
-I=[I1,I2,I3,I4,I5,I6,I7,I8,I9,I10,I11,I12,I13,I14,I15,I16,I17,I18,I19];
-figure(1);
-imshow(I); %打印图片
-</code></pre>
-
-<h5>程序运行结果</h5>
-
-<p><img src="http://files.note.sdo.com/xBlh9~kzr6QG4M0oI002pz" alt="matlab" /><br/>
-汗，好好的图片让我弄的都快显示不清楚了，因为技术还不到家，就没有在调整大小，最后运行结果时，显示了一个警告，说是尺寸给压缩了。</p>
-
-<h5>总结</h5>
-
-<p>matlab的语法很灵活，使用起来很舒服，用一天的时间基本上都是在百度，google其语法，不得不说，matlab处理图像的能力还是很强悍的，不知道和开源的opencv比起来怎么样，以后有时间在整剩下的题吧。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/5/">&larr; Older</a>
@@ -1544,6 +1460,10 @@ imshow(I); %打印图片
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/04/30/jingdianlei/">读restframework源码想到的</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/04/30/zuijin/">javascript的函数式编程</a>
       </li>
     
@@ -1557,10 +1477,6 @@ imshow(I); %打印图片
     
       <li class="post">
         <a href="/blog/2015/01/23/jquery/">jquery动态加载</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/01/21/gailvlun/">概率论与数理统计学习</a>
       </li>
     
   </ul>

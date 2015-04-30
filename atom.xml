@@ -4,7 +4,7 @@
   <title><![CDATA[TuTeng'blog]]></title>
   <link href="http://tuteng.github.io/atom.xml" rel="self"/>
   <link href="http://tuteng.github.io/"/>
-  <updated>2015-04-30T16:29:55+08:00</updated>
+  <updated>2015-04-30T16:37:11+08:00</updated>
   <id>http://tuteng.github.io/</id>
   <author>
     <name><![CDATA[图腾]]></name>
@@ -12,6 +12,63 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[读restframework源码想到的]]></title>
+    <link href="http://tuteng.github.io/blog/2015/04/30/jingdianlei/"/>
+    <updated>2015-04-30T16:36:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2015/04/30/jingdianlei</id>
+    <content type="html"><![CDATA[<ul>
+<li>经典类与新式类的区别</li>
+<li><strong>new</strong>方法的使用，<strong>init</strong>方法的使用</li>
+<li><p>must be type, not classobj此错误出现的原因。</p>
+
+<pre><code>  # 此处SchoolMember若不继承object则为经典类
+  class SchoolMember(object):
+      '''Represents any school member.'''
+      def __init__(self, name, age):
+          self.name = name
+          self.age = age
+          print '(Initialized SchoolMember: %s)' % self.name
+
+      def tell(self):
+          '''Tell my details.'''
+          # 这个例子主要是用来想验证此处的self.tell2()会调用哪里的tell2
+          # 事实证明它会调用子类的tell2.
+          # 原因：调用哪个方法取决据self指向谁，我们在下面传进来的self是指向子类的，所以会调用子类的tell2方法
+          self.tell2()
+          print 'Name:"%s" Age:"%s"' % (self.name, self.age),
+
+      def tell2(self):
+          print "base class tell2"
+
+
+  class Student(SchoolMember):
+      '''Represents a student.'''
+      def __init__(self, name, age, marks):
+          SchoolMember.__init__(self, name, age)
+          self.marks = marks
+          print '(Initialized Student: %s)' % self.name
+
+      def tell(self):
+          SchoolMember.tell(self)
+          # 若要调用父类的tell2方法，使用super关键字，但是在经典类里会出现must be type, not classobj错误。
+          super(Student, self).tell2()
+          print 'Marks: "%d"' % self.marks
+
+      def tell2(self):
+          print "subclass basss"
+
+
+  s = Student('Swaroop', 22, 75)
+  s.tell()
+</code></pre></li>
+</ul>
+
+
+<p>关于<strong>new</strong>和<strong>init</strong>方法参考了<a href="http://www.cnblogs.com/ifantastic/p/3175735.html">这篇文章</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[javascript的函数式编程]]></title>
@@ -1242,23 +1299,6 @@ linux命令top或uptime的中的负载如何计算  （load，系统负载） <b
 <p>手头上有两块stm32.这几天先熟悉了一下它的时钟机制，毕竟时钟是根本嘛。跑通了几个程序，但是对gpio口的八种模式还是不大理解，什么叫推挽输出，开漏输出&#8230;..看来得好好复习一下数电模电了。</p>
 
 <p>感觉最终的难点部分会是在pid的调节部分，这是最终的部分，也是靠大量的实验测出来的，慢慢的折腾吧。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[情怀]]></title>
-    <link href="http://tuteng.github.io/blog/2014/05/21/tt/"/>
-    <updated>2014-05-21T23:33:00+08:00</updated>
-    <id>http://tuteng.github.io/blog/2014/05/21/tt</id>
-    <content type="html"><![CDATA[<p>过了五一，感觉就要毕业的样子。同学都在努力的为未来准备，考研，考公，培训，就业，明显感觉到了与以往的不同。</p>
-
-<p>各大培训机构的宣讲会犹如强奸一般，根本没有给你反应思考的时间，或许大学生活真的就要结束，今年又是最难就业年，应届毕业生比去年还要多，不知道还应不应该感谢高等教育的普及，像我这种人也搞了个二本的院校接受高等教育。我想我还是应该感谢的，大学应该是我人生最美好的时候了，每天都有很多时间做自己喜欢的事情，认识许多不一样的人，我感觉这就挺好的，但是美好的日子总是会过的很快，看见别人的匆忙，自己心里也不免有些着急，幸好在宿舍的日子不是很多&#8230;&#8230;</p>
-
-<p>从前两个星期开始，感觉异常的忙碌，给老师做东西，帮同学忙，上课，自己在学一些喜欢的东西，就这样一直不停的折腾，折腾，直到前两天总算是大部分都弄完了，终于可以安心做自己的事情了。说实话，这种集体开弓的日子真是不大好过，就嵌入式比赛还学了点东西，其他的感觉没有做什么，日子就这样空洞洞的过了，还好一切都差不多快要结束了，可以专心折腾自己没有完活的飞行器了</p>
-
-<p>昨天晚上学校艺术大坑举办了十佳歌手比赛，说心里话，在实验室里听着感觉都挺好的（我五音不全），乱哄哄的。而昨天也是一个特殊的日子，520嘛，老罗的锤子发布会。老罗是一个幽默的人，一直不看好他去做手机，开始看直播还有点困，但后来发现老罗是个靠谱的人，对于锤子的工业设计，外观，内部系统的优化都是下了功夫的，最看好的是对于大屏幕的手机，如何实现单手对全屏的操作，一直认为一个手能够把握住全屏的手机才是好手机，老罗做到了。下面还将100万门票费捐给了openssl，就这点给老罗必须赞一个。“我不关心输赢，我就是认真”，真是有些感动，我是不是也要成为脑残的罗粉了呢。做一个理想主义青年也挺好的&#8230;.. 其实不管怎样，用心做东西真的不错。</p>
-
-<p>老罗做了两年，做的还不错，至少从视频上看，可以秒杀大部分国产机，“彪悍的人生不需要解释”。慢慢的来吧，先把手头上自己喜欢的东西做好，顺便找一下有没有合适的实习，尽量让时光过的慢些吧。</p>
 ]]></content>
   </entry>
   
