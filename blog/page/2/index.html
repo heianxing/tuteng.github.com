@@ -9,7 +9,9 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="上海的天气有些变凉，来的这几天经常下雨。 又过节了，没有上班，但心情不大好，感觉很累。 下午经历了个面试，感觉自己还差得很多，自我介绍都有些紧张，还有自己的职业规划，比别人的优势在哪里，问题都回答的不好，4个技术问题，回答上了两个，还是准备的不够充分，没办法，生活就这样过着。 只能靠自己继续努力了 &hellip;">
+  <meta name="description" content="python的gil机制 (python多线程与多进程，全局解释器锁)
+tornado的异步非阻塞（epoll）
+list与set哪个更快 (set更快，基于字典，哈希) linux命令top或uptime的中的负载如何计算 （load，系统负载） 参考链接 http://www.mike.org &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +68,51 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/11/11/mianshiti/">面试题</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-11-11T22:58:00+08:00" pubdate data-updated="true">Nov 11<span>th</span>, 2014</time>
+        
+         
+                   | <a href="/blog/2014/11/11/mianshiti/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>python的gil机制 (python多线程与多进程，全局解释器锁)<br/>
+tornado的异步非阻塞（epoll）<br/>
+list与set哪个更快  (set更快，基于字典，哈希)   <br/>
+linux命令top或uptime的中的负载如何计算  （load，系统负载） <br/>
+参考链接
+  http://www.mike.org.cn/articles/linux-top-command-in-the-meaning-of-load-average/
+  http://www.cnblogs.com/realviv/articles/1883679.html</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -484,54 +531,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/05/10/erfenfa/">嵌入式比赛总结</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-05-10T17:20:00+08:00" pubdate data-updated="true">May 10<span>th</span>, 2014</time>
-        
-         
-                   | <a href="/blog/2014/05/10/erfenfa/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>劳动节已经过去，五一假期一直在实验室呆着，每天忙忙碌碌，服务器端的例程耗时两天总算弄懂了。大致的框架是  <br/>
-下端zigbee终端设备和各传感器之间通过串口采集传感器的数据，zigbee上跑的是zstack协议栈，关于zstack协议栈，以后再进行分析，这个协议栈总的来说是根据zigbee标准制定的用来做物联网的。当zigbee终端设备采集到数据之后，会通过无线网络传到协调器处，协调器实际也是一个zigbee设备，只是通过软件对其进行了类别划分，它可以管理其他的zigbee设备，它收到终端设备发过来的数据后会在通过串口传输到arm网关部分，在arm上可以对数据进行处理，包括数据的显示，分析，开关控制，报警等功能。 <br/>
-对于设备中arm上的开机跑的智能家居的例程，其逻辑主要如下：<br/>
-arm上实现了两个程序，一个是c语言实现的服务器端，另一个是qt实现的客户端，qt并没有直接通过串口和zigbee或者rfid或者gprs或者蓝牙通信，一切的数据获取，报警短信，开关控制都要通过服务器端的程序。服务器端和zigbee，服务器端和qt客户端都有一个简单地协议，服务器和qt端通过socket通信。并且两方都通过select机制监听可读事件。服务器端使用了libev这个库，据说这个库为libevent的升级版。花了两天的时间大致了解了一下libevent的源代码，参考文章如下<br/>
-<a href="http://blog.csdn.net/sparkliang/article/category/660506">libevent代码分析</a><br/>
-其中越往下看，越发现数据结构与算法才是根本。涉及到了链表，堆排序等。看这种代码确实能够学到很多东西，借着这个机会熟悉了一下二叉树，以前并不知道堆是怎么存储的，现在才知道其实堆就是用二叉树这种数据结构来实现的（囧）,因此操作堆就是操作二叉树，并且堆总是一个完全二叉树，
-对其可以进行遍历（前序，中序，后序等），还有查找，插入，删除等一系列操作。而二叉树的操作又是建立在递归的基础之上。libevent库中使用了最小堆排序。对于不同的事件，IO，定时器，信号，都有不同的数据结构与算法来实现，至今也只是了解了一点皮毛。 <br/>
-服务器端的程序大量使用了多线程，这个时候我们就要小心线程之间的数据共享等问题。 <br/>
-比赛中发现自己真是没有写多少代码，总是在别人的基础上进行修改，增添一些自己的功能。倒是下端的zigbee对于其数据的传输逻辑了解了不少。包括串口的初始化，任务id的注册，怎么通过无线发送数据，从无线端传过来的数据怎么处理，不同的设备如何识别。终端设备如何加入自己的传感器以及与传感器之间的接口如何实现等现在了解的都差不多了。但是对于大量的节点身份如何识别，如何选择路径，何时加入网络，何时选择网络，传感器的自组网算法等都有待进一步的学习。最近也了解了一下contiki这个开源的操作系统，跑了个串口的例子，没想到一下就跑通了。所以打算深入的了解一下它的源代码，等以后有空了在作总结。 <br/>
-慢慢的来吧，虽说快要结束了，但是学习这件事情是急不得的。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -549,6 +548,10 @@ arm上实现了两个程序，一个是c语言实现的服务器端，另一个�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/04/30/zuijin/">javascript的函数式编程</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/02/28/android/">android学习笔记</a>
       </li>
     
@@ -562,10 +565,6 @@ arm上实现了两个程序，一个是c语言实现的服务器端，另一个�
     
       <li class="post">
         <a href="/blog/2015/01/21/gailvlun/">概率论与数理统计学习</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/01/06/chengkuaishujuliu/">tcp成块数据流</a>
       </li>
     
   </ul>

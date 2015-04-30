@@ -5,12 +5,14 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>一步一步学python - TuTeng'blog</title>
+  <title>javascript的函数式编程 - TuTeng'blog</title>
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="今后结合github，多学习一些python，结合项目，锻炼数据结构与算法。
-">
+  <meta name="description" content="高阶函数：
+接收函数作为参数的函数为高阶函数，c语言里的函数指针。js可以使用匿名函数，比较方便，c不可以 闭包：高阶函数内部的函数引用外部作用域的变量。实现缓存。问题：内存泄漏，上下文的引用
+例子： $(function(){
+var con = $("di##anel"); this.id &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +21,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://tuteng.github.io/blog/2014/11/01/onestepone">
+  <link rel="canonical" href="http://tuteng.github.io/blog/2015/04/30/zuijin">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TuTeng'blog" type="application/atom+xml">
@@ -70,7 +72,7 @@
   
   <header>
     
-      <h1 class="entry-title">一步一步学python</h1>
+      <h1 class="entry-title">Javascript的函数式编程</h1>
     
     
       <p class="meta">
@@ -86,7 +88,7 @@
   
 
 
-<time datetime="2014-11-01T20:47:00+08:00" pubdate data-updated="true">Nov 1<span>st</span>, 2014</time>
+<time datetime="2015-04-30T16:22:00+08:00" pubdate data-updated="true">Apr 30<span>th</span>, 2015</time>
         
          
                    | <a href="#comments">Comments</a>
@@ -96,7 +98,73 @@
   </header>
 
 
-<div class="entry-content"><p>今后结合github，多学习一些python，结合项目，锻炼数据结构与算法。</p>
+<div class="entry-content"><p>高阶函数：
+接收函数作为参数的函数为高阶函数，c语言里的函数指针。js可以使用匿名函数，比较方便，c不可以 <br/>
+闭包：高阶函数内部的函数引用外部作用域的变量。实现缓存。问题：内存泄漏，上下文的引用<br/>
+例子：</p>
+
+<pre><code>$(function(){
+var con = $("di##anel"); 
+this.id = "content"; 
+con.click(function(){
+alert(this.id);//panel 
+});
+});
+
+$(function(){
+var con = $("di##anel"); 
+this.id = "content";
+var self = this; 
+con.click(function(){
+alert(self.id);//content 
+});
+});    
+</code></pre>
+
+<p>柯里化：预先将函数的某些参数传入，得到一个简单的函数，但是预先传入的参数被保存在闭包中。 <br/>
+柯里化使用案例： <br/>
+页面中的局部刷新，使用柯里化使之更容易维护，代码可读性更好。</p>
+
+<pre><code>    //update会返回一个函数,这个函数可以设置id属性为item的web元素的内容 
+    function update(item){
+    return function(text){
+    $("di##+item).html(text);
+    } 
+    }
+
+    //Ajax请求,当成功是调用参数callback 
+    function refresh(url, callback){
+    var params = {
+       type : "echo",
+       data : "" };
+
+    $.ajax({
+       type:"post",
+       url:url, 
+       cache:false, 
+       async:true, 
+       dataType:"json", 
+       data:params,
+
+    //当异步请求成功时调用
+    success: function(data, status){
+    callback(data);
+           },
+
+     //当请求出现错误时调用 
+     error: function(err){
+         alert("error : "+err); 
+    }
+    }); 
+    }
+    refresh("action.do?target=news",update("newsPanel")); 
+    refresh("action.do?target=articles",update("articlePanel")); 
+    refresh("action.do?target=pictures",update("picturePanel"));
+
+    update("newsPanel") = function(text){ 
+    $("div#newsPanel").html(text);
+    }
+</code></pre>
 </div>
 
 
@@ -119,7 +187,7 @@
   
 
 
-<time datetime="2014-11-01T20:47:00+08:00" pubdate data-updated="true">Nov 1<span>st</span>, 2014</time>
+<time datetime="2015-04-30T16:22:00+08:00" pubdate data-updated="true">Apr 30<span>th</span>, 2015</time>
       
 
 
@@ -127,7 +195,7 @@
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2014/11/01/onestepone/" data-via="" data-counturl="http://tuteng.github.io/blog/2014/11/01/onestepone/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://tuteng.github.io/blog/2015/04/30/zuijin/" data-via="" data-counturl="http://tuteng.github.io/blog/2015/04/30/zuijin/" >Tweet</a>
   
   
   
@@ -136,10 +204,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2014/11/01/step/" title="Previous Post: 下一步">&laquo; 下一步</a>
+        <a class="basic-alignment left" href="/blog/2015/02/28/android/" title="Previous Post: android学习笔记">&laquo; android学习笔记</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2014/11/01/new/" title="Next Post: python获取文件路径">python获取文件路径 &raquo;</a>
       
     </p>
   </footer>
@@ -150,7 +216,7 @@
           <h1>Comments</h1>
               <div id="comments" aria-live="polite"><!-- 多说公共JS代码 end -->
 <!-- Duoshuo Comment BEGIN -->
-<div class="ds-thread" data-title="一步一步学python"></div>
+<div class="ds-thread" data-title="Javascript的函数式编程"></div>
 <script type="text/javascript">
       var duoshuoQuery = {short_name:"tuteng"};
 (function() {

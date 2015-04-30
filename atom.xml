@@ -4,7 +4,7 @@
   <title><![CDATA[TuTeng'blog]]></title>
   <link href="http://tuteng.github.io/atom.xml" rel="self"/>
   <link href="http://tuteng.github.io/"/>
-  <updated>2015-02-28T22:03:50+08:00</updated>
+  <updated>2015-04-30T16:29:55+08:00</updated>
   <id>http://tuteng.github.io/</id>
   <author>
     <name><![CDATA[图腾]]></name>
@@ -12,6 +12,81 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[javascript的函数式编程]]></title>
+    <link href="http://tuteng.github.io/blog/2015/04/30/zuijin/"/>
+    <updated>2015-04-30T16:22:00+08:00</updated>
+    <id>http://tuteng.github.io/blog/2015/04/30/zuijin</id>
+    <content type="html"><![CDATA[<p>高阶函数：
+接收函数作为参数的函数为高阶函数，c语言里的函数指针。js可以使用匿名函数，比较方便，c不可以 <br/>
+闭包：高阶函数内部的函数引用外部作用域的变量。实现缓存。问题：内存泄漏，上下文的引用<br/>
+例子：</p>
+
+<pre><code>$(function(){
+var con = $("di##anel"); 
+this.id = "content"; 
+con.click(function(){
+alert(this.id);//panel 
+});
+});
+
+$(function(){
+var con = $("di##anel"); 
+this.id = "content";
+var self = this; 
+con.click(function(){
+alert(self.id);//content 
+});
+});    
+</code></pre>
+
+<p>柯里化：预先将函数的某些参数传入，得到一个简单的函数，但是预先传入的参数被保存在闭包中。 <br/>
+柯里化使用案例： <br/>
+页面中的局部刷新，使用柯里化使之更容易维护，代码可读性更好。</p>
+
+<pre><code>    //update会返回一个函数,这个函数可以设置id属性为item的web元素的内容 
+    function update(item){
+    return function(text){
+    $("di##+item).html(text);
+    } 
+    }
+
+    //Ajax请求,当成功是调用参数callback 
+    function refresh(url, callback){
+    var params = {
+       type : "echo",
+       data : "" };
+
+    $.ajax({
+       type:"post",
+       url:url, 
+       cache:false, 
+       async:true, 
+       dataType:"json", 
+       data:params,
+
+    //当异步请求成功时调用
+    success: function(data, status){
+    callback(data);
+           },
+
+     //当请求出现错误时调用 
+     error: function(err){
+         alert("error : "+err); 
+    }
+    }); 
+    }
+    refresh("action.do?target=news",update("newsPanel")); 
+    refresh("action.do?target=articles",update("articlePanel")); 
+    refresh("action.do?target=pictures",update("picturePanel"));
+
+    update("newsPanel") = function(text){ 
+    $("div#newsPanel").html(text);
+    }
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[android学习笔记]]></title>
@@ -1184,24 +1259,6 @@ linux命令top或uptime的中的负载如何计算  （load，系统负载） <b
 <p>昨天晚上学校艺术大坑举办了十佳歌手比赛，说心里话，在实验室里听着感觉都挺好的（我五音不全），乱哄哄的。而昨天也是一个特殊的日子，520嘛，老罗的锤子发布会。老罗是一个幽默的人，一直不看好他去做手机，开始看直播还有点困，但后来发现老罗是个靠谱的人，对于锤子的工业设计，外观，内部系统的优化都是下了功夫的，最看好的是对于大屏幕的手机，如何实现单手对全屏的操作，一直认为一个手能够把握住全屏的手机才是好手机，老罗做到了。下面还将100万门票费捐给了openssl，就这点给老罗必须赞一个。“我不关心输赢，我就是认真”，真是有些感动，我是不是也要成为脑残的罗粉了呢。做一个理想主义青年也挺好的&#8230;.. 其实不管怎样，用心做东西真的不错。</p>
 
 <p>老罗做了两年，做的还不错，至少从视频上看，可以秒杀大部分国产机，“彪悍的人生不需要解释”。慢慢的来吧，先把手头上自己喜欢的东西做好，顺便找一下有没有合适的实习，尽量让时光过的慢些吧。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[嵌入式比赛总结]]></title>
-    <link href="http://tuteng.github.io/blog/2014/05/10/erfenfa/"/>
-    <updated>2014-05-10T17:20:00+08:00</updated>
-    <id>http://tuteng.github.io/blog/2014/05/10/erfenfa</id>
-    <content type="html"><![CDATA[<p>劳动节已经过去，五一假期一直在实验室呆着，每天忙忙碌碌，服务器端的例程耗时两天总算弄懂了。大致的框架是  <br/>
-下端zigbee终端设备和各传感器之间通过串口采集传感器的数据，zigbee上跑的是zstack协议栈，关于zstack协议栈，以后再进行分析，这个协议栈总的来说是根据zigbee标准制定的用来做物联网的。当zigbee终端设备采集到数据之后，会通过无线网络传到协调器处，协调器实际也是一个zigbee设备，只是通过软件对其进行了类别划分，它可以管理其他的zigbee设备，它收到终端设备发过来的数据后会在通过串口传输到arm网关部分，在arm上可以对数据进行处理，包括数据的显示，分析，开关控制，报警等功能。 <br/>
-对于设备中arm上的开机跑的智能家居的例程，其逻辑主要如下：<br/>
-arm上实现了两个程序，一个是c语言实现的服务器端，另一个是qt实现的客户端，qt并没有直接通过串口和zigbee或者rfid或者gprs或者蓝牙通信，一切的数据获取，报警短信，开关控制都要通过服务器端的程序。服务器端和zigbee，服务器端和qt客户端都有一个简单地协议，服务器和qt端通过socket通信。并且两方都通过select机制监听可读事件。服务器端使用了libev这个库，据说这个库为libevent的升级版。花了两天的时间大致了解了一下libevent的源代码，参考文章如下<br/>
-<a href="http://blog.csdn.net/sparkliang/article/category/660506">libevent代码分析</a><br/>
-其中越往下看，越发现数据结构与算法才是根本。涉及到了链表，堆排序等。看这种代码确实能够学到很多东西，借着这个机会熟悉了一下二叉树，以前并不知道堆是怎么存储的，现在才知道其实堆就是用二叉树这种数据结构来实现的（囧）,因此操作堆就是操作二叉树，并且堆总是一个完全二叉树，
-对其可以进行遍历（前序，中序，后序等），还有查找，插入，删除等一系列操作。而二叉树的操作又是建立在递归的基础之上。libevent库中使用了最小堆排序。对于不同的事件，IO，定时器，信号，都有不同的数据结构与算法来实现，至今也只是了解了一点皮毛。 <br/>
-服务器端的程序大量使用了多线程，这个时候我们就要小心线程之间的数据共享等问题。 <br/>
-比赛中发现自己真是没有写多少代码，总是在别人的基础上进行修改，增添一些自己的功能。倒是下端的zigbee对于其数据的传输逻辑了解了不少。包括串口的初始化，任务id的注册，怎么通过无线发送数据，从无线端传过来的数据怎么处理，不同的设备如何识别。终端设备如何加入自己的传感器以及与传感器之间的接口如何实现等现在了解的都差不多了。但是对于大量的节点身份如何识别，如何选择路径，何时加入网络，何时选择网络，传感器的自组网算法等都有待进一步的学习。最近也了解了一下contiki这个开源的操作系统，跑了个串口的例子，没想到一下就跑通了。所以打算深入的了解一下它的源代码，等以后有空了在作总结。 <br/>
-慢慢的来吧，虽说快要结束了，但是学习这件事情是急不得的。</p>
 ]]></content>
   </entry>
   

@@ -9,9 +9,10 @@
   <meta name="author" content="图腾">
 
   
-  <meta name="description" content="activity的生命周期 每个activity具有四种基本状态:
-1.Active/Runing一个新 Activity 启动入栈后，它在屏幕最前端，处于栈的最顶端，此时它处于可见并可和用户交互的激活状态。
-2.Paused 当 Activity 被另一个透明或者 Dialog 样式的 &hellip;">
+  <meta name="description" content="高阶函数：
+接收函数作为参数的函数为高阶函数，c语言里的函数指针。js可以使用匿名函数，比较方便，c不可以 闭包：高阶函数内部的函数引用外部作用域的变量。实现缓存。问题：内存泄漏，上下文的引用
+例子： $(function(){
+var con = $("di##anel"); this.id &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +69,111 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/04/30/zuijin/">Javascript的函数式编程</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-04-30T16:22:00+08:00" pubdate data-updated="true">Apr 30<span>th</span>, 2015</time>
+        
+         
+                   | <a href="/blog/2015/04/30/zuijin/#comments">Comments</a>
+         
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>高阶函数：
+接收函数作为参数的函数为高阶函数，c语言里的函数指针。js可以使用匿名函数，比较方便，c不可以 <br/>
+闭包：高阶函数内部的函数引用外部作用域的变量。实现缓存。问题：内存泄漏，上下文的引用<br/>
+例子：</p>
+
+<pre><code>$(function(){
+var con = $("di##anel"); 
+this.id = "content"; 
+con.click(function(){
+alert(this.id);//panel 
+});
+});
+
+$(function(){
+var con = $("di##anel"); 
+this.id = "content";
+var self = this; 
+con.click(function(){
+alert(self.id);//content 
+});
+});    
+</code></pre>
+
+<p>柯里化：预先将函数的某些参数传入，得到一个简单的函数，但是预先传入的参数被保存在闭包中。 <br/>
+柯里化使用案例： <br/>
+页面中的局部刷新，使用柯里化使之更容易维护，代码可读性更好。</p>
+
+<pre><code>    //update会返回一个函数,这个函数可以设置id属性为item的web元素的内容 
+    function update(item){
+    return function(text){
+    $("di##+item).html(text);
+    } 
+    }
+
+    //Ajax请求,当成功是调用参数callback 
+    function refresh(url, callback){
+    var params = {
+       type : "echo",
+       data : "" };
+
+    $.ajax({
+       type:"post",
+       url:url, 
+       cache:false, 
+       async:true, 
+       dataType:"json", 
+       data:params,
+
+    //当异步请求成功时调用
+    success: function(data, status){
+    callback(data);
+           },
+
+     //当请求出现错误时调用 
+     error: function(err){
+         alert("error : "+err); 
+    }
+    }); 
+    }
+    refresh("action.do?target=news",update("newsPanel")); 
+    refresh("action.do?target=articles",update("articlePanel")); 
+    refresh("action.do?target=pictures",update("picturePanel"));
+
+    update("newsPanel") = function(text){ 
+    $("div#newsPanel").html(text);
+    }
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1351,51 +1457,6 @@ def _eintr_retry(func, *args):
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/11/11/mianshiti/">面试题</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-11-11T22:58:00+08:00" pubdate data-updated="true">Nov 11<span>th</span>, 2014</time>
-        
-         
-                   | <a href="/blog/2014/11/11/mianshiti/#comments">Comments</a>
-         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>python的gil机制 (python多线程与多进程，全局解释器锁)<br/>
-tornado的异步非阻塞（epoll）<br/>
-list与set哪个更快  (set更快，基于字典，哈希)   <br/>
-linux命令top或uptime的中的负载如何计算  （load，系统负载） <br/>
-参考链接
-  http://www.mike.org.cn/articles/linux-top-command-in-the-meaning-of-load-average/
-  http://www.cnblogs.com/realviv/articles/1883679.html</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1411,6 +1472,10 @@ linux命令top或uptime的中的负载如何计算  （load，系统负载） <b
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/04/30/zuijin/">javascript的函数式编程</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/02/28/android/">android学习笔记</a>
       </li>
     
@@ -1424,10 +1489,6 @@ linux命令top或uptime的中的负载如何计算  （load，系统负载） <b
     
       <li class="post">
         <a href="/blog/2015/01/21/gailvlun/">概率论与数理统计学习</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/01/06/chengkuaishujuliu/">tcp成块数据流</a>
       </li>
     
   </ul>
